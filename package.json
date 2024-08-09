@@ -13,8 +13,7 @@
     "lint:eslint": "eslint .",
     "fix": "run-s fix:*",
     "fix:prettier": "prettier . --write",
-    "fix:eslint": "eslint --fix",
-    "flavor-development": "dotenv -e .env.development"
+    "fix:eslint": "eslint --fix"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -28,7 +27,6 @@
     "@typescript-eslint/parser": "^6.0.0",
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
-    "dotenv-cli": "^7.4.2",
     "eslint": "^8.0.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
