@@ -1,9 +1,9 @@
-import { auth } from "./firebase"
+import { auth } from "../../infrastructures/firebase"
 import { useDispatch,useSelector } from "react-redux"
 import { GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut } from "firebase/auth"
 import { useEffect } from 'react'
-import { initUser,clearUser } from "./reducers"
-const Login = () => {
+import { initUser,clearUser } from "../../reducers"
+const Auth = () => {
     const email = useSelector((state: any) => state.authReducer.email);
     const dispatch = useDispatch();
     const init = () => {
@@ -50,4 +50,4 @@ const Login = () => {
     }
     
 }
-export default Login;
+export default Auth;
