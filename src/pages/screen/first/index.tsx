@@ -4,12 +4,12 @@ import Loading from '../loading';
 import { useSelector } from "react-redux"
 function First() { 
   const firstLoaded = useSelector((state: any) => state.authReducer.firstLoaded);
-  const email = useSelector((state: any) => state.authReducer.email);
-  
+  const uid = useSelector((state: any) => state.authReducer.uid);
+
   if (!firstLoaded) {
     return <Loading></Loading>
   }
-  if (email) {
+  if (uid) {
     return <Home></Home>
   } else {
     return <Auth></Auth>
