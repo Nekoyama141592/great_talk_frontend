@@ -28,7 +28,7 @@ const Login = () => {
     };
     const handleLogout = async () => {
         try {
-            signOut(auth)
+            await signOut(auth)
         } catch (error) {}
     }
     useEffect(() => {
