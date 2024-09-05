@@ -1,13 +1,14 @@
 import { CreateSliceOptions, createSlice } from "@reduxjs/toolkit"
+const initialState = {email: ''};
 const x: CreateSliceOptions = {
     name: 'auth',
-    initialState: {email: ''},
+    initialState: initialState,
     reducers: {
         initUser(_,{payload}) {
             return payload;
         },
-        clearUser(_,{payload}) {
-            return payload;
+        clearUser(_,{}) {
+            return initialState;
         }
     }
 }

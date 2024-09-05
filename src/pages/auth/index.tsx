@@ -14,7 +14,7 @@ const Auth = () => {
                 const action = initUser(payload);
                 dispatch(action);
             } else {
-                const payload = {email: ''}
+                const payload = {};
                 const action = clearUser(payload);
                 dispatch(action);
             }
