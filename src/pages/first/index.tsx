@@ -29,24 +29,12 @@ function First() {
     init();
   },[]);
   if (!firstLoaded) {
-    return (
-      <>
-       <Loading></Loading>
-      </>
-    )
+    return <Loading></Loading>
   }
   if (email) {
-    return (
-      <>
-        <Home></Home>
-      </>
-    )
+    return <Home></Home>
   } else {
-    return (
-      <>
-        <Auth></Auth>
-      </>
-    )
+    return <Auth></Auth>
   }
 }
 
