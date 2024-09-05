@@ -9,8 +9,8 @@ const Auth = () => {
     const init = () => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                const email = user.email ?? ''
-                const payload = {email}
+                const {email,uid} = user;
+                const payload = {email,uid}
                 const action = initUser(payload);
                 dispatch(action);
             } else {

@@ -1,5 +1,5 @@
 import { CreateSliceOptions, createSlice } from "@reduxjs/toolkit"
-const initialState = {email: ''};
+const initialState = {email: '',uid: ''};
 const x: CreateSliceOptions = {
     name: 'auth',
     initialState: initialState,
