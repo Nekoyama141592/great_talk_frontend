@@ -1,15 +1,22 @@
 import { auth } from "./firebase"
-import { GoogleAuthProvider, User, signInWithPopup,onAuthStateChanged,signOut } from "firebase/auth"
-import { useEffect, useState } from 'react'
-
+import { useDispatch,useSelector } from "react-redux"
+import { GoogleAuthProvider,signInWithPopup,onAuthStateChanged,signOut } from "firebase/auth"
+import { useEffect } from 'react'
+import { initUser,clearUser } from "./reducers"
 const Login = () => {
-    const [user,setUser] = useState<User>();
+    const email = useSelector((state: any) => state.authReducer.email);
+    const dispatch = useDispatch();
     const init = () => {
         onAuthStateChanged(auth, (user) => {
             if (user) {
-                setUser(user)
+                const email = user.email ?? ''
+                const payload = {email}
+                const action = initUser(payload);
+                dispatch(action);
             } else {
-                setUser(undefined)
+                const payload = {email: ''}
+                const action = clearUser(payload);
+                dispatch(action);
             }
           });
     }
@@ -27,10 +34,10 @@ const Login = () => {
     useEffect(() => {
         init();
     },[]);
-    if (user) {
+    if (email) {
         return (
             <div>
-                <h3>{user?.email ?? ''}</h3>
+                <h3>{email}</h3>
                 <button onClick={handleLogout}>ログアウトする</button>
             </div>
         )
