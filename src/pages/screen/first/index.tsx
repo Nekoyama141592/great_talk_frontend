@@ -1,9 +1,9 @@
 import Auth from '../auth';
 import Home from '../home';
 import Loading from '../loading';
-import { auth } from "../../infrastructures/firebase"
+import { auth } from "../../../infrastructures/firebase"
 import { useDispatch,useSelector } from "react-redux"
-import { initUser,clearUser } from "../../reducers"
+import { initUser,clearUser } from "../../../reducers"
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect} from 'react'
 function First() { 

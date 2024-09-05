@@ -1,4 +1,4 @@
-import { auth } from "../../infrastructures/firebase"
+import { auth } from "../../../infrastructures/firebase"
 import { useSelector } from "react-redux"
 import { signOut } from "firebase/auth";
 
