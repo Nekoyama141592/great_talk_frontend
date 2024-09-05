@@ -1,14 +1,16 @@
 import Auth from '../auth';
+import Home from '../home';
+import Loading from '../loading';
 import { auth } from "../../infrastructures/firebase"
 import { useDispatch,useSelector } from "react-redux"
 import { initUser,clearUser } from "../../reducers"
 import { onAuthStateChanged } from 'firebase/auth';
-
-import { useEffect } from 'react'
-import Home from '../home';
+import { useEffect} from 'react'
 function First() { 
+  const firstLoaded = useSelector((state: any) => state.authReducer.firstLoaded);
   const email = useSelector((state: any) => state.authReducer.email);
   const dispatch = useDispatch();
+  
   const init = () => {
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -26,6 +28,13 @@ function First() {
   useEffect(() => {
     init();
   },[]);
+  if (!firstLoaded) {
+    return (
+      <>
+       <Loading></Loading>
+      </>
+    )
+  }
   if (email) {
     return (
       <>
