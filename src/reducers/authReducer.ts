@@ -12,8 +12,9 @@ const option: CreateSliceOptions = {
         }
     }
 }
-const authReducer = createSlice(option)
-const {initUser,clearUser} = authReducer.actions
+const slice = createSlice(option)
+const {initUser,clearUser} = slice.actions
+const authReducer = slice.reducer
 export {initUser,clearUser}
-export default authReducer.reducer
+export default authReducer
   

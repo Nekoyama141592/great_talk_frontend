@@ -1,9 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { useSelector as rawUseSelector, TypedUseSelectorHook } from 'react-redux';
-import authReducer from "../reducers"
+import authReducer from "../reducers/authReducer"
 const store = configureStore({
     reducer: {
-        authReducer
+        authReducer: authReducer
     }
 })
 export default store;

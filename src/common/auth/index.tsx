@@ -1,4 +1,4 @@
-import { auth } from "../../../infrastructures/firebase"
+import { auth } from "../../infrastructures/firebase"
 
 import { GoogleAuthProvider,signInWithPopup } from "firebase/auth"
 

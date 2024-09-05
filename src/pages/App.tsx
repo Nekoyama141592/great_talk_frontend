@@ -1,10 +1,13 @@
 import './App.css'
-import First from './screen/first';
+import About from './about';
+import CreatePost from './create-post';
 import { auth } from "../infrastructures/firebase"
 import { useDispatch } from "react-redux"
-import { initUser,clearUser } from "../reducers"
+import { initUser,clearUser } from "../reducers/authReducer"
 import { onAuthStateChanged } from 'firebase/auth';
 import { useEffect} from 'react'
+import { Routes, Route } from 'react-router-dom';
+import Home from './home';
 
 function App() {
   const dispatch = useDispatch();
@@ -27,7 +30,11 @@ function App() {
   },[]);
   return (
     <>
-      <First></First>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/createPost" element={<CreatePost />} />
+      </Routes>
     </>
   )
 }

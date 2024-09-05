@@ -1,19 +1,18 @@
 import Auth from '../auth';
-import Home from '../home';
 import Loading from '../loading';
-import { useSelector } from "../../../store";
-function First() { 
+import { useSelector } from "../../store";
+const CheckAuth = (props: any) => { 
   const firstLoaded = useSelector((state) => state.authReducer.firstLoaded);
   const uid = useSelector((state) => state.authReducer.uid);
 
   if (!firstLoaded) {
-    return <Loading></Loading>
+    return <><Loading /></>
   }
   if (uid) {
-    return <Home></Home>
+    return <>{props.children}</>
   } else {
-    return <Auth></Auth>
+    return <><Auth /></>
   }
 }
 
-export default First
+export default CheckAuth
