@@ -1,10 +1,10 @@
 import Auth from '../auth';
 import Home from '../home';
 import Loading from '../loading';
-import { useSelector } from "react-redux"
+import { useSelector } from "../../../store";
 function First() { 
-  const firstLoaded = useSelector((state: any) => state.authReducer.firstLoaded);
-  const uid = useSelector((state: any) => state.authReducer.uid);
+  const firstLoaded = useSelector((state) => state.authReducer.firstLoaded);
+  const uid = useSelector((state) => state.authReducer.uid);
 
   if (!firstLoaded) {
     return <Loading></Loading>
