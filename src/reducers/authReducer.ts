@@ -1,20 +1,19 @@
-import { CreateSliceOptions, createSlice } from "@reduxjs/toolkit"
-const initialState = {email: '',uid: '',firstLoaded: false};
+import { CreateSliceOptions, createSlice } from '@reduxjs/toolkit'
+const initialState = { email: '', uid: '', firstLoaded: false }
 const option: CreateSliceOptions = {
-    name: 'auth',
-    initialState: initialState,
-    reducers: {
-        initUser(_,{payload}) {
-            return {...payload,firstLoaded: true};
-        },
-        clearUser(_,{}) {
-            return {...initialState,firstLoaded: true};
-        }
-    }
+  name: 'auth',
+  initialState: initialState,
+  reducers: {
+    initUser(_, { payload }) {
+      return { ...payload, firstLoaded: true }
+    },
+    clearUser(_, {}) {
+      return { ...initialState, firstLoaded: true }
+    },
+  },
 }
 const slice = createSlice(option)
-const {initUser,clearUser} = slice.actions
+const { initUser, clearUser } = slice.actions
 const authReducer = slice.reducer
-export {initUser,clearUser}
+export { initUser, clearUser }
 export default authReducer
-  
