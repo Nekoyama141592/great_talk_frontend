@@ -14,8 +14,8 @@ function App() {
   const init = () => {
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        const { email, uid } = user
-        const payload = { email, uid }
+        const { uid } = user
+        const payload = { uid }
         const action = initUser(payload)
         dispatch(action)
       } else {
