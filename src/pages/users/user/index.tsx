@@ -7,15 +7,11 @@ import PublicUser from '../../../schema/public-user'
 const User = () => {
   const { uid } = useParams()
   const queryFn = async () => {
-    if (!uid) {
-      return
-    }
+    if (!uid) return
     const docRef = doc(db, 'public/v1/users', uid)
     const userDoc = await getDoc(docRef)
     const data = userDoc.data()
-    if (!data) {
-      return undefined;
-    }
+    if (!data) return
     const res: PublicUser = {
       bio: data.bio,
       blockCount: data.blockCount,

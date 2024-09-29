@@ -1,49 +1,36 @@
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../../infrastructures/firebase'
 import PublicPost from '../../../../schema/public-post'
 
 function Post() {
   const { uid, postId } = useParams()
-  const [post, setPost] = useState<PublicPost | null>(null)
-  const [error, setError] = useState<string>('')
-
-  useEffect(() => {
-    if (!uid || !postId) {
-      return
+  const queryFn = async () => {
+    if (!uid || !postId) return
+    const docRef = doc(db, `public/v1/users/${uid}/posts`, postId)
+    const postDoc = await getDoc(docRef)
+    const data = postDoc.data()
+    if (!data) return
+    const res: PublicPost = {
+      customCompleteText: data.customCompleteText,
+      description: data.description,
+      image: data.image,
+      msgCount: data.msgCount,
+      postId: data.postId,
+      title: data.title,
+      uid: data.uid,
     }
-    const fetchPostData = async () => {
-      try {
-        const docRef = doc(db, `public/v1/users/${uid}/posts`, postId)
-        const postDoc = await getDoc(docRef)
-        if (postDoc.exists()) {
-          const data = postDoc.data()
-          const res: PublicPost = {
-            customCompleteText: data.customCompleteText,
-            description: data.description,
-            image: data.image,
-            msgCount: data.msgCount,
-            postId: data.postId,
-            title: data.title,
-            uid: data.uid,
-          }
-          setPost(res)
-        } else {
-          setError('投稿が存在しません')
-        }
-      } catch (err) {
-        setError(err?.toString() ?? 'ERROR')
-      }
-    }
-
-    fetchPostData()
-  }, [uid, postId])
-
-  if (error) {
-    return <h3>{error}</h3>
+    return res
   }
-
+  const { data, isPending, error } = useQuery({
+    queryKey: ['post'],
+    queryFn: queryFn,
+  })
+  if (isPending) return <div>読み込み中...</div>
+  if (!data) return <div>投稿が存在しません</div>
+  if (error) return <div>{error.message}</div>
+  const post: PublicPost = data
   return (
     <>
       <h2>
