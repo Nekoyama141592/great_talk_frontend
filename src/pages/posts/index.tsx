@@ -8,26 +8,9 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '../../infrastructures/firebase'
-import DetectedText from '../../schema/detected-text'
-import ModeratedImage from '../../schema/moderated-image'
-
-interface CustomCompleteText {
-  systemPrompt: string
-}
-
-
-interface Post {
-  customCompleteText: CustomCompleteText
-  description: DetectedText
-  image: ModeratedImage
-  msgCount: number
-  postId: string
-  title: DetectedText
-  uid: string
-}
-
+import PublicPost from '../../schema/public-post'
 function Posts() {
-  const [posts, setPosts] = useState<Post[] | null>(null)
+  const [posts, setPosts] = useState<PublicPost[] | null>(null)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -45,7 +28,7 @@ function Posts() {
           const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))
           const querySnapshot = await getDocs(q)
 
-          const postsData: Post[] = querySnapshot.docs.map((doc) => {
+          const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
             const data = doc.data()
             return {
               customCompleteText: data.customCompleteText,
@@ -74,10 +57,11 @@ function Posts() {
   return (
     <ul>
       {posts.map((post) => (
-        <li key={post.postId} className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8">
-          <Link
-            to={`/posts/${post.postId}`}
-          >
+        <li
+          key={post.postId}
+          className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
+        >
+          <Link to={`/posts/${post.postId}`}>
             <p>{post.title.value}</p>
             <p>{post.description.value}</p>
             <p>{post.msgCount}コメント</p>

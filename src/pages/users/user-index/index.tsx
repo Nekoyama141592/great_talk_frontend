@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  collection,
-  query,
-  orderBy,
-  limit,
-  getDocs,
-} from 'firebase/firestore'
+import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '../../../infrastructures/firebase'
 import PublicUser from '../../../schema/public-user'
 
@@ -31,23 +25,22 @@ function UserIndex() {
 
           const usersData: PublicUser[] = querySnapshot.docs.map((doc) => {
             const data = doc.data()
-            const res: PublicUser = 
-                {
-                    bio: data.bio,
-                    blockCount: data.blockCount,
-                    ethAddress: data.ethAddress,
-                    followerCount: data.followerCount,
-                    followingCount: data.followingCount,
-                    isNFTicon: data.isNFTicon,
-                    isOfficial: data.isOfficial,
-                    isSuspended: data.isSuspended,
-                    muteCount: data.muteCount,
-                    postCount: data.postCount,
-                    reportCount: data.reportCount,
-                    uid: data.uid,
-                    image: data.image,
-                    userName: data.userName,
-                };
+            const res: PublicUser = {
+              bio: data.bio,
+              blockCount: data.blockCount,
+              ethAddress: data.ethAddress,
+              followerCount: data.followerCount,
+              followingCount: data.followingCount,
+              isNFTicon: data.isNFTicon,
+              isOfficial: data.isOfficial,
+              isSuspended: data.isSuspended,
+              muteCount: data.muteCount,
+              postCount: data.postCount,
+              reportCount: data.reportCount,
+              uid: data.uid,
+              image: data.image,
+              userName: data.userName,
+            }
             return res
           })
           setUsers(usersData)
@@ -67,10 +60,11 @@ function UserIndex() {
   return (
     <ul>
       {users.map((user) => (
-        <li key={user.uid} className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8">
-          <Link
-            to={`/users/${user.uid}`}
-          >
+        <li
+          key={user.uid}
+          className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
+        >
+          <Link to={`/users/${user.uid}`}>
             <p>{user.userName.value}</p>
             <p>{user.bio.value}</p>
             <p>{user.followerCount}フォロワー</p>

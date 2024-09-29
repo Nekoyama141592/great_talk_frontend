@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-function Users() {
+function UserPosts() {
   return (
     <>
       <Outlet />
@@ -8,4 +8,4 @@ function Users() {
   )
 }
 
-export default Users
+export default UserPosts

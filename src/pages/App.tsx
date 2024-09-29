@@ -8,10 +8,14 @@ import { useEffect } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from './home'
 import Posts from './posts'
-import User from './user'
+import User from './users/user'
 import CheckAuth from '../common/check-auth'
 import Users from './users'
 import UserIndex from './users/user-index'
+import Post from './users/user-posts/post'
+import UserPosts from './users/user-posts'
+import PostIndex from './users/user-posts/post-index'
+
 
 function App() {
   const dispatch = useDispatch()
@@ -40,6 +44,10 @@ function App() {
         <Route path="/users" element={<Users />}>
           <Route index element={<UserIndex />} />
           <Route path=":uid" element={<User />} />
+        </Route>
+        <Route path="/users/:uid/posts" element={<UserPosts />}>
+          <Route index element={<PostIndex />} />
+          <Route path=":postId" element={<Post />} />
         </Route>
         <Route path="/posts" element={<Posts />} />
       </Routes>

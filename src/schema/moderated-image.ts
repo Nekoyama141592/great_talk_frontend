@@ -1,4 +1,4 @@
 export default interface ModeratedImage {
-    bucketName: string
-    value: string
+  bucketName: string
+  value: string
 }
