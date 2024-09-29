@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '../../../../infrastructures/firebase'
@@ -6,39 +6,34 @@ import PublicPost from '../../../../schema/public-post'
 
 function PostIndex() {
   const { uid } = useParams()
-  const [posts, setPosts] = useState<PublicPost[] | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const queryFn = async () => {
+    const colRef = collection(db, `public/v1/users/${uid}/posts`)
+    const q = query(colRef, orderBy('createdAt', 'desc'), limit(30))
+    const querySnapshot = await getDocs(q)
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const colRef = collection(db, `public/v1/users/${uid}/posts`)
-        const q = query(colRef, orderBy('createdAt', 'desc'), limit(30))
-        const querySnapshot = await getDocs(q)
-
-        const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
-          const data = doc.data()
-          return {
-            customCompleteText: data.customCompleteText,
-            description: data.description,
-            image: data.image,
-            msgCount: data.msgCount,
-            uid: data.uid,
-            postId: data.postId,
-            title: data.title,
-          }
-        })
-        setPosts(postsData)
-      } catch (err) {
-        setError(err?.toString() ?? 'ERROR')
+    const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data()
+      return {
+        customCompleteText: data.customCompleteText,
+        description: data.description,
+        image: data.image,
+        msgCount: data.msgCount,
+        uid: data.uid,
+        postId: data.postId,
+        title: data.title,
       }
-    }
+    })
+    return postsData
+  }
 
-    fetchPosts()
-  }, [uid])
-
-  if (error) return <div>{error}</div>
-  if (!posts) return <div>読み込み中...</div>
+  const { data, isPending, error } = useQuery({
+    queryKey: ['user-posts'],
+    queryFn: queryFn,
+  })
+  if (error) return <div>{error.message}</div>
+  if (isPending) return <div>読み込み中...</div>
+  if (!data) return <div>データがありません</div>
+  const posts: PublicPost[] = data;
   return (
     <ul>
       {posts.map((post) => (

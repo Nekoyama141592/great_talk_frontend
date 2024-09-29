@@ -38,7 +38,7 @@ function UserIndex() {
   if (error) return <div>{error.message}</div>
   if (isPending) return <div>読み込み中...</div>
   if (!data) return <div>データがありません</div>
-  const users: PublicUser[] = data;
+  const users: PublicUser[] = data
   return (
     <ul>
       {users.map((user) => (
