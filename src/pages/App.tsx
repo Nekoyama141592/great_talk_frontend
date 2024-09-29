@@ -1,6 +1,7 @@
 import './App.css'
 import About from './about'
 import CreatePost from './create-post'
+import PolularPosts from './polular-posts'
 import { auth } from '../infrastructures/firebase'
 import { useDispatch } from 'react-redux'
 import { initUser, clearUser } from '../reducers/authReducer'
@@ -34,6 +35,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/createPost" element={<CreatePost />} />
+        <Route path="/polularPosts" element={<PolularPosts />} />
       </Routes>
     </>
   )
