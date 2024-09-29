@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import useSWR from 'swr';
 import { Link } from 'react-router-dom';
 
 interface Post {
@@ -6,17 +6,13 @@ interface Post {
   title: string;
 }
 
-function PostIndex() {
-  const [posts, setPosts] = useState<Post[]>([]);
+const fetcher = (url: string) => fetch(url).then(res => res.json());
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const res = await fetch('https://jsonplaceholder.typicode.com/posts');
-      const data: Post[] = await res.json();
-      setPosts(data);
-    };
-    fetchPosts();
-  }, []);
+function PostIndex() {
+  const { data: posts, error } = useSWR<Post[]>('https://jsonplaceholder.typicode.com/posts', fetcher, { suspense: true });
+
+  if (error) return <div>エラーが発生しました</div>;
+  if (!posts) return <div>読み込み中...</div>;
 
   return (
     <ul>
