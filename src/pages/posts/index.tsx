@@ -45,7 +45,7 @@ function Posts() {
           key={post.postId}
           className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
         >
-          <Link to={`/posts/${post.postId}`}>
+          <Link to={`/users/${post.uid}/posts/${post.postId}`}>
             <p>{post.title.value}</p>
             <p>{post.description.value}</p>
             <p>{post.msgCount}コメント</p>

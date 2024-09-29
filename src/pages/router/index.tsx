@@ -1,5 +1,4 @@
 import { Routes, Route } from 'react-router-dom'
-import Home from '../home'
 import CreatePost from '../create-post'
 import Posts from '../posts'
 import User from '../users/user'
@@ -13,7 +12,7 @@ const Router = () => {
   return (
     <CheckAuth>
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Posts />} />
         <Route path="/createPost" element={<CreatePost />} />
         <Route path="/users" element={<Users />}>
           <Route index element={<UserIndex />} />
@@ -23,7 +22,6 @@ const Router = () => {
           <Route index element={<PostIndex />} />
           <Route path=":postId" element={<Post />} />
         </Route>
-        <Route path="/posts" element={<Posts />} />
       </Routes>
     </CheckAuth>
   )

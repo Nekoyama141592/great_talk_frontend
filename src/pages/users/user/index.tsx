@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
 import { doc, getDoc } from 'firebase/firestore'
@@ -44,6 +45,9 @@ const User = () => {
       <p>自己紹介: {userData?.bio.value ?? ''}</p>
       <p>フォロワー数: {userData?.followerCount ?? 0}</p>
       <p>フォロー数: {userData?.followingCount ?? 0}</p>
+      <Link to='posts'>
+        <button className="text-white">投稿一覧</button>
+      </Link>
     </div>
   )
 }

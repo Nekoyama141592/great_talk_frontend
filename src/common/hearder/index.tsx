@@ -36,12 +36,19 @@ const Header = () => {
               </button>
               <nav className="mt-10">
                 <ul>
-                  <li className="p-2 text-black">
-                    <h3>{uid.slice(0, 5)}...でログイン中</h3>
+                  <li className="p-2">
+                    <Link to='/users' className="text-blue-500">
+                      ユーザー一覧
+                    </Link>
+                  </li>
+                  <li className="p-2">
+                    <Link to={`/users/${uid}`} className="text-blue-500">
+                      プロフィール
+                    </Link>
                   </li>
                   <li className="p-2">
                     <Link to="/" className="text-blue-500">
-                      ホーム
+                      ホームに戻る
                     </Link>
                   </li>
                   <li className="p-2">
