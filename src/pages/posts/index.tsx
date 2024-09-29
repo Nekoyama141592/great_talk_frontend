@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   collectionGroup,
@@ -8,52 +7,37 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '../../infrastructures/firebase'
+import { useQuery } from '@tanstack/react-query'
 import PublicPost from '../../schema/public-post'
 function Posts() {
-  const [posts, setPosts] = useState<PublicPost[] | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const queryFn = async () => {
+    const colRef = collectionGroup(db, `posts`)
+    const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))
+    const querySnapshot = await getDocs(q)
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const cacheKey = 'posts_cache'
-        const cachedData = localStorage.getItem(cacheKey)
-        const cacheTime = localStorage.getItem(`${cacheKey}_time`)
-        const now = new Date().getTime()
-
-        if (cachedData && cacheTime && now - parseInt(cacheTime) < 3600000) {
-          setPosts(JSON.parse(cachedData))
-        } else {
-          const colRef = collectionGroup(db, `posts`)
-          const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))
-          const querySnapshot = await getDocs(q)
-
-          const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
-            const data = doc.data()
-            return {
-              customCompleteText: data.customCompleteText,
-              description: data.description,
-              image: data.image,
-              msgCount: data.msgCount,
-              uid: data.uid,
-              postId: data.postId,
-              title: data.title,
-            }
-          })
-          setPosts(postsData)
-          localStorage.setItem(cacheKey, JSON.stringify(postsData))
-          localStorage.setItem(`${cacheKey}_time`, now.toString())
-        }
-      } catch (err) {
-        setError(err?.toString() ?? 'ERROR')
+    const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
+      const docData = doc.data()
+      return {
+        customCompleteText: docData.customCompleteText,
+        description: docData.description,
+        image: docData.image,
+        msgCount: docData.msgCount,
+        uid: docData.uid,
+        postId: docData.postId,
+        title: docData.title,
       }
-    }
+    })
+    return postsData
+  }
+  const { data, isPending, error } = useQuery({
+    queryKey: ['posts'],
+    queryFn: queryFn,
+  })
 
-    fetchPosts()
-  }, [])
-
-  if (error) return <div>{error}</div>
-  if (!posts) return <div>読み込み中...</div>
+  if (error) return <div>{error.message}</div>
+  if (isPending) return <div>読み込み中...</div>
+  if (!data) return <div>データがありません</div>
+  const posts: PublicPost[] = data
   return (
     <ul>
       {posts.map((post) => (

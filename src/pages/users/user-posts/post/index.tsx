@@ -1,8 +1,8 @@
-import { useParams } from "react-router-dom"
-import { useEffect, useState } from "react"
-import { doc, getDoc } from "firebase/firestore"
-import { db } from "../../../../infrastructures/firebase"
-import PublicPost from "../../../../schema/public-post"
+import { useParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { doc, getDoc } from 'firebase/firestore'
+import { db } from '../../../../infrastructures/firebase'
+import PublicPost from '../../../../schema/public-post'
 
 function Post() {
   const { uid, postId } = useParams()
@@ -46,7 +46,9 @@ function Post() {
 
   return (
     <>
-      <h2>{post?.title.value} by {post?.uid}</h2>
+      <h2>
+        {post?.title.value} by {post?.uid}
+      </h2>
       <p>{post?.description.value}</p>
       <p>{post?.msgCount}コメント</p>
     </>
