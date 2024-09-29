@@ -12,6 +12,8 @@ import PostIndex from './posts/post-index'
 import Post from './posts/post'
 import User from './user'
 import CheckAuth from '../common/check-auth'
+import Users from './users'
+import UserIndex from './users/user-index'
 
 function App() {
   const dispatch = useDispatch()
@@ -37,7 +39,10 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/createPost" element={<CreatePost />} />
-        <Route path="/users/:uid" element={<User />} />
+        <Route path="/users" element={<Users />}>
+          <Route index element={<UserIndex />} />
+          <Route path=":uid" element={<User />} />
+        </Route>
         <Route path="/posts" element={<Posts />}>
           <Route index element={<PostIndex />} />
           <Route path=":postId" element={<Post />} />
