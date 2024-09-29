@@ -1,50 +1,47 @@
+import { useQuery } from '@tanstack/react-query'
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
 import { doc, getDoc } from 'firebase/firestore'
 import { db } from '../../../infrastructures/firebase'
 import PublicUser from '../../../schema/public-user'
 
 const User = () => {
   const { uid } = useParams()
-  const [error, setError] = useState<string>('')
-  const [userData, setUserData] = useState<PublicUser | null>()
-
-  useEffect(() => {
+  const queryFn = async () => {
     if (!uid) {
       return
     }
-    const fetchUserData = async () => {
-      const docRef = doc(db, 'public/v1/users', uid)
-      const userDoc = await getDoc(docRef)
-      if (userDoc.exists()) {
-        const data = userDoc.data()
-        const res: PublicUser = {
-          bio: data.bio,
-          blockCount: data.blockCount,
-          ethAddress: data.ethAddress,
-          followerCount: data.followerCount,
-          followingCount: data.followingCount,
-          isNFTicon: data.isNFTicon,
-          isOfficial: data.isOfficial,
-          isSuspended: data.isSuspended,
-          muteCount: data.muteCount,
-          postCount: data.postCount,
-          reportCount: data.reportCount,
-          uid: data.uid,
-          image: data.image,
-          userName: data.userName,
-        }
-        setUserData(res)
-      } else {
-        setError('ユーザーが存在しません')
-      }
+    const docRef = doc(db, 'public/v1/users', uid)
+    const userDoc = await getDoc(docRef)
+    const data = userDoc.data()
+    if (!data) {
+      return undefined;
     }
-
-    fetchUserData()
-  }, [uid])
-  if (error) {
-    return <h3>{error}</h3>
+    const res: PublicUser = {
+      bio: data.bio,
+      blockCount: data.blockCount,
+      ethAddress: data.ethAddress,
+      followerCount: data.followerCount,
+      followingCount: data.followingCount,
+      isNFTicon: data.isNFTicon,
+      isOfficial: data.isOfficial,
+      isSuspended: data.isSuspended,
+      muteCount: data.muteCount,
+      postCount: data.postCount,
+      reportCount: data.reportCount,
+      uid: data.uid,
+      image: data.image,
+      userName: data.userName,
+    }
+    return res
   }
+  const { data, isPending, error } = useQuery({
+    queryKey: ['user'],
+    queryFn: queryFn,
+  })
+  if (isPending) return <div>読み込み中...</div>
+  if (!data) return <div>ユーザーが存在しません</div>
+  if (error) return <div>{error.message}</div>
+  const userData: PublicUser = data
   return (
     <div>
       <h3>ユーザー名: {userData?.userName.value ?? ''}</h3>

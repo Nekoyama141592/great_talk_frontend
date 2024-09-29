@@ -33,7 +33,7 @@ function PostIndex() {
   if (error) return <div>{error.message}</div>
   if (isPending) return <div>読み込み中...</div>
   if (!data) return <div>データがありません</div>
-  const posts: PublicPost[] = data;
+  const posts: PublicPost[] = data
   return (
     <ul>
       {posts.map((post) => (
