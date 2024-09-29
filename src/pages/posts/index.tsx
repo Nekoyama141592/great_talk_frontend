@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import { Outlet } from 'react-router-dom'
 
 function Posts() {
   return (
@@ -6,7 +6,7 @@ function Posts() {
       <h2>Posts</h2>
       <Outlet />
     </>
-  );
+  )
 }
 
-export default Posts;
+export default Posts

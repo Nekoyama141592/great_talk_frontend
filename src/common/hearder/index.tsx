@@ -26,7 +26,6 @@ const Header = () => {
           </button>
         </div>
         {drawerOpen && (
-            
           <div className="fixed inset-0 bg-gray-800 bg-opacity-75 z-50">
             <div className="fixed left-0 top-0 w-64 h-full bg-white shadow-lg z-50">
               <button
@@ -37,7 +36,9 @@ const Header = () => {
               </button>
               <nav className="mt-10">
                 <ul>
-                  <li className="p-2 text-black"><h3>{uid.slice(0,5)}...でログイン中</h3></li>
+                  <li className="p-2 text-black">
+                    <h3>{uid.slice(0, 5)}...でログイン中</h3>
+                  </li>
                   <li className="p-2">
                     <Link to="/" className="text-blue-500">
                       ホーム

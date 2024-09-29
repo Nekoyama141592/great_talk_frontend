@@ -1,30 +1,94 @@
-import useSWR from 'swr';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import {
+  collectionGroup,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+} from 'firebase/firestore'
+import { db } from '../../../infrastructures/firebase'
 
+interface CustomCompleteText {
+  systemPrompt: string
+}
+interface DetectedText {
+  value: string
+}
+interface DetectedImage {
+  bucketName: string
+  value: string
+}
 interface Post {
-  id: number;
-  title: string;
+  customCompleteText: CustomCompleteText
+  description: DetectedText
+  image: DetectedImage
+  msgCount: number
+  postId: string
+  title: DetectedText
+  uid: string
 }
 
-const fetcher = (url: string) => fetch(url).then(res => res.json());
-
 function PostIndex() {
-  const { data: posts, error } = useSWR<Post[]>('https://jsonplaceholder.typicode.com/posts', fetcher, { suspense: true });
+  const [posts, setPosts] = useState<Post[] | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
-  if (error) return <div>エラーが発生しました</div>;
-  if (!posts) return <div>読み込み中...</div>;
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const cacheKey = 'posts_cache'
+        const cachedData = localStorage.getItem(cacheKey)
+        const cacheTime = localStorage.getItem(`${cacheKey}_time`)
+        const now = new Date().getTime()
 
+        if (cachedData && cacheTime && now - parseInt(cacheTime) < 3600000) {
+          setPosts(JSON.parse(cachedData))
+        } else {
+          const colRef = collectionGroup(db, `posts`)
+          const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))
+          const querySnapshot = await getDocs(q)
+
+          const postsData: Post[] = querySnapshot.docs.map((doc) => {
+            const data = doc.data()
+            return {
+              customCompleteText: data.customCompleteText,
+              description: data.description,
+              image: data.image,
+              msgCount: data.msgCount,
+              uid: data.uid,
+              postId: data.postId,
+              title: data.title,
+            }
+          })
+          setPosts(postsData)
+          localStorage.setItem(cacheKey, JSON.stringify(postsData))
+          localStorage.setItem(`${cacheKey}_time`, now.toString())
+        }
+      } catch (err) {
+        setError(err?.toString() ?? 'ERROR')
+      }
+    }
+
+    fetchPosts()
+  }, [])
+
+  if (error) return <div>{error}</div>
+  if (!posts) return <div>読み込み中...</div>
   return (
     <ul>
       {posts.map((post) => (
-        <li key={post.id}>
-          <Link to={`/posts/${post.id}`}>
-            {post.id}:{post.title}
+        <li key={post.postId} className="border-2 border-white hover:border-emerald-500">
+          <Link
+            to={`/posts/${post.postId}`}
+          >
+            <p>{post.title.value}</p>
+            <p>{post.description.value}</p>
+            <p>{post.msgCount}コメント</p>
           </Link>
         </li>
       ))}
     </ul>
-  );
+  )
 }
 
-export default PostIndex;
+export default PostIndex
