@@ -10,6 +10,8 @@ import Home from './home'
 import Posts from './posts'
 import PostIndex from './posts/post-index'
 import Post from './posts/post'
+import User from './user'
+import CheckAuth from '../common/check-auth'
 
 function App() {
   const dispatch = useDispatch()
@@ -31,16 +33,17 @@ function App() {
     init()
   }, [])
   return (
-    <>
+    <CheckAuth>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/createPost" element={<CreatePost />} />
+        <Route path="/users/:uid" element={<User />} />
         <Route path="/posts" element={<Posts />}>
           <Route index element={<PostIndex />} />
           <Route path=":postId" element={<Post />} />
         </Route>
       </Routes>
-    </>
+    </CheckAuth>
   )
 }
 
