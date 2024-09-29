@@ -77,7 +77,7 @@ function PostIndex() {
   return (
     <ul>
       {posts.map((post) => (
-        <li key={post.postId} className="border-2 border-white hover:border-emerald-500">
+        <li key={post.postId} className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8">
           <Link
             to={`/posts/${post.postId}`}
           >
