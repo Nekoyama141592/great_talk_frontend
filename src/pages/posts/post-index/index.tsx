@@ -8,21 +8,18 @@ import {
   getDocs,
 } from 'firebase/firestore'
 import { db } from '../../../infrastructures/firebase'
+import DetectedText from '../../../schema/detected-text'
+import ModeratedImage from '../../../schema/moderated-image'
 
 interface CustomCompleteText {
   systemPrompt: string
 }
-interface DetectedText {
-  value: string
-}
-interface DetectedImage {
-  bucketName: string
-  value: string
-}
+
+
 interface Post {
   customCompleteText: CustomCompleteText
   description: DetectedText
-  image: DetectedImage
+  image: ModeratedImage
   msgCount: number
   postId: string
   title: DetectedText
