@@ -1,62 +1,44 @@
-import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '../../../infrastructures/firebase'
 import PublicUser from '../../../schema/public-user'
-
+import { useQuery } from '@tanstack/react-query'
 function UserIndex() {
-  const [users, setUsers] = useState<PublicUser[] | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const queryFn = async () => {
+    const colRef = collection(db, `public/v1/users`)
+    const q = query(colRef, orderBy('followerCount', 'desc'), limit(30))
+    const querySnapshot = await getDocs(q)
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const cacheKey = 'users_cache'
-        const cachedData = localStorage.getItem(cacheKey)
-        const cacheTime = localStorage.getItem(`${cacheKey}_time`)
-        const now = new Date().getTime()
-
-        if (cachedData && cacheTime && now - parseInt(cacheTime) < 3600000) {
-          setUsers(JSON.parse(cachedData))
-        } else {
-          const colRef = collection(db, `public/v1/users`)
-          const q = query(colRef, orderBy('followerCount', 'desc'), limit(30))
-          const querySnapshot = await getDocs(q)
-
-          const usersData: PublicUser[] = querySnapshot.docs.map((doc) => {
-            const data = doc.data()
-            const res: PublicUser = {
-              bio: data.bio,
-              blockCount: data.blockCount,
-              ethAddress: data.ethAddress,
-              followerCount: data.followerCount,
-              followingCount: data.followingCount,
-              isNFTicon: data.isNFTicon,
-              isOfficial: data.isOfficial,
-              isSuspended: data.isSuspended,
-              muteCount: data.muteCount,
-              postCount: data.postCount,
-              reportCount: data.reportCount,
-              uid: data.uid,
-              image: data.image,
-              userName: data.userName,
-            }
-            return res
-          })
-          setUsers(usersData)
-          localStorage.setItem(cacheKey, JSON.stringify(usersData))
-          localStorage.setItem(`${cacheKey}_time`, now.toString())
-        }
-      } catch (err) {
-        setError(err?.toString() ?? 'ERROR')
+    const usersData: PublicUser[] = querySnapshot.docs.map((doc) => {
+      const data = doc.data()
+      const res: PublicUser = {
+        bio: data.bio,
+        blockCount: data.blockCount,
+        ethAddress: data.ethAddress,
+        followerCount: data.followerCount,
+        followingCount: data.followingCount,
+        isNFTicon: data.isNFTicon,
+        isOfficial: data.isOfficial,
+        isSuspended: data.isSuspended,
+        muteCount: data.muteCount,
+        postCount: data.postCount,
+        reportCount: data.reportCount,
+        uid: data.uid,
+        image: data.image,
+        userName: data.userName,
       }
-    }
-
-    fetchUsers()
-  }, [])
-
-  if (error) return <div>{error}</div>
-  if (!users) return <div>読み込み中...</div>
+      return res
+    })
+    return usersData
+  }
+  const { data, isPending, error } = useQuery({
+    queryKey: ['users'],
+    queryFn: queryFn,
+  })
+  if (error) return <div>{error.message}</div>
+  if (isPending) return <div>読み込み中...</div>
+  if (!data) return <div>データがありません</div>
+  const users: PublicUser[] = data;
   return (
     <ul>
       {users.map((user) => (
