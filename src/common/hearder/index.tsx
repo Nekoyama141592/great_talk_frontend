@@ -37,7 +37,7 @@ const Header = () => {
               <nav className="mt-10">
                 <ul>
                   <li className="p-2">
-                    <Link to='/users' className="text-blue-500">
+                    <Link to="/users" className="text-blue-500">
                       ユーザー一覧
                     </Link>
                   </li>
