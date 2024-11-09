@@ -39,7 +39,7 @@ function Post() {
   const onClick = async (systemPrompt: string,text: string) => {
     setResponse('読み込み中...')
     const functions = getFunctions()
-    const generateText = httpsCallable(functions, 'generateText')
+    const generateText = httpsCallable(functions, 'generateTextV2')
     const messages =  [{role: 'system',content: systemPrompt},{ role: 'user', content: text }]
     generateText({ messages })
       .then((result) => {
