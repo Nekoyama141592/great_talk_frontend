@@ -11,7 +11,7 @@ function PostIndex() {
     const q = query(colRef, orderBy('createdAt', 'desc'), limit(30))
     const querySnapshot = await getDocs(q)
 
-    const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
+    const postsData: PublicPost[] = querySnapshot.docs.map(doc => {
       const data = doc.data()
       return {
         customCompleteText: data.customCompleteText,
@@ -36,10 +36,10 @@ function PostIndex() {
   const posts: PublicPost[] = data
   return (
     <ul>
-      {posts.map((post) => (
+      {posts.map(post => (
         <li
           key={post.postId}
-          className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
+          className='border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8'
         >
           <Link to={`${post.postId}`}>
             <p>{post.title.value}</p>

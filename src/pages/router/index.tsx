@@ -12,15 +12,15 @@ const Router = () => {
   return (
     <CheckAuth>
       <Routes>
-        <Route path="/" element={<Posts />} />
-        <Route path="/createPost" element={<CreatePost />} />
-        <Route path="/users" element={<Users />}>
+        <Route path='/' element={<Posts />} />
+        <Route path='/createPost' element={<CreatePost />} />
+        <Route path='/users' element={<Users />}>
           <Route index element={<UserIndex />} />
-          <Route path=":uid" element={<User />} />
+          <Route path=':uid' element={<User />} />
         </Route>
-        <Route path="/users/:uid/posts" element={<UserPosts />}>
+        <Route path='/users/:uid/posts' element={<UserPosts />}>
           <Route index element={<PostIndex />} />
-          <Route path=":postId" element={<Post />} />
+          <Route path=':postId' element={<Post />} />
         </Route>
       </Routes>
     </CheckAuth>

@@ -7,7 +7,9 @@ const Auth = () => {
     const provider = new GoogleAuthProvider()
     try {
       await signInWithPopup(auth, provider)
-    } catch (error) {}
+    } catch (error) {
+      console.error('Login failed:', error)
+    }
   }
 
   return (

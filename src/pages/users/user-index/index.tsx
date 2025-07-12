@@ -9,7 +9,7 @@ function UserIndex() {
     const q = query(colRef, orderBy('followerCount', 'desc'), limit(30))
     const querySnapshot = await getDocs(q)
 
-    const usersData: PublicUser[] = querySnapshot.docs.map((doc) => {
+    const usersData: PublicUser[] = querySnapshot.docs.map(doc => {
       const data = doc.data()
       const res: PublicUser = {
         bio: data.bio,
@@ -41,10 +41,10 @@ function UserIndex() {
   const users: PublicUser[] = data
   return (
     <ul>
-      {users.map((user) => (
+      {users.map(user => (
         <li
           key={user.uid}
-          className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
+          className='border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8'
         >
           <Link to={`/users/${user.uid}`}>
             <p>{user.userName.value}</p>

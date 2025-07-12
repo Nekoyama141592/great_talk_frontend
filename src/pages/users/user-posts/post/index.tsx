@@ -36,24 +36,30 @@ function Post() {
   })
   const [inputText, setInputText] = useState('')
 
-  const onClick = async (systemPrompt: string,text: string) => {
+  const onClick = async (systemPrompt: string, text: string) => {
     setResponse('読み込み中...')
     const functions = getFunctions()
     const generateText = httpsCallable(functions, 'generateTextV2')
-    const messages =  [{role: 'system',content: systemPrompt},{ role: 'user', content: text }]
+    const messages = [
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: text },
+    ]
     generateText({ messages })
-      .then((result) => {
+      .then(result => {
         const data = result.data as Response
         setResponse(data.message)
       })
-      .catch((e) => {
+      .catch(e => {
         setResponse(`${e}`)
       })
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>,systemPrompt: string) => {
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    systemPrompt: string
+  ) => {
     e.preventDefault()
-    onClick(systemPrompt,inputText)
+    onClick(systemPrompt, inputText)
   }
 
   if (isPending) return <div>読み込み中...</div>
@@ -67,14 +73,16 @@ function Post() {
       </h2>
       <p>{post?.description.value}</p>
       <p>{post?.msgCount}コメント</p>
-      <form onSubmit={(e) => handleSubmit(e,post.customCompleteText.systemPrompt)}>
+      <form
+        onSubmit={e => handleSubmit(e, post.customCompleteText.systemPrompt)}
+      >
         <input
-          type="text"
+          type='text'
           value={inputText}
-          onChange={(e) => setInputText(e.target.value)}
-          placeholder="質問を入力"
+          onChange={e => setInputText(e.target.value)}
+          placeholder='質問を入力'
         />
-        <button type="submit">質問を送信</button>
+        <button type='submit'>質問を送信</button>
       </form>
       <ReactMarkdown>{response}</ReactMarkdown>
     </>

@@ -2,10 +2,15 @@ import Auth from '../auth'
 import Loading from '../loading'
 import { useSelector } from '../../store'
 import Header from '../hearder'
+import { ReactNode } from 'react'
 
-const CheckAuth = (props: any) => {
-  const firstLoaded = useSelector((state) => state.authReducer.firstLoaded)
-  const uid = useSelector((state) => state.authReducer.uid)
+interface CheckAuthProps {
+  children: ReactNode
+}
+
+const CheckAuth = (props: CheckAuthProps) => {
+  const firstLoaded = useSelector(state => state.authReducer.firstLoaded)
+  const uid = useSelector(state => state.authReducer.uid)
 
   if (!firstLoaded) {
     return (

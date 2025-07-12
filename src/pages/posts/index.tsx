@@ -15,7 +15,7 @@ function Posts() {
     const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))
     const querySnapshot = await getDocs(q)
 
-    const postsData: PublicPost[] = querySnapshot.docs.map((doc) => {
+    const postsData: PublicPost[] = querySnapshot.docs.map(doc => {
       const docData = doc.data()
       return {
         customCompleteText: docData.customCompleteText,
@@ -40,10 +40,10 @@ function Posts() {
   const posts: PublicPost[] = data
   return (
     <ul>
-      {posts.map((post) => (
+      {posts.map(post => (
         <li
           key={post.postId}
-          className="border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8"
+          className='border-2 rounded-full border-white hover:border-emerald-500 p-8 m-8'
         >
           <Link to={`/users/${post.uid}/posts/${post.postId}`}>
             <p>{post.title.value}</p>

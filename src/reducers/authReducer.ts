@@ -7,7 +7,7 @@ const option: CreateSliceOptions = {
     initUser(_, { payload }) {
       return { ...payload, firstLoaded: true }
     },
-    clearUser(_, {}) {
+    clearUser() {
       return { ...initialState, firstLoaded: true }
     },
   },
