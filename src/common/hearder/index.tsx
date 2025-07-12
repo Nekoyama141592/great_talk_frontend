@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
-import { useSelector } from '../../store'
+import { useAtomValue } from 'jotai'
+import { uidAtom } from '../../store/atoms'
 import { signOut } from 'firebase/auth'
 import { auth } from '../../infrastructures/firebase'
 import { useState } from 'react'
 import { TiThMenu } from 'react-icons/ti'
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false)
-  const uid = useSelector(state => state.authReducer.uid)
+  const uid = useAtomValue(uidAtom)
   const handleLogout = async () => {
     try {
       await signOut(auth)
