@@ -1,14 +1,16 @@
-import { collection, doc, setDoc, serverTimestamp } from 'firebase/firestore'
-import { ref, uploadBytes } from 'firebase/storage'
-import { storage } from '@shared/infrastructures/firebase'
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { CreatePostRequest } from '@shared/schema/create-post'
+import { ApiRepository } from '@shared/repositories/api-repository'
+import { generateRandomId } from '@shared/utils/id-util'
 
 export class PostRepository {
+  private apiRepository = new ApiRepository()
+
   async createPost(userId: string, postData: CreatePostRequest): Promise<string> {
-    const postId = doc(collection(db, 'posts')).id
+    const postId = generateRandomId()
     
-    // Upload image if it's a File
+    // Upload image using Cloud Functions
     let imageFileName = ''
     if (postData.image instanceof File) {
       imageFileName = await this.uploadImage(userId, postId, postData.image)
@@ -56,10 +58,15 @@ export class PostRepository {
   }
 
   private async uploadImage(userId: string, postId: string, image: File): Promise<string> {
-    const fileName = `${userId}/${postId}/image.jpg`
-    const imageRef = ref(storage, fileName)
+    const fileName = this.apiRepository.generatePostImagePath(userId, postId)
+    const base64Image = await this.apiRepository.fileToBase64(image)
     
-    await uploadBytes(imageRef, image)
+    const result = await this.apiRepository.putObject(base64Image, fileName)
+    
+    if (!result.success) {
+      throw new Error(result.error || '画像のアップロードに失敗しました')
+    }
+    
     return fileName
   }
 
