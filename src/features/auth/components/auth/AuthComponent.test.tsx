@@ -15,13 +15,13 @@ vi.mock('firebase/auth', () => ({
 describe('AuthComponent', () => {
   it('renders google sign in button', () => {
     render(<AuthComponent />)
-    
+
     expect(screen.getByText('Googleでログイン')).toBeInTheDocument()
   })
 
   it('has a clickable button', () => {
     render(<AuthComponent />)
-    
+
     const button = screen.getByRole('button')
     expect(button).toBeInTheDocument()
     expect(button).toHaveTextContent('Googleでログイン')

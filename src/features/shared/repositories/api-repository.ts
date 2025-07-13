@@ -1,31 +1,38 @@
 import { httpsCallable } from 'firebase/functions'
 import { functions } from '@shared/infrastructures/firebase'
-import { PutObjectRequest, PutObjectResponse, ApiResult } from '@shared/schema/api-requests'
+import {
+  PutObjectRequest,
+  PutObjectResponse,
+  ApiResult,
+} from '@shared/schema/api-requests'
 
 export class ApiRepository {
   /**
    * Upload image to Cloud Storage using Cloud Functions
    */
-  async putObject(base64Image: string, object: string): Promise<ApiResult<PutObjectResponse>> {
+  async putObject(
+    base64Image: string,
+    object: string
+  ): Promise<ApiResult<PutObjectResponse>> {
     try {
       const putObjectV2 = httpsCallable(functions, 'putObjectV2')
-      
+
       const request: PutObjectRequest = {
         base64Image,
-        object
+        object,
       }
-      
+
       const result = await putObjectV2(request)
       const response = result.data as PutObjectResponse
-      
+
       return {
         success: true,
-        data: response
+        data: response,
       }
     } catch {
       return {
         success: false,
-        error: '画像のアップロードが失敗しました'
+        error: '画像のアップロードが失敗しました',
       }
     }
   }

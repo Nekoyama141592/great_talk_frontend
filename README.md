@@ -31,21 +31,25 @@ GreatTalk Frontend は ShareAI エコシステムの一部として開発され�
 ## 🛠 技術スタック
 
 ### Core Technologies
+
 - **React 18** - モダンなReactフレームワーク
 - **TypeScript** - 静的型付けによる開発効率向上
 - **Vite** - 高速なビルドツール・開発サーバー
 
 ### State Management & Data Fetching
+
 - **Jotai** - 軽量でスケーラブルな状態管理
 - **TanStack React Query** - サーバー状態管理とキャッシング
 - **SWR** - フォールバック用データ取得ライブラリ
 
 ### UI & Styling
+
 - **Tailwind CSS** - ユーティリティファーストCSSフレームワーク
 - **Material-UI (MUI)** - Reactコンポーネントライブラリ
 - **React Icons** - アイコンコンポーネント集
 
 ### Backend & Infrastructure
+
 - **Firebase Suite**:
   - Firebase Auth - 認証システム
   - Cloud Firestore - NoSQLデータベース
@@ -53,6 +57,7 @@ GreatTalk Frontend は ShareAI エコシステムの一部として開発され�
   - Firebase Hosting - ホスティング
 
 ### Development Tools
+
 - **ESLint** - コード品質管理
 - **Prettier** - コードフォーマッター
 - **Vitest** - 高速テストランナー
@@ -104,23 +109,27 @@ src/
 ### インストール手順
 
 1. **リポジトリのクローン**
+
 ```bash
 git clone <repository-url>
 cd great_talk_frontend
 ```
 
 2. **依存関係のインストール**
+
 ```bash
 npm install
 ```
 
 3. **Firebase設定**
+
 ```bash
 # Firebase プロジェクトの設定ファイルを配置
 # src/features/shared/infrastructures/firebase.ts を確認
 ```
 
 4. **開発サーバーの起動**
+
 ```bash
 npm run dev
 ```
@@ -176,15 +185,15 @@ npm run fix:eslint   # ESLintで自動修正
 
 ### 主要なファイル
 
-| ファイル/ディレクトリ | 説明 |
-|---------------------|------|
-| `src/features/shared/main.tsx` | アプリケーションエントリーポイント |
-| `src/features/shared/pages/App.tsx` | メインアプリケーションコンポーネント |
-| `src/features/shared/pages/router/` | React Router設定 |
-| `src/atoms/` | グローバル状態管理 |
-| `src/features/shared/infrastructures/firebase.ts` | Firebase設定 |
-| `src/test/setup.ts` | テスト環境設定 |
-| `vite.config.ts` | Vite設定（パスエイリアス含む） |
+| ファイル/ディレクトリ                             | 説明                                 |
+| ------------------------------------------------- | ------------------------------------ |
+| `src/features/shared/main.tsx`                    | アプリケーションエントリーポイント   |
+| `src/features/shared/pages/App.tsx`               | メインアプリケーションコンポーネント |
+| `src/features/shared/pages/router/`               | React Router設定                     |
+| `src/atoms/`                                      | グローバル状態管理                   |
+| `src/features/shared/infrastructures/firebase.ts` | Firebase設定                         |
+| `src/test/setup.ts`                               | テスト環境設定                       |
+| `vite.config.ts`                                  | Vite設定（パスエイリアス含む）       |
 
 ## 🎯 開発ガイドライン
 
@@ -212,7 +221,7 @@ export const ExampleComponent = ({ title, onClick }: ExampleComponentProps) => {
     <div className="p-4 bg-white rounded-lg shadow">
       <h2 className="text-xl font-bold">{title}</h2>
       {onClick && (
-        <button 
+        <button
           onClick={onClick}
           className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
         >
@@ -240,13 +249,10 @@ export const exampleAtom = atom<ExampleState>({
   isLoading: false,
 })
 
-export const incrementAtom = atom(
-  null,
-  (get, set) => {
-    const current = get(exampleAtom)
-    set(exampleAtom, { ...current, count: current.count + 1 })
-  }
-)
+export const incrementAtom = atom(null, (get, set) => {
+  const current = get(exampleAtom)
+  set(exampleAtom, { ...current, count: current.count + 1 })
+})
 ```
 
 ## 🧪 テスト
@@ -274,7 +280,7 @@ describe('ExampleComponent', () => {
   it('クリックイベントが正しく動作する', () => {
     const handleClick = vi.fn()
     render(<ExampleComponent title="テスト" onClick={handleClick} />)
-    
+
     fireEvent.click(screen.getByText('クリック'))
     expect(handleClick).toHaveBeenCalledTimes(1)
   })
@@ -314,21 +320,27 @@ firebase deploy --only hosting
 ### よくある問題
 
 #### 1. インポートエラー
+
 ```
 Module not found: Can't resolve '@shared/...'
 ```
+
 **解決方法**: TypeScript設定を確認し、パスエイリアスが正しく設定されているか確認
 
 #### 2. Firebase接続エラー
+
 ```
 Firebase: No Firebase App '[DEFAULT]' has been created
 ```
+
 **解決方法**: Firebase設定ファイルが正しく配置されているか確認
 
 #### 3. テスト実行エラー
+
 ```
 TypeError: Cannot read properties of undefined
 ```
+
 **解決方法**: モック設定を確認し、必要な依存関係がモックされているか確認
 
 ### デバッグ手順
@@ -359,6 +371,6 @@ TypeError: Cannot read properties of undefined
 
 **Version**: 0.0.0  
 **Last Updated**: 2024年  
-**License**: Private  
+**License**: Private
 
 このプロジェクトは GreatTalk Apps エコシステムの一部として開発されています。

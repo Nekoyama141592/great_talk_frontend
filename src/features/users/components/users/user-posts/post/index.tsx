@@ -27,6 +27,7 @@ export const PostComponent = () => {
       postId: data.postId,
       title: data.title,
       uid: data.uid,
+      createdAt: data.createdAt,
     }
     return res
   }

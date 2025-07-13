@@ -37,6 +37,6 @@ export const useCreatePost = (): UseCreatePostResult => {
   return {
     createPost,
     isLoading,
-    error
+    error,
   }
 }

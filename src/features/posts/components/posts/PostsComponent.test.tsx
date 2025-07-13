@@ -29,9 +29,7 @@ const renderWithProviders = (component: React.ReactElement) => {
 
   return render(
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        {component}
-      </BrowserRouter>
+      <BrowserRouter>{component}</BrowserRouter>
     </QueryClientProvider>
   )
 }
@@ -39,7 +37,7 @@ const renderWithProviders = (component: React.ReactElement) => {
 describe('PostsComponent', () => {
   it('renders empty posts list when no data', () => {
     renderWithProviders(<PostsComponent />)
-    
+
     // Should render ul element
     expect(screen.getByRole('list')).toBeInTheDocument()
   })

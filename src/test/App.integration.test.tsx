@@ -7,7 +7,7 @@ import { AppComponent } from '@shared/pages/App'
 // Mock Firebase
 vi.mock('@shared/infrastructures/firebase', () => ({
   auth: {
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       // Simulate user not logged in
       callback(null)
       return vi.fn() // unsubscribe function
@@ -36,14 +36,14 @@ const renderApp = () => {
 describe('App Integration', () => {
   it('renders the app without crashing', () => {
     renderApp()
-    
+
     // Should render without throwing errors
     expect(document.body).toBeInTheDocument()
   })
 
   it('renders main content when not logged in', () => {
     renderApp()
-    
+
     // The app renders successfully and shows main content
     // (Actual auth check behavior may vary based on mocking)
     expect(screen.getByRole('list')).toBeInTheDocument()

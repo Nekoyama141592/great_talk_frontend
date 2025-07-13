@@ -1,6 +1,7 @@
 import { CustomCompleteText } from '@shared/schema/custom-complete-text'
 import { DetectedText } from '@shared/schema/detected-text'
 import { ModeratedImage } from '@shared/schema/moderated-image'
+import { Timestamp } from 'firebase/firestore'
 
 export interface PublicPost {
   customCompleteText: CustomCompleteText
@@ -10,4 +11,5 @@ export interface PublicPost {
   postId: string
   title: DetectedText
   uid: string
+  createdAt: Timestamp
 }

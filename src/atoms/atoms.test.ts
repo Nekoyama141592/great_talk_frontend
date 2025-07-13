@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest'
-import { authAtom, uidAtom, firstLoadedAtom, initUserAtom, clearUserAtom } from './index'
+import {
+  authAtom,
+  uidAtom,
+  firstLoadedAtom,
+  initUserAtom,
+  clearUserAtom,
+} from './index'
 
 describe('Auth Atoms', () => {
   it('should export auth atom', () => {

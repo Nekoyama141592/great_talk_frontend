@@ -21,6 +21,7 @@ export const PostIndexComponent = () => {
         uid: data.uid,
         postId: data.postId,
         title: data.title,
+        createdAt: data.createdAt,
       }
     })
     return postsData

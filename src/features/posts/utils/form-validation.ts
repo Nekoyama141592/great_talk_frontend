@@ -7,7 +7,9 @@ export interface ValidationErrors {
   systemPrompt?: string
 }
 
-export const validateCreatePostForm = (data: CreatePostData): ValidationErrors => {
+export const validateCreatePostForm = (
+  data: CreatePostData
+): ValidationErrors => {
   const errors: ValidationErrors = {}
 
   if (!data.title.trim()) {
