@@ -9,7 +9,7 @@ import {
   AdminDashboardExample,
 } from '@shared/components/examples'
 
-export function DIKWDemo() {
+export const DIKWDemo = () => {
   const [activeTab, setActiveTab] = useState<'feed' | 'admin'>('feed')
 
   return (

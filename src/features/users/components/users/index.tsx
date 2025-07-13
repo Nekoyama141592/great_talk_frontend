@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router-dom'
 
-export function UsersComponent() {
+export const UsersComponent = () => {
   return (
     <>
       <Outlet />

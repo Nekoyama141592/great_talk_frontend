@@ -19,9 +19,9 @@ interface AdminDashboardExampleProps {
   className?: string
 }
 
-export function AdminDashboardExample({
+export const AdminDashboardExample = ({
   className,
-}: AdminDashboardExampleProps) {
+}: AdminDashboardExampleProps) => {
   const {
     strategicDecisions,
     aiAdvice,
@@ -35,10 +35,7 @@ export function AdminDashboardExample({
 
   const { performanceMetrics, measurePerformance } = useDIKWPerformance()
 
-  const {
-    moderationResults,
-    checkContentModeration,
-  } = useBusinessRules()
+  const { moderationResults, checkContentModeration } = useBusinessRules()
 
   const [systemData, setSystemData] = useState<{
     users: ProcessedUser[]
@@ -549,7 +546,10 @@ export function AdminDashboardExample({
                 {aiAdvice.recommendations
                   ?.slice(0, 3)
                   .map((rec: any, _index: number) => (
-                    <div key={_index} className='text-sm p-2 bg-blue-50 rounded'>
+                    <div
+                      key={_index}
+                      className='text-sm p-2 bg-blue-50 rounded'
+                    >
                       <span className='font-medium text-blue-900'>
                         {rec.title}
                       </span>

@@ -9,7 +9,7 @@ import {
 import { db } from '@shared/infrastructures/firebase'
 import { useQuery } from '@tanstack/react-query'
 import { PublicPost } from '@shared/schema/public-post'
-export function PostsComponent() {
+export const PostsComponent = () => {
   const queryFn = async () => {
     const colRef = collectionGroup(db, `posts`)
     const q = query(colRef, orderBy('msgCount', 'desc'), limit(30))

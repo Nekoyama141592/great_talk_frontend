@@ -201,7 +201,11 @@ export class AIAdvisor {
     retention: AIRecommendation[]
     satisfaction: AIRecommendation[]
   }> {
-    const userContext = this.analyzeUserContext(user, userInteractions, _context)
+    const userContext = this.analyzeUserContext(
+      user,
+      userInteractions,
+      _context
+    )
 
     return {
       personalization: this.generatePersonalizationAdvice(userContext),

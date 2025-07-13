@@ -71,7 +71,7 @@ export interface DIKWHookReturn {
 /**
  * Main DIKW hook for comprehensive data processing
  */
-export function useDIKW(options: UseDIKWOptions = {}): DIKWHookReturn {
+export const useDIKW = (options: UseDIKWOptions = {}): DIKWHookReturn => {
   const uid = useAtomValue(uidAtom)
   const firstLoaded = useAtomValue(firstLoadedAtom)
 
@@ -237,7 +237,7 @@ export function useDIKW(options: UseDIKWOptions = {}): DIKWHookReturn {
 /**
  * Hook for user-specific DIKW processing
  */
-export function useUserDIKW(options: UseDIKWOptions = {}) {
+export const useUserDIKW = (options: UseDIKWOptions = {}) => {
   const uid = useAtomValue(uidAtom)
   const dikw = useDIKW(options)
 
@@ -282,7 +282,7 @@ export function useUserDIKW(options: UseDIKWOptions = {}) {
 /**
  * Hook for content recommendations
  */
-export function useContentRecommendations(options: UseDIKWOptions = {}) {
+export const useContentRecommendations = (options: UseDIKWOptions = {}) => {
   const dikw = useDIKW(options)
   const [recommendations, setRecommendations] = useState<any>(null)
   const [isLoadingRecommendations, setIsLoadingRecommendations] =
@@ -333,7 +333,7 @@ export function useContentRecommendations(options: UseDIKWOptions = {}) {
 /**
  * Hook for business rules and moderation
  */
-export function useBusinessRules(options: UseDIKWOptions = {}) {
+export const useBusinessRules = (options: UseDIKWOptions = {}) => {
   const dikw = useDIKW(options)
   const [moderationResults, setModerationResults] = useState<any>(null)
 
@@ -378,7 +378,7 @@ export function useBusinessRules(options: UseDIKWOptions = {}) {
 /**
  * Hook for strategic insights and decisions
  */
-export function useStrategicInsights(options: UseDIKWOptions = {}) {
+export const useStrategicInsights = (options: UseDIKWOptions = {}) => {
   const dikw = useDIKW({ ...options, enableWisdomLayer: true })
   const [strategicDecisions, setStrategicDecisions] = useState<any>(null)
   const [aiAdvice, setAiAdvice] = useState<any>(null)
@@ -443,7 +443,7 @@ export function useStrategicInsights(options: UseDIKWOptions = {}) {
 /**
  * Hook for real-time DIKW processing
  */
-export function useRealTimeDIKW(options: UseDIKWOptions = {}) {
+export const useRealTimeDIKW = (options: UseDIKWOptions = {}) => {
   const dikw = useDIKW({ ...options, enableRealTime: true })
   const [realTimeInsights] = useState<any>(null)
 
@@ -468,7 +468,7 @@ export function useRealTimeDIKW(options: UseDIKWOptions = {}) {
 /**
  * Hook for performance monitoring of DIKW layers
  */
-export function useDIKWPerformance() {
+export const useDIKWPerformance = () => {
   const [performanceMetrics, setPerformanceMetrics] = useState({
     dataLayerTime: 0,
     informationLayerTime: 0,
@@ -507,7 +507,7 @@ export function useDIKWPerformance() {
 /**
  * Hook for DIKW cache management
  */
-export function useDIKWCache() {
+export const useDIKWCache = () => {
   const [cacheStats, setCacheStats] = useState({
     hitRate: 0,
     missRate: 0,

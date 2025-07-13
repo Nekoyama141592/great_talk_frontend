@@ -18,9 +18,7 @@ import {
   AIAdvisoryRequest,
 } from '@shared/layers/wisdom/advisors/ai-advisor'
 
-import {
-  RawUserData,
-} from '@shared/layers/data/models/user'
+import { RawUserData } from '@shared/layers/data/models/user'
 import {
   ProcessedUser,
   ProcessedPost,

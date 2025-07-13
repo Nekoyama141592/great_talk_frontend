@@ -18,7 +18,7 @@ const queryClient = new QueryClient({
     },
   },
 })
-function AppContent() {
+const AppContent = () => {
   const initUser = useSetAtom(initUserAtom)
   const clearUser = useSetAtom(clearUserAtom)
 
@@ -54,7 +54,7 @@ function AppContent() {
   return <RouterComponent />
 }
 
-export function AppComponent() {
+export const AppComponent = () => {
   return (
     <JotaiProvider>
       <QueryClientProvider client={queryClient}>

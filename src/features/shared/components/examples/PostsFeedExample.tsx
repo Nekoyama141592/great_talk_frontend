@@ -20,7 +20,7 @@ interface PostsFeedExampleProps {
   className?: string
 }
 
-export function PostsFeedExample({ className }: PostsFeedExampleProps) {
+export const PostsFeedExample = ({ className }: PostsFeedExampleProps) => {
   const uid = useAtomValue(uidAtom)
 
   // Use DIKW hooks for intelligent content management

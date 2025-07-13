@@ -10,7 +10,7 @@ import ReactMarkdown from 'react-markdown'
 interface Response {
   message: string
 }
-export function PostComponent() {
+export const PostComponent = () => {
   const [response, setResponse] = useState<string>('')
   const { uid, postId } = useParams()
   const queryFn = async () => {

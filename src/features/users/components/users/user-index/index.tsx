@@ -3,7 +3,7 @@ import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PublicUser } from '@shared/schema/public-user'
 import { useQuery } from '@tanstack/react-query'
-export function UserIndexComponent() {
+export const UserIndexComponent = () => {
   const queryFn = async () => {
     const colRef = collection(db, `public/v1/users`)
     const q = query(colRef, orderBy('followerCount', 'desc'), limit(30))

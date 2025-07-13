@@ -4,7 +4,7 @@ import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
 
-export function PostIndexComponent() {
+export const PostIndexComponent = () => {
   const { uid } = useParams()
   const queryFn = async () => {
     const colRef = collection(db, `public/v1/users/${uid}/posts`)
