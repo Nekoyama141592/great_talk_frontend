@@ -20,6 +20,8 @@
     "fix:eslint": "eslint --fix"
   },
   "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^6.1.1",
     "@mui/material": "^6.1.1",
     "@tanstack/react-query": "^5.59.13",
@@ -27,6 +29,7 @@
     "jotai": "^2.12.5",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-firebase-hooks": "^5.1.1",
     "react-icons": "^5.3.0",
     "react-markdown": "^9.0.1",
     "react-router-dom": "^6.26.1",

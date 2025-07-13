@@ -6,6 +6,8 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai'
+import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { CssBaseline } from '@mui/material'
 import { RouterComponent } from '@shared/pages/router'
 
 const queryClient = new QueryClient({
@@ -16,6 +18,12 @@ const queryClient = new QueryClient({
     mutations: {
       retry: false,
     },
+  },
+})
+
+const theme = createTheme({
+  palette: {
+    mode: 'light',
   },
 })
 const AppContent = () => {
@@ -51,7 +59,12 @@ const AppContent = () => {
     }
   }, [initUser, clearUser])
 
-  return <RouterComponent />
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <RouterComponent />
+    </ThemeProvider>
+  )
 }
 
 export const AppComponent = () => {
