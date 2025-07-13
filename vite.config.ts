@@ -14,6 +14,11 @@ export default defineConfig({
       '@auth': path.resolve(__dirname, './src/features/auth'),
       '@posts': path.resolve(__dirname, './src/features/posts'),
       '@users': path.resolve(__dirname, './src/features/users'),
-    },
+    }
   },
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+  }
 })
