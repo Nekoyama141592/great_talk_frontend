@@ -10,7 +10,7 @@ const postLikeRepository = new PostLikeRepository()
 export const useLikedPosts = () => {
   const [authState] = useAtom(authAtom)
   const [, initializePostLikeState] = useAtom(initializePostLikeStateAtom)
-  const initializedRef = useRef(false)
+  const initializedRef = useRef<string | null>(null)
 
   const queryFn = async () => {
     if (!authState?.uid) return []
@@ -23,13 +23,24 @@ export const useLikedPosts = () => {
     enabled: !!authState?.uid,
   })
 
-  // Initialize the post like state when data is loaded (only once)
+  // Initialize the post like state when data is loaded
   useEffect(() => {
-    if (likedPostIds && !initializedRef.current) {
+    if (likedPostIds && authState?.uid && initializedRef.current !== authState.uid) {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Initializing liked posts state:', likedPostIds)
+      }
       initializePostLikeState(likedPostIds)
-      initializedRef.current = true
+      initializedRef.current = authState.uid
     }
-  }, [likedPostIds, initializePostLikeState])
+  }, [likedPostIds, authState?.uid, initializePostLikeState])
+
+  // Clear state when user logs out
+  useEffect(() => {
+    if (!authState?.uid && initializedRef.current) {
+      initializePostLikeState([])
+      initializedRef.current = null
+    }
+  }, [authState?.uid, initializePostLikeState])
 
   return {
     likedPostIds: likedPostIds || [],

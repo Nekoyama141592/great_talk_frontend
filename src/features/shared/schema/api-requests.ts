@@ -36,7 +36,10 @@ export interface PostLike {
 }
 
 export interface PostLikeToken {
+  activeUid: string
   createdAt: Date
+  passiveUid: string
+  postId: string
   tokenId: string
   tokenType: string
 }

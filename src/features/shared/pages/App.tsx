@@ -9,6 +9,7 @@ import { Provider as JotaiProvider } from 'jotai'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material'
 import { RouterComponent } from '@shared/pages/router'
+import { useLikedPosts } from '../../posts/hooks/use-liked-posts'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -29,6 +30,9 @@ const theme = createTheme({
 const AppContent = () => {
   const initUser = useSetAtom(initUserAtom)
   const clearUser = useSetAtom(clearUserAtom)
+  
+  // Initialize liked posts state when user is authenticated
+  useLikedPosts()
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {

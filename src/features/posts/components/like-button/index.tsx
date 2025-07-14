@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { IconButton, Typography, Box, CircularProgress } from '@mui/material'
 import { Favorite, FavoriteBorder } from '@mui/icons-material'
 import { useAtom } from 'jotai'
@@ -31,6 +31,13 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
   const isAuthenticated = !!authState?.uid
   const likeCountDelta = postLikeState.likeCountDeltas[postId] || 0
   const displayLikeCount = likeCount + likeCountDelta
+
+  // Debug log to check if liked posts are being loaded
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`Post ${postId}: liked=${liked}, likedPosts=${JSON.stringify(postLikeState.likedPostIds)}`)
+    }
+  }, [postId, liked, postLikeState.likedPostIds])
 
   const handleLikeClick = async (event: React.MouseEvent) => {
     event.preventDefault()

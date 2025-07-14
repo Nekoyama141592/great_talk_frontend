@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PostLike, PostLikeToken, ApiResult } from '@shared/schema/api-requests'
+import { generateUUID } from '@shared/utils/id-util'
 
 export class PostLikeRepository {
   /**
@@ -34,11 +35,15 @@ export class PostLikeRepository {
       batch.set(postLikeRef, postLikeData)
 
       // Create like token in current user's private tokens collection
-      const tokenRef = doc(collection(db, `private/v1/privateUsers/${currentUserId}/tokens`), `like_${postId}`)
+      const tokenId = generateUUID()
+      const tokenRef = doc(collection(db, `private/v1/privateUsers/${currentUserId}/tokens`), tokenId)
       const tokenData: Omit<PostLikeToken, 'createdAt'> & { createdAt: ReturnType<typeof serverTimestamp> } = {
+        activeUid: currentUserId,
         createdAt: serverTimestamp(),
-        tokenId: `like_${postId}`,
-        tokenType: 'postLike',
+        passiveUid: targetUserId,
+        postId: postId,
+        tokenId: tokenId,
+        tokenType: 'likePost',
       }
       batch.set(tokenRef, tokenData)
 
@@ -63,10 +68,23 @@ export class PostLikeRepository {
     postId: string
   ): Promise<ApiResult<void>> {
     try {
+      // First find the token ID by querying the tokens collection
+      const tokensQuery = query(
+        collection(db, `private/v1/privateUsers/${currentUserId}/tokens`),
+        where('tokenType', '==', 'likePost'),
+        where('postId', '==', postId)
+      )
+      const tokenSnapshot = await getDocs(tokensQuery)
+      
+      if (tokenSnapshot.empty) {
+        throw new Error('Like token not found')
+      }
+      
       const batch = writeBatch(db)
-
+      
       // Delete the like token
-      const tokenRef = doc(db, `private/v1/privateUsers/${currentUserId}/tokens/like_${postId}`)
+      const tokenDoc = tokenSnapshot.docs[0]
+      const tokenRef = doc(db, `private/v1/privateUsers/${currentUserId}/tokens/${tokenDoc.id}`)
       batch.delete(tokenRef)
 
       // Delete corresponding post like record
@@ -90,9 +108,13 @@ export class PostLikeRepository {
    */
   async isPostLiked(currentUserId: string, postId: string): Promise<boolean> {
     try {
-      const tokenRef = doc(db, `private/v1/privateUsers/${currentUserId}/tokens/like_${postId}`)
-      const docSnapshot = await getDoc(tokenRef)
-      return docSnapshot.exists()
+      const tokensQuery = query(
+        collection(db, `private/v1/privateUsers/${currentUserId}/tokens`),
+        where('tokenType', '==', 'likePost'),
+        where('postId', '==', postId)
+      )
+      const querySnapshot = await getDocs(tokensQuery)
+      return !querySnapshot.empty
     } catch (error) {
       console.error('Check post like status error:', error)
       return false
@@ -106,14 +128,13 @@ export class PostLikeRepository {
     try {
       const tokensQuery = query(
         collection(db, `private/v1/privateUsers/${userId}/tokens`),
-        where('tokenType', '==', 'postLike')
+        where('tokenType', '==', 'likePost')
       )
       const querySnapshot = await getDocs(tokensQuery)
       
       return querySnapshot.docs
-        .map(doc => doc.data().tokenId)
-        .filter((tokenId): tokenId is string => !!tokenId && tokenId.startsWith('like_'))
-        .map(tokenId => tokenId.replace('like_', ''))
+        .map(doc => doc.data().postId)
+        .filter((postId): postId is string => !!postId)
     } catch (error) {
       console.error('Get liked posts error:', error)
       return []
