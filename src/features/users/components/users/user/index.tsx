@@ -19,12 +19,29 @@ import {
 import { Person, Article, Verified } from '@mui/icons-material'
 import { FollowButton } from '../../follow-button'
 import { useFollowingUsers } from '../../../hooks/use-following-users'
+import { UserMenu } from '../../user-menu'
+import { useUserMute, useIsUserMuted } from '../../../hooks/use-user-mute'
+import { useAtom } from 'jotai'
+import { authAtom } from '@auth/atoms'
+import { useEffect } from 'react'
 
 export const UserComponent = () => {
   const { uid } = useParams()
+  const [authState] = useAtom(authAtom)
+  const { initializeMuteTokens } = useUserMute()
+  const isMuted = useIsUserMuted(uid || '')
   
   // Initialize following users data
   useFollowingUsers()
+  
+  // Initialize user mute tokens on component mount
+  useEffect(() => {
+    if (authState?.uid) {
+      initializeMuteTokens()
+    }
+  }, [authState?.uid, initializeMuteTokens])
+  
+  const isOwnProfile = authState?.uid === uid
   
   const queryFn = async () => {
     if (!uid) return
@@ -131,12 +148,14 @@ export const UserComponent = () => {
                 </Grid>
               </Grid>
               
-              <Box sx={{ display: 'flex', gap: 2 }}>
-                <FollowButton 
-                  targetUserId={uid!} 
-                  variant="contained"
-                  size="medium"
-                />
+              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+                {!isOwnProfile && (
+                  <FollowButton 
+                    targetUserId={uid!} 
+                    variant="contained"
+                    size="medium"
+                  />
+                )}
                 <Button
                   component={Link}
                   to="posts"
@@ -145,9 +164,39 @@ export const UserComponent = () => {
                 >
                   投稿一覧
                 </Button>
+                
+                {/* ユーザーメニュー */}
+                <UserMenu
+                  userId={uid!}
+                  userName={userData?.userName.value}
+                  isOwnProfile={isOwnProfile}
+                  onShare={() => {
+                    navigator.share?.({
+                      title: `${userData?.userName.value}さんのプロフィール`,
+                      text: userData?.bio.value || '',
+                      url: window.location.href
+                    })
+                  }}
+                  onReport={() => {
+                    console.log('Report user:', uid)
+                    // TODO: 報告機能の実装
+                  }}
+                />
               </Box>
             </Box>
           </Box>
+          
+          {/* ミュート状態の表示 */}
+          {isMuted && !isOwnProfile && (
+            <>
+              <Divider sx={{ my: 2 }} />
+              <Chip 
+                label="このユーザーをミュートしています" 
+                color="warning" 
+                variant="outlined" 
+              />
+            </>
+          )}
           
           {userData?.isSuspended && (
             <>

@@ -95,7 +95,7 @@ export const setPostMuteLoadingAtom = atom(
 // ミュートトークンリストを初期化するwrite-only atom
 export const initializeMutePostTokensAtom = atom(
   null,
-  (get, set, tokens: MutePostTokenEntity[]) => {
+  (_get, set, tokens: MutePostTokenEntity[]) => {
     set(postMuteStateAtom, {
       mutePostTokens: tokens,
       loadingPostIds: [],

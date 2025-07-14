@@ -19,6 +19,7 @@ import { PublicPost } from '@shared/schema/public-post'
 import { usePosts, PostSortType } from '@features/posts/hooks/use-posts'
 import { useTimelinePosts } from '@features/posts/hooks/use-timeline-posts'
 import { usePostMute } from '../../hooks/use-post-mute'
+import { useUserMute } from '@users/hooks/use-user-mute'
 import { PostCard } from '../post-card'
 
 type ViewType = 'popularity' | 'newest' | 'following'
@@ -26,6 +27,7 @@ type ViewType = 'popularity' | 'newest' | 'following'
 export const PostsComponent = () => {
   const [viewType, setViewType] = useState<ViewType>('popularity')
   const { initializeMuteTokens } = usePostMute()
+  const { initializeMuteTokens: initializeUserMuteTokens } = useUserMute()
   
   // 通常の投稿データ（フォロー中の場合は人気順にフォールバック）
   const sortType = (viewType === 'following' ? 'popularity' : viewType) as PostSortType
@@ -62,6 +64,7 @@ export const PostsComponent = () => {
   // ミュートトークンを初期化（一度だけ実行、リトライなし）
   useEffect(() => {
     initializeMuteTokens()
+    initializeUserMuteTokens()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Infinite scroll intersection observer

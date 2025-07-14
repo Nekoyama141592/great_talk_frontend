@@ -1,7 +1,5 @@
 import {
   doc,
-  setDoc,
-  deleteDoc,
   collection,
   getDocs,
   query,
@@ -137,12 +135,12 @@ export class PostMuteRepository {
 
       const allPosts: PublicPost[] = []
 
-      for (const chunk of chunks) {
+      // for (const chunk of chunks) {
         // 投稿をcollectionGroupで検索
-        const postsRef = collection(db, 'public', 'v1', 'users')
+        // const postsRef = collection(db, 'public', 'v1', 'users')
         // Note: 実際の実装では、投稿IDから投稿を取得する適切なクエリが必要
         // ここでは簡略化していますが、実際にはより効率的な方法を検討してください
-      }
+      // }
 
       return allPosts
     } catch (error) {
