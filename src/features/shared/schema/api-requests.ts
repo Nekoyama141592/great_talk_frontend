@@ -23,9 +23,9 @@ export interface Follower {
 }
 
 export interface FollowingToken {
-  passiveUid: string
-  tokenId: string
   createdAt: Date
+  tokenId: string
+  tokenType: string
 }
 
 export interface ApiResult<T> {

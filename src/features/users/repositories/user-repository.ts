@@ -5,6 +5,7 @@ import {
   query,
   where,
   getDocs,
+  getDoc,
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
@@ -19,7 +20,7 @@ export class UserRepository {
       const batch = writeBatch(db)
       
       // Create follower record in target user's followers collection
-      const followerRef = doc(collection(db, `public/v1/users/${targetUserId}/followers`))
+      const followerRef = doc(collection(db, `public/v1/users/${targetUserId}/followers`), currentUserId)
       const followerData: Omit<Follower, 'createdAt'> & { createdAt: ReturnType<typeof serverTimestamp> } = {
         activeUid: currentUserId,
         passiveUid: targetUserId,
@@ -27,14 +28,14 @@ export class UserRepository {
       }
       batch.set(followerRef, followerData)
 
-      // Create following token in current user's following collection
-      const followingRef = doc(collection(db, `public/v1/users/${currentUserId}/following`))
-      const followingData: Omit<FollowingToken, 'createdAt'> & { createdAt: ReturnType<typeof serverTimestamp> } = {
-        passiveUid: targetUserId,
-        tokenId: followerRef.id,
+      // Create following token in current user's private tokens collection
+      const tokenRef = doc(collection(db, `private/v1/privateUsers/${currentUserId}/tokens`), targetUserId)
+      const tokenData: Omit<FollowingToken, 'createdAt'> & { createdAt: ReturnType<typeof serverTimestamp> } = {
         createdAt: serverTimestamp(),
+        tokenId: targetUserId,
+        tokenType: 'following',
       }
-      batch.set(followingRef, followingData)
+      batch.set(tokenRef, tokenData)
 
       await batch.commit()
 
@@ -55,28 +56,12 @@ export class UserRepository {
     try {
       const batch = writeBatch(db)
 
-      // Find and delete the following token
-      const followingQuery = query(
-        collection(db, `public/v1/users/${currentUserId}/following`),
-        where('passiveUid', '==', targetUserId)
-      )
-      const followingDocs = await getDocs(followingQuery)
-
-      if (followingDocs.empty) {
-        return {
-          success: false,
-          error: 'フォロー関係が見つかりません',
-        }
-      }
-
-      const followingDoc = followingDocs.docs[0]
-      const tokenId = followingDoc.data().tokenId
-
-      // Delete following token
-      batch.delete(followingDoc.ref)
+      // Delete the following token (using targetUserId as the document ID)
+      const tokenRef = doc(db, `private/v1/privateUsers/${currentUserId}/tokens/${targetUserId}`)
+      batch.delete(tokenRef)
 
       // Delete corresponding follower record
-      const followerRef = doc(db, `public/v1/users/${targetUserId}/followers/${tokenId}`)
+      const followerRef = doc(db, `public/v1/users/${targetUserId}/followers/${currentUserId}`)
       batch.delete(followerRef)
 
       await batch.commit()
@@ -96,12 +81,9 @@ export class UserRepository {
    */
   async isFollowing(currentUserId: string, targetUserId: string): Promise<boolean> {
     try {
-      const followingQuery = query(
-        collection(db, `public/v1/users/${currentUserId}/following`),
-        where('passiveUid', '==', targetUserId)
-      )
-      const querySnapshot = await getDocs(followingQuery)
-      return !querySnapshot.empty
+      const tokenRef = doc(db, `private/v1/privateUsers/${currentUserId}/tokens/${targetUserId}`)
+      const docSnapshot = await getDoc(tokenRef)
+      return docSnapshot.exists()
     } catch (error) {
       console.error('Check following status error:', error)
       return false
@@ -113,10 +95,13 @@ export class UserRepository {
    */
   async getFollowing(userId: string): Promise<string[]> {
     try {
-      const followingQuery = query(collection(db, `public/v1/users/${userId}/following`))
-      const querySnapshot = await getDocs(followingQuery)
+      const tokensQuery = query(
+        collection(db, `private/v1/privateUsers/${userId}/tokens`),
+        where('tokenType', '==', 'following')
+      )
+      const querySnapshot = await getDocs(tokensQuery)
       
-      return querySnapshot.docs.map(doc => doc.data().passiveUid)
+      return querySnapshot.docs.map(doc => doc.data().tokenId)
     } catch (error) {
       console.error('Get following list error:', error)
       return []
