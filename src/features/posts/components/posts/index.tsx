@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { PublicPost } from '@shared/schema/public-post'
 import { usePosts, PostSortType } from '@features/posts/hooks/use-posts'
+import { LikeButton } from '../like-button'
 
 export const PostsComponent = () => {
   const [sortType, setSortType] = useState<PostSortType>('popularity')
@@ -49,7 +50,18 @@ export const PostsComponent = () => {
             <Link to={`/users/${post.uid}/posts/${post.postId}`}>
               <p>{post.title.value}</p>
               <p>{post.description.value}</p>
-              <p>{post.msgCount}コメント</p>
+              <div className='flex items-center justify-between mt-4'>
+                <p>{post.msgCount}コメント</p>
+                <div onClick={(e) => e.preventDefault()}>
+                  <LikeButton
+                    postId={post.postId}
+                    targetUserId={post.uid}
+                    likeCount={post.likeCount}
+                    size="medium"
+                    showCount={true}
+                  />
+                </div>
+              </div>
             </Link>
           </li>
         ))}

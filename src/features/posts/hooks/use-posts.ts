@@ -29,6 +29,7 @@ export const usePosts = (sortType: PostSortType = 'popularity') => {
         description: docData.description,
         image: docData.image,
         msgCount: docData.msgCount,
+        likeCount: docData.likeCount || 0,
         uid: docData.uid,
         postId: docData.postId,
         title: docData.title,

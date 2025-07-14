@@ -8,6 +8,7 @@ export interface PublicPost {
   description: DetectedText
   image: ModeratedImage
   msgCount: number
+  likeCount: number
   postId: string
   title: DetectedText
   uid: string

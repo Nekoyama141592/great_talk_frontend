@@ -28,6 +28,19 @@ export interface FollowingToken {
   tokenType: string
 }
 
+export interface PostLike {
+  activeUid: string
+  passiveUid: string
+  postId: string
+  createdAt: Date
+}
+
+export interface PostLikeToken {
+  createdAt: Date
+  tokenId: string
+  tokenType: string
+}
+
 export interface ApiResult<T> {
   success: boolean
   data?: T

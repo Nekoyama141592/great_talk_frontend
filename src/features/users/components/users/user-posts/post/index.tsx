@@ -6,6 +6,7 @@ import { PublicPost } from '@shared/schema/public-post'
 import { useState } from 'react'
 import { getFunctions, httpsCallable } from '@firebase/functions'
 import ReactMarkdown from 'react-markdown'
+import { LikeButton } from '@posts/components/like-button'
 
 interface Response {
   message: string
@@ -24,6 +25,7 @@ export const PostComponent = () => {
       description: data.description,
       image: data.image,
       msgCount: data.msgCount,
+      likeCount: data.likeCount || 0,
       postId: data.postId,
       title: data.title,
       uid: data.uid,
@@ -73,7 +75,16 @@ export const PostComponent = () => {
         {post?.title.value} by {post?.uid}
       </h2>
       <p>{post?.description.value}</p>
-      <p>{post?.msgCount}コメント</p>
+      <div className='flex items-center gap-4 my-4'>
+        <p>{post?.msgCount}コメント</p>
+        <LikeButton
+          postId={post.postId}
+          targetUserId={post.uid}
+          likeCount={post.likeCount}
+          size="medium"
+          showCount={true}
+        />
+      </div>
       <form
         onSubmit={e => handleSubmit(e, post.customCompleteText.systemPrompt)}
       >

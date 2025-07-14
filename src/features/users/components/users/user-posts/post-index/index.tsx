@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
+import { LikeButton } from '@posts/components/like-button'
 
 export const PostIndexComponent = () => {
   const { uid } = useParams()
@@ -18,6 +19,7 @@ export const PostIndexComponent = () => {
         description: data.description,
         image: data.image,
         msgCount: data.msgCount,
+        likeCount: data.likeCount || 0,
         uid: data.uid,
         postId: data.postId,
         title: data.title,
@@ -45,7 +47,18 @@ export const PostIndexComponent = () => {
           <Link to={`${post.postId}`}>
             <p>{post.title.value}</p>
             <p>{post.description.value}</p>
-            <p>{post.msgCount}コメント</p>
+            <div className='flex items-center justify-between mt-4'>
+              <p>{post.msgCount}コメント</p>
+              <div onClick={(e) => e.preventDefault()}>
+                <LikeButton
+                  postId={post.postId}
+                  targetUserId={post.uid}
+                  likeCount={post.likeCount}
+                  size="medium"
+                  showCount={true}
+                />
+              </div>
+            </div>
           </Link>
         </li>
       ))}
