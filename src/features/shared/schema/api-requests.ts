@@ -16,6 +16,18 @@ export interface GenerateImageResponse {
   base64: string
 }
 
+export interface Follower {
+  activeUid: string
+  passiveUid: string
+  createdAt: Date
+}
+
+export interface FollowingToken {
+  passiveUid: string
+  tokenId: string
+  createdAt: Date
+}
+
 export interface ApiResult<T> {
   success: boolean
   data?: T
