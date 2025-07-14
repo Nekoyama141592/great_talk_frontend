@@ -59,6 +59,11 @@ export const HeaderComponent = () => {
                       投稿を作成
                     </Link>
                   </li>
+                  <li className='p-2'>
+                    <Link to='/generateImage' className='text-blue-500'>
+                      AI画像生成
+                    </Link>
+                  </li>
                   {uid && (
                     <li className='p-2'>
                       <button onClick={handleLogout} className='text-white'>

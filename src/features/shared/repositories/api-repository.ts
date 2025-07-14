@@ -3,6 +3,8 @@ import { functions } from '@shared/infrastructures/firebase'
 import {
   PutObjectRequest,
   PutObjectResponse,
+  GenerateImageRequest,
+  GenerateImageResponse,
   ApiResult,
 } from '@shared/schema/api-requests'
 
@@ -52,6 +54,36 @@ export class ApiRepository {
       reader.onerror = reject
       reader.readAsDataURL(file)
     })
+  }
+
+  /**
+   * Generate image using AI
+   */
+  async generateImage(
+    prompt: string,
+    size: '1024x1024' | '1536x1024' | '1024x1536'
+  ): Promise<ApiResult<GenerateImageResponse>> {
+    try {
+      const generateImage = httpsCallable(functions, 'generateImage')
+
+      const request: GenerateImageRequest = {
+        prompt,
+        size,
+      }
+
+      const result = await generateImage(request)
+      const response = result.data as GenerateImageResponse
+
+      return {
+        success: true,
+        data: response,
+      }
+    } catch {
+      return {
+        success: false,
+        error: '画像の生成が失敗しました',
+      }
+    }
   }
 
   /**

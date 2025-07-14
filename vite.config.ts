@@ -14,6 +14,7 @@ export default defineConfig({
       '@auth': path.resolve(__dirname, './src/features/auth'),
       '@posts': path.resolve(__dirname, './src/features/posts'),
       '@users': path.resolve(__dirname, './src/features/users'),
+      '@image-generation': path.resolve(__dirname, './src/features/image-generation'),
     },
   },
   test: {

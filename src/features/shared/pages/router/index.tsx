@@ -8,12 +8,14 @@ import { UserIndexComponent } from '@users/components/users/user-index'
 import { PostComponent } from '@users/components/users/user-posts/post'
 import { UserPostsComponent } from '@users/components/users/user-posts'
 import { PostIndexComponent } from '@users/components/users/user-posts/post-index'
+import ImageGenerationPage from '@image-generation/components/ImageGenerationPage'
 export const RouterComponent = () => {
   return (
     <CheckAuthComponent>
       <Routes>
         <Route path='/' element={<PostsComponent />} />
         <Route path='/createPost' element={<CreatePostComponent />} />
+        <Route path='/generateImage' element={<ImageGenerationPage />} />
         <Route path='/users' element={<UsersComponent />}>
           <Route index element={<UserIndexComponent />} />
           <Route path=':uid' element={<UserComponent />} />

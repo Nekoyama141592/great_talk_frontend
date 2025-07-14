@@ -23,7 +23,8 @@
       "@shared/*": ["src/features/shared/*"],
       "@auth/*": ["src/features/auth/*"],
       "@posts/*": ["src/features/posts/*"],
-      "@users/*": ["src/features/users/*"]
+      "@users/*": ["src/features/users/*"],
+      "@image-generation/*": ["src/features/image-generation/*"]
     },
 
     /* Linting */
