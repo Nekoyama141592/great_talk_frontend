@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Box,
@@ -7,15 +7,13 @@ import {
   Typography,
   Avatar,
   Chip,
-  Button,
-  ButtonGroup,
   Alert,
   Fade,
   Skeleton,
   CircularProgress
 } from '@mui/material'
 import { 
-  TrendingUp,
+  Timeline,
   Schedule,
   Comment,
   Visibility,
@@ -23,44 +21,18 @@ import {
   People
 } from '@mui/icons-material'
 import { PublicPost } from '@shared/schema/public-post'
-import { usePosts, PostSortType } from '@features/posts/hooks/use-posts'
 import { useTimelinePosts } from '@features/posts/hooks/use-timeline-posts'
 import { LikeButton } from '../like-button'
 
-type ViewType = 'popularity' | 'newest' | 'following'
-
-export const PostsComponent = () => {
-  const [viewType, setViewType] = useState<ViewType>('popularity')
-  
-  // 通常の投稿データ（フォロー中の場合は人気順にフォールバック）
-  const sortType = (viewType === 'following' ? 'popularity' : viewType) as PostSortType
+export const TimelineComponent = () => {
   const { 
-    data: postsData, 
-    isPending: isPostsPending, 
-    error: postsError, 
-    fetchNextPage: fetchNextPostsPage, 
-    hasNextPage: hasNextPostsPage, 
-    isFetchingNextPage: isFetchingNextPostsPage 
-  } = usePosts(sortType)
-  
-  // フォロー中の投稿データ（フォロー中タブが選択されている場合のみ有効）
-  const { 
-    data: timelineData, 
-    isPending: isTimelinePending, 
-    error: timelineError, 
-    fetchNextPage: fetchNextTimelinePage, 
-    hasNextPage: hasNextTimelinePage, 
-    isFetchingNextPage: isFetchingNextTimelinePage 
-  } = useTimelinePosts(viewType === 'following')
-  
-  // 現在選択されたビューに応じてデータを選択
-  const isFollowingView = viewType === 'following'
-  const data = isFollowingView ? timelineData : postsData
-  const isPending = isFollowingView ? isTimelinePending : isPostsPending
-  const error = isFollowingView ? timelineError : postsError
-  const fetchNextPage = isFollowingView ? fetchNextTimelinePage : fetchNextPostsPage
-  const hasNextPage = isFollowingView ? hasNextTimelinePage : hasNextPostsPage
-  const isFetchingNextPage = isFollowingView ? isFetchingNextTimelinePage : isFetchingNextPostsPage
+    data, 
+    isPending, 
+    error, 
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useTimelinePosts()
 
   const loadMoreRef = useRef<HTMLDivElement>(null)
 
@@ -98,31 +70,23 @@ export const PostsComponent = () => {
   if (isPending) {
     return (
       <Box sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-        <PostsSkeleton />
+        <TimelineSkeleton />
       </Box>
     )
   }
 
-  if (!data || data.pages.length === 0 || data.pages.every(page => page.posts.length === 0)) {
-    if (isFollowingView) {
-      return (
-        <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <People sx={{ fontSize: 48, color: 'text.disabled' }} />
-            <Typography>
-              フォローしているユーザーの投稿がありません
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              ユーザーをフォローして、タイムラインに投稿を表示しましょう
-            </Typography>
-          </Box>
-        </Alert>
-      )
-    }
-    
+  if (!data || data.pages.length === 0) {
     return (
       <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-        投稿がありません
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <People sx={{ fontSize: 48, color: 'text.disabled' }} />
+          <Typography>
+            フォローしているユーザーの投稿がありません
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            ユーザーをフォローして、タイムラインに投稿を表示しましょう
+          </Typography>
+        </Box>
       </Alert>
     )
   }
@@ -131,75 +95,22 @@ export const PostsComponent = () => {
 
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
-      {/* Enhanced View Controls */}
-      <Card sx={{ mb: 3, borderRadius: 2 }}>
+      {/* Timeline Header */}
+      <Card sx={{ mb: 3, borderRadius: 2, bgcolor: 'primary.main', color: 'white' }}>
         <CardContent sx={{ py: 2 }}>
-          <ButtonGroup
-            variant="outlined"
-            size="small"
-            sx={{ 
-              width: '100%',
-              '& .MuiButton-root': {
-                flex: 1,
-                borderRadius: 1.5,
-                textTransform: 'none',
-                fontWeight: 500
-              }
-            }}
-          >
-            <Button
-              onClick={() => setViewType('popularity')}
-              variant={viewType === 'popularity' ? 'contained' : 'outlined'}
-              startIcon={<TrendingUp />}
-              sx={{
-                backgroundColor: viewType === 'popularity' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'popularity' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'popularity' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
-                }
-              }}
-            >
-              人気順
-            </Button>
-            <Button
-              onClick={() => setViewType('newest')}
-              variant={viewType === 'newest' ? 'contained' : 'outlined'}
-              startIcon={<Schedule />}
-              sx={{
-                backgroundColor: viewType === 'newest' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'newest' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'newest' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
-                }
-              }}
-            >
-              新着順
-            </Button>
-            <Button
-              onClick={() => setViewType('following')}
-              variant={viewType === 'following' ? 'contained' : 'outlined'}
-              startIcon={<People />}
-              sx={{
-                backgroundColor: viewType === 'following' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'following' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'following' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
-                }
-              }}
-            >
-              フォロー中
-            </Button>
-          </ButtonGroup>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Timeline />
+            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+              タイムライン
+            </Typography>
+          </Box>
+          <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+            フォローしているユーザーの最新投稿
+          </Typography>
         </CardContent>
       </Card>
 
-      {/* Enhanced Posts List */}
+      {/* Timeline Posts */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {posts.map((post, index) => (
           <Fade key={post.postId} in={true} timeout={300 + index * 100}>
@@ -207,13 +118,12 @@ export const PostsComponent = () => {
               sx={{
                 borderRadius: 2,
                 transition: 'all 0.2s ease-in-out',
-                border: isFollowingView ? '1px solid' : 'none',
-                borderColor: isFollowingView ? 'primary.main' : 'transparent',
-                bgcolor: isFollowingView ? 'primary.50' : 'background.paper',
+                border: '1px solid',
+                borderColor: 'primary.main',
                 '&:hover': {
                   transform: 'translateY(-2px)',
                   boxShadow: 4,
-                  borderColor: isFollowingView ? 'primary.dark' : 'transparent'
+                  borderColor: 'primary.dark'
                 }
               }}
             >
@@ -222,14 +132,14 @@ export const PostsComponent = () => {
                   to={`/users/${post.uid}/posts/${post.postId}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
                 >
-                  {/* Post Header */}
+                  {/* Timeline Post Header */}
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                     <Avatar
                       sx={{
                         width: 40,
                         height: 40,
                         mr: 2,
-                        bgcolor: '#10b981'
+                        bgcolor: 'primary.main'
                       }}
                     >
                       <Psychology />
@@ -255,17 +165,12 @@ export const PostsComponent = () => {
                         {formatDate(post.createdAt)}
                       </Typography>
                     </Box>
-                    
-                    {/* フォロー中表示の場合はフォローチップを表示 */}
-                    {isFollowingView && (
-                      <Chip
-                        label="フォロー中"
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                        icon={<People />}
-                      />
-                    )}
+                    <Chip
+                      label="フォロー中"
+                      size="small"
+                      color="primary"
+                      variant="outlined"
+                    />
                   </Box>
 
                   {/* Post Content */}
@@ -377,11 +282,11 @@ export const PostsComponent = () => {
 }
 
 // Helper component for loading skeleton
-const PostsSkeleton = () => {
+const TimelineSkeleton = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
       {[1, 2, 3].map((i) => (
-        <Card key={i} sx={{ borderRadius: 2 }}>
+        <Card key={i} sx={{ borderRadius: 2, border: '1px solid', borderColor: 'primary.main' }}>
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Skeleton variant="circular" width={40} height={40} sx={{ mr: 2 }} />
@@ -389,6 +294,7 @@ const PostsSkeleton = () => {
                 <Skeleton variant="text" width="60%" height={24} />
                 <Skeleton variant="text" width="40%" height={16} />
               </Box>
+              <Skeleton variant="rectangular" width={60} height={20} />
             </Box>
             <Skeleton variant="text" width="100%" height={20} />
             <Skeleton variant="text" width="80%" height={20} />

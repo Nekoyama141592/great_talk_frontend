@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { 
   Box,
@@ -7,199 +7,155 @@ import {
   Typography,
   Avatar,
   Chip,
-  Button,
-  ButtonGroup,
   Alert,
   Fade,
   Skeleton,
-  CircularProgress
+  Badge,
+  IconButton,
+  Tooltip,
+  Switch,
+  FormControlLabel
 } from '@mui/material'
 import { 
-  TrendingUp,
+  Timeline,
   Schedule,
   Comment,
   Visibility,
   Psychology,
-  People
+  People,
+  NotificationsActive
 } from '@mui/icons-material'
-import { PublicPost } from '@shared/schema/public-post'
-import { usePosts, PostSortType } from '@features/posts/hooks/use-posts'
 import { useTimelinePosts } from '@features/posts/hooks/use-timeline-posts'
+import { useRealtimeTimeline } from '@features/posts/hooks/use-realtime-timeline'
 import { LikeButton } from '../like-button'
+import { FollowButton } from '@users/components/follow-button'
 
-type ViewType = 'popularity' | 'newest' | 'following'
-
-export const PostsComponent = () => {
-  const [viewType, setViewType] = useState<ViewType>('popularity')
+export const EnhancedTimelineComponent = () => {
+  const [useRealtime, setUseRealtime] = useState(false)
   
-  // 通常の投稿データ（フォロー中の場合は人気順にフォールバック）
-  const sortType = (viewType === 'following' ? 'popularity' : viewType) as PostSortType
+  // Regular timeline with pagination
   const { 
-    data: postsData, 
-    isPending: isPostsPending, 
-    error: postsError, 
-    fetchNextPage: fetchNextPostsPage, 
-    hasNextPage: hasNextPostsPage, 
-    isFetchingNextPage: isFetchingNextPostsPage 
-  } = usePosts(sortType)
-  
-  // フォロー中の投稿データ（フォロー中タブが選択されている場合のみ有効）
+    data: paginatedData, 
+    isPending: isPaginatedPending, 
+    error: paginatedError,
+    fetchNextPage, 
+    hasNextPage, 
+    isFetchingNextPage 
+  } = useTimelinePosts()
+
+  // Real-time timeline
   const { 
-    data: timelineData, 
-    isPending: isTimelinePending, 
-    error: timelineError, 
-    fetchNextPage: fetchNextTimelinePage, 
-    hasNextPage: hasNextTimelinePage, 
-    isFetchingNextPage: isFetchingNextTimelinePage 
-  } = useTimelinePosts(viewType === 'following')
-  
-  // 現在選択されたビューに応じてデータを選択
-  const isFollowingView = viewType === 'following'
-  const data = isFollowingView ? timelineData : postsData
-  const isPending = isFollowingView ? isTimelinePending : isPostsPending
-  const error = isFollowingView ? timelineError : postsError
-  const fetchNextPage = isFollowingView ? fetchNextTimelinePage : fetchNextPostsPage
-  const hasNextPage = isFollowingView ? hasNextTimelinePage : hasNextPostsPage
-  const isFetchingNextPage = isFollowingView ? isFetchingNextTimelinePage : isFetchingNextPostsPage
+    posts: realtimePosts, 
+    loading: realtimeLoading, 
+    error: realtimeError,
+    markAsRead,
+    hasNewPosts,
+    unreadCount
+  } = useRealtimeTimeline()
 
-  const loadMoreRef = useRef<HTMLDivElement>(null)
+  // Choose data source based on user preference
+  const posts = useRealtime ? realtimePosts : (paginatedData?.pages.flatMap(page => page.posts) || [])
+  const loading = useRealtime ? realtimeLoading : isPaginatedPending
+  const error = useRealtime ? realtimeError : paginatedError?.message
 
-  // Infinite scroll intersection observer
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage()
-        }
-      },
-      { threshold: 0.1 }
-    )
-
-    const currentRef = loadMoreRef.current
-    if (currentRef) {
-      observer.observe(currentRef)
+  const handlePostClick = (postId: string) => {
+    if (useRealtime) {
+      markAsRead(postId)
     }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef)
-      }
-    }
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+  }
 
   if (error) {
     return (
       <Alert severity="error" sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-        エラーが発生しました: {error.message}
+        エラーが発生しました: {error}
       </Alert>
     )
   }
 
-  if (isPending) {
+  if (loading) {
     return (
       <Box sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-        <PostsSkeleton />
+        <TimelineSkeleton />
       </Box>
     )
   }
 
-  if (!data || data.pages.length === 0 || data.pages.every(page => page.posts.length === 0)) {
-    if (isFollowingView) {
-      return (
-        <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-            <People sx={{ fontSize: 48, color: 'text.disabled' }} />
-            <Typography>
-              フォローしているユーザーの投稿がありません
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              ユーザーをフォローして、タイムラインに投稿を表示しましょう
-            </Typography>
-          </Box>
-        </Alert>
-      )
-    }
-    
+  if (!posts || posts.length === 0) {
     return (
       <Alert severity="info" sx={{ maxWidth: 600, mx: 'auto', mt: 2 }}>
-        投稿がありません
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+          <People sx={{ fontSize: 48, color: 'text.disabled' }} />
+          <Typography>
+            フォローしているユーザーの投稿がありません
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            ユーザーをフォローして、タイムラインに投稿を表示しましょう
+          </Typography>
+        </Box>
       </Alert>
     )
   }
 
-  const posts: PublicPost[] = data.pages.flatMap(page => page.posts)
-
   return (
     <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
-      {/* Enhanced View Controls */}
-      <Card sx={{ mb: 3, borderRadius: 2 }}>
+      {/* Enhanced Timeline Header */}
+      <Card sx={{ mb: 3, borderRadius: 2, bgcolor: 'primary.main', color: 'white' }}>
         <CardContent sx={{ py: 2 }}>
-          <ButtonGroup
-            variant="outlined"
-            size="small"
-            sx={{ 
-              width: '100%',
-              '& .MuiButton-root': {
-                flex: 1,
-                borderRadius: 1.5,
-                textTransform: 'none',
-                fontWeight: 500
-              }
-            }}
-          >
-            <Button
-              onClick={() => setViewType('popularity')}
-              variant={viewType === 'popularity' ? 'contained' : 'outlined'}
-              startIcon={<TrendingUp />}
-              sx={{
-                backgroundColor: viewType === 'popularity' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'popularity' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'popularity' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              <Badge badgeContent={useRealtime ? unreadCount : 0} color="secondary">
+                <Timeline />
+              </Badge>
+              <Typography variant="h6" sx={{ fontWeight: 600 }}>
+                タイムライン
+              </Typography>
+            </Box>
+            
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+              {useRealtime && hasNewPosts && (
+                <Tooltip title="新しい投稿があります">
+                  <IconButton 
+                    color="inherit" 
+                    size="small"
+                    sx={{ animation: 'pulse 1.5s infinite' }}
+                  >
+                    <NotificationsActive />
+                  </IconButton>
+                </Tooltip>
+              )}
+              
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={useRealtime}
+                    onChange={(e) => setUseRealtime(e.target.checked)}
+                    size="small"
+                    sx={{ 
+                      '& .MuiSwitch-switchBase.Mui-checked': { color: 'white' },
+                      '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { backgroundColor: 'rgba(255,255,255,0.3)' }
+                    }}
+                  />
                 }
-              }}
-            >
-              人気順
-            </Button>
-            <Button
-              onClick={() => setViewType('newest')}
-              variant={viewType === 'newest' ? 'contained' : 'outlined'}
-              startIcon={<Schedule />}
-              sx={{
-                backgroundColor: viewType === 'newest' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'newest' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'newest' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
+                label={
+                  <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.9)' }}>
+                    リアルタイム
+                  </Typography>
                 }
-              }}
-            >
-              新着順
-            </Button>
-            <Button
-              onClick={() => setViewType('following')}
-              variant={viewType === 'following' ? 'contained' : 'outlined'}
-              startIcon={<People />}
-              sx={{
-                backgroundColor: viewType === 'following' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'following' ? 'white' : '#10b981',
-                '&:hover': {
-                  backgroundColor: viewType === 'following' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981'
-                }
-              }}
-            >
-              フォロー中
-            </Button>
-          </ButtonGroup>
+                sx={{ m: 0 }}
+              />
+            </Box>
+          </Box>
+          
+          <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
+            {useRealtime 
+              ? `リアルタイム更新中${unreadCount > 0 ? ` (${unreadCount}件の未読)` : ''}`
+              : 'フォローしているユーザーの最新投稿'
+            }
+          </Typography>
         </CardContent>
       </Card>
 
-      {/* Enhanced Posts List */}
+      {/* Timeline Posts */}
       <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
         {posts.map((post, index) => (
           <Fade key={post.postId} in={true} timeout={300 + index * 100}>
@@ -207,13 +163,13 @@ export const PostsComponent = () => {
               sx={{
                 borderRadius: 2,
                 transition: 'all 0.2s ease-in-out',
-                border: isFollowingView ? '1px solid' : 'none',
-                borderColor: isFollowingView ? 'primary.main' : 'transparent',
-                bgcolor: isFollowingView ? 'primary.50' : 'background.paper',
+                border: '1px solid',
+                borderColor: useRealtime && !(post as Record<string, unknown>).isRead ? 'primary.main' : 'divider',
+                bgcolor: useRealtime && !(post as Record<string, unknown>).isRead ? 'primary.50' : 'background.paper',
                 '&:hover': {
                   transform: 'translateY(-2px)',
                   boxShadow: 4,
-                  borderColor: isFollowingView ? 'primary.dark' : 'transparent'
+                  borderColor: 'primary.main'
                 }
               }}
             >
@@ -221,15 +177,16 @@ export const PostsComponent = () => {
                 <Link
                   to={`/users/${post.uid}/posts/${post.postId}`}
                   style={{ textDecoration: 'none', color: 'inherit' }}
+                  onClick={() => handlePostClick(post.postId)}
                 >
-                  {/* Post Header */}
+                  {/* Timeline Post Header */}
                   <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
                     <Avatar
                       sx={{
                         width: 40,
                         height: 40,
                         mr: 2,
-                        bgcolor: '#10b981'
+                        bgcolor: 'primary.main'
                       }}
                     >
                       <Psychology />
@@ -256,16 +213,22 @@ export const PostsComponent = () => {
                       </Typography>
                     </Box>
                     
-                    {/* フォロー中表示の場合はフォローチップを表示 */}
-                    {isFollowingView && (
-                      <Chip
-                        label="フォロー中"
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      {useRealtime && !(post as Record<string, unknown>).isRead && (
+                        <Chip
+                          label="新着"
+                          size="small"
+                          color="primary"
+                          sx={{ fontSize: '0.7rem' }}
+                        />
+                      )}
+                      <FollowButton 
+                        targetUserId={post.uid}
+                        isFollowing={true}
                         size="small"
-                        color="primary"
                         variant="outlined"
-                        icon={<People />}
                       />
-                    )}
+                    </Box>
                   </Box>
 
                   {/* Post Content */}
@@ -347,41 +310,43 @@ export const PostsComponent = () => {
         ))}
       </Box>
 
-      {/* Infinite Scroll Loading Indicator */}
-      <Box
-        ref={loadMoreRef}
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          py: 4,
-          minHeight: 60
-        }}
-      >
-        {isFetchingNextPage && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <CircularProgress size={24} />
-            <Typography variant="body2" color="text.secondary">
-              読み込み中...
-            </Typography>
-          </Box>
-        )}
-        {!hasNextPage && posts.length > 0 && (
-          <Typography variant="body2" color="text.secondary">
-            すべての投稿を表示しました
-          </Typography>
-        )}
-      </Box>
+      {/* Load More for Paginated Mode */}
+      {!useRealtime && hasNextPage && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+          <button
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#1976d2',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: isFetchingNextPage ? 'not-allowed' : 'pointer',
+              opacity: isFetchingNextPage ? 0.6 : 1
+            }}
+          >
+            {isFetchingNextPage ? '読み込み中...' : 'さらに読み込む'}
+          </button>
+        </Box>
+      )}
     </Box>
   )
 }
 
 // Helper component for loading skeleton
-const PostsSkeleton = () => {
+const TimelineSkeleton = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Card sx={{ borderRadius: 2, bgcolor: 'primary.main' }}>
+        <CardContent sx={{ py: 2 }}>
+          <Skeleton variant="text" width="40%" height={28} sx={{ bgcolor: 'rgba(255,255,255,0.2)' }} />
+          <Skeleton variant="text" width="60%" height={16} sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
+        </CardContent>
+      </Card>
+      
       {[1, 2, 3].map((i) => (
-        <Card key={i} sx={{ borderRadius: 2 }}>
+        <Card key={i} sx={{ borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
           <CardContent sx={{ p: 3 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
               <Skeleton variant="circular" width={40} height={40} sx={{ mr: 2 }} />
@@ -389,6 +354,7 @@ const PostsSkeleton = () => {
                 <Skeleton variant="text" width="60%" height={24} />
                 <Skeleton variant="text" width="40%" height={16} />
               </Box>
+              <Skeleton variant="rectangular" width={80} height={24} />
             </Box>
             <Skeleton variant="text" width="100%" height={20} />
             <Skeleton variant="text" width="80%" height={20} />

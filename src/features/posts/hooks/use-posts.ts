@@ -1,25 +1,35 @@
-import { useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery } from '@tanstack/react-query'
 import {
   collectionGroup,
   query,
   orderBy,
   limit,
   getDocs,
+  startAfter,
+  DocumentSnapshot,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
 
 export type PostSortType = 'popularity' | 'newest'
 
+const POSTS_PER_PAGE = 10
+
 export const usePosts = (sortType: PostSortType = 'popularity') => {
-  const queryFn = async () => {
+  const queryFn = async ({ pageParam }: { pageParam?: DocumentSnapshot }) => {
     const colRef = collectionGroup(db, `posts`)
 
     // Configure sorting based on the selected sort type
     const orderField = sortType === 'popularity' ? 'msgCount' : 'createdAt'
     const orderDirection = 'desc' // Both popularity and newest should be descending
 
-    const q = query(colRef, orderBy(orderField, orderDirection), limit(30))
+    let q = query(colRef, orderBy(orderField, orderDirection), limit(POSTS_PER_PAGE))
+    
+    // Add pagination cursor if provided
+    if (pageParam) {
+      q = query(q, startAfter(pageParam))
+    }
+
     const querySnapshot = await getDocs(q)
 
     const postsData: PublicPost[] = querySnapshot.docs.map(doc => {
@@ -36,11 +46,20 @@ export const usePosts = (sortType: PostSortType = 'popularity') => {
         createdAt: docData.createdAt,
       }
     })
-    return postsData
+
+    return {
+      posts: postsData,
+      lastDoc: querySnapshot.docs[querySnapshot.docs.length - 1],
+      hasMore: querySnapshot.docs.length === POSTS_PER_PAGE,
+    }
   }
 
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: ['posts', sortType],
-    queryFn: queryFn,
+    queryFn,
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) => {
+      return lastPage.hasMore ? lastPage.lastDoc : undefined
+    },
   })
 }
