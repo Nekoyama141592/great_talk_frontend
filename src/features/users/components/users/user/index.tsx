@@ -14,7 +14,6 @@ import {
   Button,
   Chip,
   Divider,
-  Grid,
 } from '@mui/material'
 import { Person, Article, Verified } from '@mui/icons-material'
 import { FollowButton } from '../../follow-button'
@@ -96,65 +95,192 @@ export const UserComponent = () => {
   const userData: PublicUser = data
 
   return (
-    <Container maxWidth='md' sx={{ py: 4 }}>
-      <Card elevation={3}>
-        <CardContent sx={{ p: 4 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
+    <Container maxWidth='lg' sx={{ py: 6 }}>
+      <Card
+        sx={{
+          borderRadius: 4,
+          background:
+            'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(226, 232, 240, 0.3)',
+          boxShadow: '0 20px 40px rgba(0, 0, 0, 0.1)',
+          overflow: 'hidden',
+          position: 'relative',
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: '6px',
+            background:
+              'linear-gradient(135deg, #22c55e 0%, #3b82f6 25%, #8b5cf6 50%, #f97316 75%, #ef4444 100%)',
+          },
+        }}
+      >
+        <CardContent sx={{ p: 6 }}>
+          <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 4 }}>
             <Avatar
               sx={{
-                width: 80,
-                height: 80,
-                mr: 3,
-                bgcolor: 'primary.main',
+                width: 120,
+                height: 120,
+                mr: 4,
+                background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                boxShadow: '0 12px 32px rgba(34, 197, 94, 0.3)',
+                border: '4px solid rgba(255, 255, 255, 0.8)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.05) rotate(2deg)',
+                  boxShadow: '0 16px 40px rgba(34, 197, 94, 0.4)',
+                },
               }}
             >
-              <Person sx={{ fontSize: 40 }} />
+              <Person sx={{ fontSize: 60 }} />
             </Avatar>
 
             <Box sx={{ flex: 1 }}>
-              <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Typography variant='h4' component='h1' sx={{ mr: 1 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                <Typography
+                  variant='h3'
+                  component='h1'
+                  sx={{
+                    mr: 2,
+                    fontWeight: 800,
+                    background:
+                      'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    letterSpacing: '-0.025em',
+                  }}
+                >
                   {userData?.userName.value ?? ''}
                 </Typography>
                 {userData?.isOfficial && (
                   <Chip
                     icon={<Verified />}
-                    label='公式'
-                    color='primary'
-                    variant='outlined'
-                    size='small'
+                    label='✨ 公式'
+                    sx={{
+                      background:
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                      color: 'white',
+                      fontWeight: 600,
+                      fontSize: '0.875rem',
+                      boxShadow: '0 4px 12px rgba(59, 130, 246, 0.3)',
+                      border: 'none',
+                    }}
                   />
                 )}
               </Box>
 
-              <Typography variant='body1' color='textSecondary' sx={{ mb: 2 }}>
-                {userData?.bio.value ?? '自己紹介がありません'}
+              <Typography
+                variant='h6'
+                sx={{
+                  mb: 3,
+                  color: 'text.secondary',
+                  lineHeight: 1.6,
+                  fontSize: '1.1rem',
+                  fontStyle: userData?.bio.value ? 'normal' : 'italic',
+                }}
+              >
+                {userData?.bio.value ?? '🤔 自己紹介がまだ設定されていません'}
               </Typography>
 
-              <Grid container spacing={2} sx={{ mb: 2 }}>
-                <Grid item>
-                  <Typography variant='body2'>
-                    <strong>{userData?.followerCount ?? 0}</strong> フォロワー
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 4,
+                  mb: 3,
+                  flexWrap: 'wrap',
+                }}
+              >
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                    borderRadius: 2,
+                    background: 'rgba(34, 197, 94, 0.1)',
+                    border: '1px solid rgba(34, 197, 94, 0.2)',
+                    minWidth: 100,
+                  }}
+                >
+                  <Typography
+                    variant='h4'
+                    sx={{ fontWeight: 800, color: '#22c55e' }}
+                  >
+                    {userData?.followerCount ?? 0}
                   </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography variant='body2'>
-                    <strong>{userData?.followingCount ?? 0}</strong> フォロー中
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{ fontWeight: 600 }}
+                  >
+                    フォロワー
                   </Typography>
-                </Grid>
-                <Grid item>
-                  <Typography variant='body2'>
-                    <strong>{userData?.postCount ?? 0}</strong> 投稿
+                </Box>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                    borderRadius: 2,
+                    background: 'rgba(59, 130, 246, 0.1)',
+                    border: '1px solid rgba(59, 130, 246, 0.2)',
+                    minWidth: 100,
+                  }}
+                >
+                  <Typography
+                    variant='h4'
+                    sx={{ fontWeight: 800, color: '#3b82f6' }}
+                  >
+                    {userData?.followingCount ?? 0}
                   </Typography>
-                </Grid>
-              </Grid>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{ fontWeight: 600 }}
+                  >
+                    フォロー中
+                  </Typography>
+                </Box>
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    p: 2,
+                    borderRadius: 2,
+                    background: 'rgba(249, 115, 22, 0.1)',
+                    border: '1px solid rgba(249, 115, 22, 0.2)',
+                    minWidth: 100,
+                  }}
+                >
+                  <Typography
+                    variant='h4'
+                    sx={{ fontWeight: 800, color: '#f97316' }}
+                  >
+                    {userData?.postCount ?? 0}
+                  </Typography>
+                  <Typography
+                    variant='body2'
+                    color='text.secondary'
+                    sx={{ fontWeight: 600 }}
+                  >
+                    投稿
+                  </Typography>
+                </Box>
+              </Box>
 
-              <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  gap: 3,
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                }}
+              >
                 {!isOwnProfile && (
                   <FollowButton
                     targetUserId={uid!}
                     variant='contained'
-                    size='medium'
+                    size='large'
                   />
                 )}
                 <Button
@@ -162,8 +288,24 @@ export const UserComponent = () => {
                   to='posts'
                   variant='outlined'
                   startIcon={<Article />}
+                  size='large'
+                  sx={{
+                    borderRadius: 3,
+                    fontWeight: 600,
+                    px: 3,
+                    py: 1.5,
+                    borderColor: '#3b82f6',
+                    color: '#3b82f6',
+                    '&:hover': {
+                      background: 'rgba(59, 130, 246, 0.1)',
+                      borderColor: '#2563eb',
+                      transform: 'translateY(-2px)',
+                      boxShadow: '0 8px 24px rgba(59, 130, 246, 0.2)',
+                    },
+                    transition: 'all 0.3s ease',
+                  }}
                 >
-                  投稿一覧
+                  📚 投稿一覧
                 </Button>
 
                 {/* ユーザーメニュー */}

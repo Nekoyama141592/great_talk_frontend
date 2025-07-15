@@ -8,6 +8,7 @@ import {
   Avatar,
   Chip,
   Fade,
+  Tooltip,
 } from '@mui/material'
 import {
   Schedule,
@@ -15,7 +16,10 @@ import {
   Visibility,
   Psychology,
   People,
+  TrendingUp,
+  AutoAwesome,
 } from '@mui/icons-material'
+// import { colors, glassMorphism, hoverScale } from '@shared/theme/modern-theme'
 import { PublicPost } from '@shared/schema/public-post'
 import { useIsPostMuted } from '../../hooks/use-post-mute'
 import { LikeButton } from '../like-button'
@@ -53,15 +57,42 @@ export const PostCard: React.FC<PostCardProps> = ({
     <Fade in={true} timeout={300 + index * 100}>
       <Card
         sx={{
-          borderRadius: 2,
-          transition: 'all 0.2s ease-in-out',
-          border: isFollowingView ? '1px solid' : 'none',
-          borderColor: isFollowingView ? 'primary.main' : 'transparent',
-          bgcolor: isFollowingView ? 'primary.50' : 'background.paper',
+          borderRadius: 3,
+          background: isFollowingView
+            ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.05) 0%, rgba(22, 163, 74, 0.02) 100%)'
+            : 'rgba(255, 255, 255, 0.9)',
+          backdropFilter: 'blur(20px)',
+          border: isFollowingView
+            ? '2px solid rgba(34, 197, 94, 0.2)'
+            : '1px solid rgba(255, 255, 255, 0.2)',
+          transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+          position: 'relative',
+          overflow: 'hidden',
+          '&:before': {
+            content: '""',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            height: isFollowingView ? '4px' : '2px',
+            background: isFollowingView
+              ? 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+              : 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+            opacity: isFollowingView ? 1 : 0.6,
+          },
           '&:hover': {
-            transform: 'translateY(-2px)',
-            boxShadow: 4,
-            borderColor: isFollowingView ? 'primary.dark' : 'transparent',
+            transform: 'translateY(-8px) scale(1.02)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
+            background: isFollowingView
+              ? 'linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(22, 163, 74, 0.04) 100%)'
+              : 'rgba(255, 255, 255, 0.95)',
+            border: isFollowingView
+              ? '2px solid rgba(34, 197, 94, 0.3)'
+              : '1px solid rgba(34, 197, 94, 0.2)',
+            '&:before': {
+              height: '4px',
+              opacity: 1,
+            },
           },
         }}
       >
@@ -71,47 +102,98 @@ export const PostCard: React.FC<PostCardProps> = ({
             style={{ textDecoration: 'none', color: 'inherit' }}
           >
             {/* Post Header */}
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Avatar
                 sx={{
-                  width: 40,
-                  height: 40,
+                  width: 48,
+                  height: 48,
                   mr: 2,
-                  bgcolor: '#10b981',
+                  background:
+                    'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                  boxShadow: '0 8px 16px rgba(34, 197, 94, 0.3)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.1) rotate(5deg)',
+                    boxShadow: '0 12px 24px rgba(34, 197, 94, 0.4)',
+                  },
                 }}
               >
-                <Psychology />
+                <Psychology sx={{ fontSize: 24 }} />
               </Avatar>
               <Box sx={{ flex: 1 }}>
                 <Typography
                   variant='h6'
                   sx={{
-                    fontWeight: 600,
-                    fontSize: '1.1rem',
-                    lineHeight: 1.2,
-                    mb: 0.5,
+                    fontWeight: 700,
+                    fontSize: '1.25rem',
+                    lineHeight: 1.3,
+                    mb: 1,
+                    background:
+                      'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+                    backgroundClip: 'text',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    letterSpacing: '-0.025em',
                   }}
                 >
                   {post.title.value}
                 </Typography>
-                <Typography
-                  variant='caption'
-                  color='text.secondary'
-                  sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
-                >
-                  <Schedule fontSize='inherit' />
-                  {formatDate(post.createdAt)}
-                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Chip
+                    icon={<Schedule sx={{ fontSize: 14 }} />}
+                    label={formatDate(post.createdAt)}
+                    size='small'
+                    sx={{
+                      background: 'rgba(148, 163, 184, 0.1)',
+                      color: 'text.secondary',
+                      border: '1px solid rgba(148, 163, 184, 0.2)',
+                      fontSize: '0.75rem',
+                      fontWeight: 500,
+                      '&:hover': {
+                        background: 'rgba(148, 163, 184, 0.2)',
+                      },
+                    }}
+                  />
+                  {post.likeCount > 10 && (
+                    <Chip
+                      icon={<TrendingUp sx={{ fontSize: 14 }} />}
+                      label='人気'
+                      size='small'
+                      sx={{
+                        background:
+                          'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                        color: 'white',
+                        fontWeight: 600,
+                        fontSize: '0.75rem',
+                        border: 'none',
+                      }}
+                    />
+                  )}
+                </Box>
               </Box>
 
               {/* フォロー中表示の場合はフォローチップを表示 */}
               {isFollowingView && (
                 <Chip
                   label='フォロー中'
-                  size='small'
-                  color='primary'
-                  variant='outlined'
-                  icon={<People />}
+                  size='medium'
+                  icon={<People sx={{ fontSize: 16 }} />}
+                  sx={{
+                    background:
+                      'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    padding: '8px 16px',
+                    border: 'none',
+                    boxShadow: '0 4px 12px rgba(34, 197, 94, 0.3)',
+                    '&:hover': {
+                      background:
+                        'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                      transform: 'translateY(-1px)',
+                      boxShadow: '0 6px 16px rgba(34, 197, 94, 0.4)',
+                    },
+                  }}
                 />
               )}
 
@@ -128,49 +210,69 @@ export const PostCard: React.FC<PostCardProps> = ({
 
             {/* Post Content */}
             <Typography
-              variant='body2'
-              color='text.secondary'
+              variant='body1'
               sx={{
-                mb: 2,
-                lineHeight: 1.5,
+                mb: 3,
+                lineHeight: 1.7,
                 display: '-webkit-box',
                 WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical',
                 overflow: 'hidden',
+                color: 'text.primary',
+                fontSize: '1rem',
+                fontWeight: 400,
+                letterSpacing: '0.01em',
               }}
             >
               {post.description.value}
             </Typography>
 
             {/* Sentiment & Moderation Indicators */}
-            <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
+            <Box sx={{ display: 'flex', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
               {post.title.sentiment && (
                 <Chip
                   label={
                     post.title.sentiment === 'POSITIVE'
-                      ? 'ポジティブ'
+                      ? '✨ ポジティブ'
                       : post.title.sentiment === 'NEGATIVE'
-                        ? 'ネガティブ'
-                        : 'ニュートラル'
+                        ? '🤔 ネガティブ'
+                        : '😐 ニュートラル'
                   }
                   size='small'
-                  color={
-                    post.title.sentiment === 'POSITIVE'
-                      ? 'success'
-                      : post.title.sentiment === 'NEGATIVE'
-                        ? 'error'
-                        : 'default'
-                  }
-                  variant='outlined'
+                  sx={{
+                    background:
+                      post.title.sentiment === 'POSITIVE'
+                        ? 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+                        : post.title.sentiment === 'NEGATIVE'
+                          ? 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)'
+                          : 'linear-gradient(135deg, #64748b 0%, #475569 100%)',
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                    border: 'none',
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)',
+                  }}
                 />
               )}
               {post.customCompleteText?.systemPrompt && (
                 <Chip
                   label='AI対話可能'
                   size='small'
-                  color='primary'
-                  variant='outlined'
-                  icon={<Psychology />}
+                  icon={<AutoAwesome sx={{ fontSize: 16 }} />}
+                  sx={{
+                    background:
+                      'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                    color: 'white',
+                    fontWeight: 600,
+                    fontSize: '0.8rem',
+                    border: 'none',
+                    boxShadow: '0 2px 8px rgba(139, 92, 246, 0.3)',
+                    animation: 'pulse 2s infinite',
+                    '@keyframes pulse': {
+                      '0%, 100%': { opacity: 1 },
+                      '50%': { opacity: 0.8 },
+                    },
+                  }}
                 />
               )}
             </Box>
@@ -181,23 +283,61 @@ export const PostCard: React.FC<PostCardProps> = ({
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                borderTop: '1px solid #f0f0f0',
-                pt: 2,
+                background:
+                  'linear-gradient(135deg, rgba(248, 250, 252, 0.8) 0%, rgba(241, 245, 249, 0.4) 100%)',
+                borderRadius: 2,
+                p: 2,
+                mt: 2,
+                border: '1px solid rgba(226, 232, 240, 0.5)',
               }}
             >
-              <Box sx={{ display: 'flex', gap: 3 }}>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Comment fontSize='small' color='action' />
-                  <Typography variant='body2' color='text.secondary'>
-                    {post.msgCount}
-                  </Typography>
-                </Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Visibility fontSize='small' color='action' />
-                  <Typography variant='body2' color='text.secondary'>
-                    {(post as Record<string, unknown>).impressionCount || 0}
-                  </Typography>
-                </Box>
+              <Box sx={{ display: 'flex', gap: 4 }}>
+                <Tooltip title='コメント数' arrow>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        color: 'primary.main',
+                      },
+                    }}
+                  >
+                    <Comment sx={{ fontSize: 18, color: 'text.secondary' }} />
+                    <Typography
+                      variant='body2'
+                      sx={{ fontWeight: 600, color: 'text.primary' }}
+                    >
+                      {post.msgCount}
+                    </Typography>
+                  </Box>
+                </Tooltip>
+                <Tooltip title='閲覧数' arrow>
+                  <Box
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      transition: 'all 0.2s ease',
+                      '&:hover': {
+                        transform: 'scale(1.05)',
+                        color: 'info.main',
+                      },
+                    }}
+                  >
+                    <Visibility
+                      sx={{ fontSize: 18, color: 'text.secondary' }}
+                    />
+                    <Typography
+                      variant='body2'
+                      sx={{ fontWeight: 600, color: 'text.primary' }}
+                    >
+                      {(post as Record<string, unknown>).impressionCount || 0}
+                    </Typography>
+                  </Box>
+                </Tooltip>
               </Box>
 
               <Box onClick={e => e.preventDefault()}>

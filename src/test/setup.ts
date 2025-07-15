@@ -4,12 +4,12 @@ import '@testing-library/jest-dom'
 vi.mock('@shared/infrastructures/firebase', () => ({
   db: {},
   auth: {
-    onAuthStateChanged: vi.fn((callback) => {
+    onAuthStateChanged: vi.fn(callback => {
       // Call callback with mock user
       callback({ uid: 'test-uid' })
       // Return unsubscribe function
       return vi.fn()
-    })
+    }),
   },
 }))
 
@@ -19,7 +19,7 @@ vi.mock('react-firebase-hooks/auth', () => ({
 }))
 
 // Mock IntersectionObserver
-global.IntersectionObserver = vi.fn().mockImplementation((callback) => ({
+global.IntersectionObserver = vi.fn().mockImplementation(_callback => ({
   observe: vi.fn(),
   unobserve: vi.fn(),
   disconnect: vi.fn(),
@@ -65,44 +65,68 @@ vi.mock('jotai', async importOriginal => {
     useAtom: (atom: any) => {
       // Handle different atom types based on their toString or properties
       const atomKey = atom.toString?.() || String(atom)
-      
+
       if (atomKey.includes('authAtom') || atomKey.includes('auth')) {
         return [{ uid: 'test-uid', firstLoaded: false }, vi.fn()]
       }
-      
-      if (atomKey.includes('postMuteState') || atomKey.includes('PostMute') || atomKey.includes('mute')) {
-        return [{ mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() }, vi.fn()]
+
+      if (
+        atomKey.includes('postMuteState') ||
+        atomKey.includes('PostMute') ||
+        atomKey.includes('mute')
+      ) {
+        return [
+          { mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() },
+          vi.fn(),
+        ]
       }
-      
+
       // Default return
-      return [{ mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() }, vi.fn()]
+      return [
+        { mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() },
+        vi.fn(),
+      ]
     },
     useAtomValue: (atom: any) => {
       const atomKey = atom.toString?.() || String(atom)
-      
+
       if (atomKey.includes('authAtom') || atomKey.includes('auth')) {
         return { uid: 'test-uid', firstLoaded: false }
       }
-      
-      if (atomKey.includes('postMuteState') || atomKey.includes('PostMute') || atomKey.includes('userMuteState') || atomKey.includes('UserMute') || atomKey.includes('mute')) {
-        return { mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() }
+
+      if (
+        atomKey.includes('postMuteState') ||
+        atomKey.includes('PostMute') ||
+        atomKey.includes('userMuteState') ||
+        atomKey.includes('UserMute') ||
+        atomKey.includes('mute')
+      ) {
+        return {
+          mutePostTokens: [],
+          muteUserTokens: [],
+          loadingStates: new Map(),
+        }
       }
-      
+
       if (atomKey.includes('isPostMuted')) {
         return false
       }
-      
+
       if (atomKey.includes('isPostMuteLoading')) {
         return false
       }
-      
-      return { mutePostTokens: [], muteUserTokens: [], loadingStates: new Map() }
+
+      return {
+        mutePostTokens: [],
+        muteUserTokens: [],
+        loadingStates: new Map(),
+      }
     },
     useSetAtom: () => vi.fn(),
-    atom: (init: any) => ({ 
+    atom: (init: any) => ({
       read: vi.fn().mockReturnValue(init),
       write: vi.fn(),
-      init 
+      init,
     }),
     Provider: ({ children }: { children: React.ReactNode }) => children,
   }

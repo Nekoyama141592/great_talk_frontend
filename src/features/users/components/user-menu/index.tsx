@@ -36,7 +36,7 @@ export interface UserMenuProps {
 
 export const UserMenu: React.FC<UserMenuProps> = ({
   userId,
-  userName = 'ユーザー',
+  _userName = 'ユーザー',
   onShare,
   onFollow,
   onUnfollow,

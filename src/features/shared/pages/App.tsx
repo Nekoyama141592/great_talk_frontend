@@ -6,8 +6,9 @@ import { onAuthStateChanged } from 'firebase/auth'
 import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Provider as JotaiProvider } from 'jotai'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
 import { CssBaseline } from '@mui/material'
+import { lightTheme } from '../theme/modern-theme'
 import { RouterComponent } from '@shared/pages/router'
 import { useLikedPosts } from '../../posts/hooks/use-liked-posts'
 
@@ -22,11 +23,8 @@ const queryClient = new QueryClient({
   },
 })
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-  },
-})
+// For now using light theme, can add dark mode toggle later
+const theme = lightTheme
 const AppContent = () => {
   const initUser = useSetAtom(initUserAtom)
   const clearUser = useSetAtom(clearUserAtom)

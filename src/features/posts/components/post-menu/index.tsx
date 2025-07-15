@@ -28,7 +28,7 @@ export interface PostMenuProps {
 export const PostMenu: React.FC<PostMenuProps> = ({
   postId,
   postUid,
-  postTitle = '投稿',
+  _postTitle = '投稿',
   onShare,
 }) => {
   const [authState] = useAtom(authAtom)

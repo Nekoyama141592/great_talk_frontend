@@ -21,7 +21,7 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
   likeCount,
   size = 'medium',
   showCount = true,
-  color = 'primary',
+  _color = 'primary',
 }) => {
   const [authState] = useAtom(authAtom)
   const { togglePostLike, isPostLiked, isLoading } = usePostLike()

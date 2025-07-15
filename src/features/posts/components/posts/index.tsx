@@ -144,20 +144,64 @@ export const PostsComponent = () => {
   const posts: PublicPost[] = data.pages.flatMap(page => page.posts)
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', p: 2 }}>
-      {/* Enhanced View Controls */}
-      <Card sx={{ mb: 3, borderRadius: 2 }}>
-        <CardContent sx={{ py: 2 }}>
+    <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+      {/* Modern View Controls */}
+      <Card
+        sx={{
+          mb: 4,
+          borderRadius: 4,
+          background:
+            'linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%)',
+          backdropFilter: 'blur(20px)',
+          border: '1px solid rgba(226, 232, 240, 0.3)',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08)',
+        }}
+      >
+        <CardContent sx={{ p: 3 }}>
+          <Typography
+            variant='h6'
+            sx={{
+              mb: 3,
+              fontWeight: 700,
+              background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+              backgroundClip: 'text',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              textAlign: 'center',
+              letterSpacing: '-0.025em',
+            }}
+          >
+            📊 投稿を探す
+          </Typography>
           <ButtonGroup
             variant='outlined'
-            size='small'
+            size='large'
             sx={{
               width: '100%',
               '& .MuiButton-root': {
                 flex: 1,
-                borderRadius: 1.5,
+                borderRadius: 3,
                 textTransform: 'none',
-                fontWeight: 500,
+                fontWeight: 600,
+                fontSize: '1rem',
+                padding: '12px 24px',
+                transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                position: 'relative',
+                overflow: 'hidden',
+                '&:before': {
+                  content: '""',
+                  position: 'absolute',
+                  top: 0,
+                  left: '-100%',
+                  width: '100%',
+                  height: '100%',
+                  background:
+                    'linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                  transition: 'left 0.5s ease',
+                },
+                '&:hover:before': {
+                  left: '100%',
+                },
               },
             }}
           >
@@ -166,61 +210,125 @@ export const PostsComponent = () => {
               variant={viewType === 'popularity' ? 'contained' : 'outlined'}
               startIcon={<TrendingUp />}
               sx={{
-                backgroundColor:
-                  viewType === 'popularity' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'popularity' ? 'white' : '#10b981',
+                background:
+                  viewType === 'popularity'
+                    ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)'
+                    : 'transparent',
+                borderColor: '#f97316',
+                color: viewType === 'popularity' ? 'white' : '#f97316',
+                boxShadow:
+                  viewType === 'popularity'
+                    ? '0 8px 24px rgba(249, 115, 22, 0.3)'
+                    : 'none',
                 '&:hover': {
-                  backgroundColor:
-                    viewType === 'popularity' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981',
+                  background:
+                    viewType === 'popularity'
+                      ? 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)'
+                      : 'rgba(249, 115, 22, 0.1)',
+                  borderColor: '#ea580c',
+                  transform: 'translateY(-2px)',
+                  boxShadow:
+                    viewType === 'popularity'
+                      ? '0 12px 32px rgba(249, 115, 22, 0.4)'
+                      : '0 4px 16px rgba(249, 115, 22, 0.2)',
                 },
               }}
             >
-              人気順
+              🔥 人気順
             </Button>
             <Button
               onClick={() => setViewType('newest')}
               variant={viewType === 'newest' ? 'contained' : 'outlined'}
               startIcon={<Schedule />}
               sx={{
-                backgroundColor:
-                  viewType === 'newest' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'newest' ? 'white' : '#10b981',
+                background:
+                  viewType === 'newest'
+                    ? 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
+                    : 'transparent',
+                borderColor: '#3b82f6',
+                color: viewType === 'newest' ? 'white' : '#3b82f6',
+                boxShadow:
+                  viewType === 'newest'
+                    ? '0 8px 24px rgba(59, 130, 246, 0.3)'
+                    : 'none',
                 '&:hover': {
-                  backgroundColor:
-                    viewType === 'newest' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981',
+                  background:
+                    viewType === 'newest'
+                      ? 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)'
+                      : 'rgba(59, 130, 246, 0.1)',
+                  borderColor: '#2563eb',
+                  transform: 'translateY(-2px)',
+                  boxShadow:
+                    viewType === 'newest'
+                      ? '0 12px 32px rgba(59, 130, 246, 0.4)'
+                      : '0 4px 16px rgba(59, 130, 246, 0.2)',
                 },
               }}
             >
-              新着順
+              ⚡ 新着順
             </Button>
             <Button
               onClick={() => setViewType('following')}
               variant={viewType === 'following' ? 'contained' : 'outlined'}
               startIcon={<People />}
               sx={{
-                backgroundColor:
-                  viewType === 'following' ? '#10b981' : 'transparent',
-                borderColor: '#10b981',
-                color: viewType === 'following' ? 'white' : '#10b981',
+                background:
+                  viewType === 'following'
+                    ? 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)'
+                    : 'transparent',
+                borderColor: '#22c55e',
+                color: viewType === 'following' ? 'white' : '#22c55e',
+                boxShadow:
+                  viewType === 'following'
+                    ? '0 8px 24px rgba(34, 197, 94, 0.3)'
+                    : 'none',
                 '&:hover': {
-                  backgroundColor:
-                    viewType === 'following' ? '#059669' : '#f0fdf4',
-                  borderColor: '#10b981',
+                  background:
+                    viewType === 'following'
+                      ? 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)'
+                      : 'rgba(34, 197, 94, 0.1)',
+                  borderColor: '#16a34a',
+                  transform: 'translateY(-2px)',
+                  boxShadow:
+                    viewType === 'following'
+                      ? '0 12px 32px rgba(34, 197, 94, 0.4)'
+                      : '0 4px 16px rgba(34, 197, 94, 0.2)',
                 },
               }}
             >
-              フォロー中
+              👥 フォロー中
             </Button>
           </ButtonGroup>
         </CardContent>
       </Card>
 
       {/* Enhanced Posts List */}
-      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 3,
+          '& > *': {
+            animation: 'fadeInUp 0.6s ease-out',
+            animationFillMode: 'both',
+          },
+          '& > *:nth-of-type(1)': { animationDelay: '0.1s' },
+          '& > *:nth-of-type(2)': { animationDelay: '0.2s' },
+          '& > *:nth-of-type(3)': { animationDelay: '0.3s' },
+          '& > *:nth-of-type(4)': { animationDelay: '0.4s' },
+          '& > *:nth-of-type(5)': { animationDelay: '0.5s' },
+          '@keyframes fadeInUp': {
+            '0%': {
+              opacity: 0,
+              transform: 'translateY(30px)',
+            },
+            '100%': {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+        }}
+      >
         {posts.map((post, index) => (
           <PostCard
             key={post.postId}

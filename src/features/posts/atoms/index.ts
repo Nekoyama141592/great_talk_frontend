@@ -92,7 +92,8 @@ export const resetPostLikeCountDeltaAtom = atom(
   null,
   (get, set, postId: string) => {
     const current = get(postLikeStateAtom)
-    const { [postId]: removed, ...remainingDeltas } = current.likeCountDeltas
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { [postId]: _, ...remainingDeltas } = current.likeCountDeltas
     set(postLikeStateAtom, {
       ...current,
       likeCountDeltas: remainingDeltas,

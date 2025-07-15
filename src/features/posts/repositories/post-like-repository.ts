@@ -5,7 +5,6 @@ import {
   query,
   where,
   getDocs,
-  getDoc,
   writeBatch,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
