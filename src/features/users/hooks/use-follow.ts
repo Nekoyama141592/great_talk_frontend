@@ -25,31 +25,34 @@ export const useFollow = () => {
     if (!currentUserId || currentUserId === targetUserId) return
 
     setLoadingFollowAction(targetUserId, true)
-    
+
     // Optimistic update
     addFollowingUser(targetUserId)
     updateFollowCount(targetUserId, 'follow', 'followers')
     updateFollowCount(currentUserId, 'follow', 'following')
 
     try {
-      const result = await userRepository.followUser(currentUserId, targetUserId)
-      
+      const result = await userRepository.followUser(
+        currentUserId,
+        targetUserId
+      )
+
       if (!result.success) {
         // Rollback on error
         removeFollowingUser(targetUserId)
         updateFollowCount(targetUserId, 'unfollow', 'followers')
         updateFollowCount(currentUserId, 'unfollow', 'following')
-        
+
         throw new Error(result.error || 'フォローに失敗しました')
       }
     } catch (error) {
       console.error('Follow error:', error)
-      
+
       // Rollback optimistic updates
       removeFollowingUser(targetUserId)
       updateFollowCount(targetUserId, 'unfollow', 'followers')
       updateFollowCount(currentUserId, 'unfollow', 'following')
-      
+
       throw error
     } finally {
       setLoadingFollowAction(targetUserId, false)
@@ -60,31 +63,34 @@ export const useFollow = () => {
     if (!currentUserId || currentUserId === targetUserId) return
 
     setLoadingFollowAction(targetUserId, true)
-    
+
     // Optimistic update
     removeFollowingUser(targetUserId)
     updateFollowCount(targetUserId, 'unfollow', 'followers')
     updateFollowCount(currentUserId, 'unfollow', 'following')
 
     try {
-      const result = await userRepository.unfollowUser(currentUserId, targetUserId)
-      
+      const result = await userRepository.unfollowUser(
+        currentUserId,
+        targetUserId
+      )
+
       if (!result.success) {
         // Rollback on error
         addFollowingUser(targetUserId)
         updateFollowCount(targetUserId, 'follow', 'followers')
         updateFollowCount(currentUserId, 'follow', 'following')
-        
+
         throw new Error(result.error || 'アンフォローに失敗しました')
       }
     } catch (error) {
       console.error('Unfollow error:', error)
-      
+
       // Rollback optimistic updates
       addFollowingUser(targetUserId)
       updateFollowCount(targetUserId, 'follow', 'followers')
       updateFollowCount(currentUserId, 'follow', 'following')
-      
+
       throw error
     } finally {
       setLoadingFollowAction(targetUserId, false)

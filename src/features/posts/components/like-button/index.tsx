@@ -35,14 +35,16 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
   // Debug log to check if liked posts are being loaded
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log(`Post ${postId}: liked=${liked}, likedPosts=${JSON.stringify(postLikeState.likedPostIds)}`)
+      console.log(
+        `Post ${postId}: liked=${liked}, likedPosts=${JSON.stringify(postLikeState.likedPostIds)}`
+      )
     }
   }, [postId, liked, postLikeState.likedPostIds])
 
   const handleLikeClick = async (event: React.MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    
+
     if (!isAuthenticated) {
       console.warn('User must be authenticated to like posts')
       return
@@ -85,11 +87,11 @@ export const LikeButton: React.FC<LikeButtonProps> = ({
           <FavoriteBorder sx={{ fontSize: iconSize }} />
         )}
       </IconButton>
-      
+
       {showCount && (
         <Typography
           variant={size === 'small' ? 'caption' : 'body2'}
-          color="textSecondary"
+          color='textSecondary'
           sx={{
             fontWeight: liked ? 600 : 400,
             transition: 'font-weight 0.2s ease-in-out',

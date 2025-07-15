@@ -47,7 +47,10 @@ export const useUserMute = () => {
       }
       addMuteUser(tempToken)
 
-      const result = await userMuteRepository.muteUser(currentUserId, passiveUserId)
+      const result = await userMuteRepository.muteUser(
+        currentUserId,
+        passiveUserId
+      )
 
       if (result.success && result.tokenId) {
         // 成功時に正しいトークンIDで更新
@@ -83,7 +86,9 @@ export const useUserMute = () => {
     }
 
     // ミュートトークンを検索
-    const muteToken = muteState.muteUserTokens.find(token => token.passiveUid === passiveUserId)
+    const muteToken = muteState.muteUserTokens.find(
+      token => token.passiveUid === passiveUserId
+    )
     if (!muteToken) {
       console.warn('Mute token not found for user:', passiveUserId)
       return false
@@ -121,7 +126,9 @@ export const useUserMute = () => {
 
   // ミュート状態をトグルする
   const toggleMute = async (passiveUserId: string): Promise<boolean> => {
-    const isMuted = muteState.muteUserTokens.some(token => token.passiveUid === passiveUserId)
+    const isMuted = muteState.muteUserTokens.some(
+      token => token.passiveUid === passiveUserId
+    )
     return isMuted ? unmuteUser(passiveUserId) : muteUser(passiveUserId)
   }
 

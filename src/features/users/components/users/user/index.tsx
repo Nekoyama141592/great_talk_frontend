@@ -30,19 +30,19 @@ export const UserComponent = () => {
   const [authState] = useAtom(authAtom)
   const { initializeMuteTokens } = useUserMute()
   const isMuted = useIsUserMuted(uid || '')
-  
+
   // Initialize following users data
   useFollowingUsers()
-  
+
   // Initialize user mute tokens on component mount
   useEffect(() => {
     if (authState?.uid) {
       initializeMuteTokens()
     }
   }, [authState?.uid, initializeMuteTokens])
-  
+
   const isOwnProfile = authState?.uid === uid
-  
+
   const queryFn = async () => {
     if (!uid) return
     const docRef = doc(db, 'public/v1/users', uid)
@@ -51,7 +51,6 @@ export const UserComponent = () => {
     if (!data) return
     const res: PublicUser = {
       bio: data.bio,
-      blockCount: data.blockCount,
       ethAddress: data.ethAddress,
       followerCount: data.followerCount,
       followingCount: data.followingCount,
@@ -60,111 +59,113 @@ export const UserComponent = () => {
       isSuspended: data.isSuspended,
       muteCount: data.muteCount,
       postCount: data.postCount,
-      reportCount: data.reportCount,
       uid: data.uid,
       image: data.image,
       userName: data.userName,
     }
     return res
   }
-  
+
   const { data, isPending, error } = useQuery({
     queryKey: ['user', uid],
     queryFn: queryFn,
     enabled: !!uid,
   })
-  
-  if (isPending) return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography>読み込み中...</Typography>
-    </Container>
-  )
-  
-  if (!data) return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography>ユーザーが存在しません</Typography>
-    </Container>
-  )
-  
-  if (error) return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography color="error">{error.message}</Typography>
-    </Container>
-  )
-  
+
+  if (isPending)
+    return (
+      <Container maxWidth='md' sx={{ py: 4 }}>
+        <Typography>読み込み中...</Typography>
+      </Container>
+    )
+
+  if (!data)
+    return (
+      <Container maxWidth='md' sx={{ py: 4 }}>
+        <Typography>ユーザーが存在しません</Typography>
+      </Container>
+    )
+
+  if (error)
+    return (
+      <Container maxWidth='md' sx={{ py: 4 }}>
+        <Typography color='error'>{error.message}</Typography>
+      </Container>
+    )
+
   const userData: PublicUser = data
-  
+
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth='md' sx={{ py: 4 }}>
       <Card elevation={3}>
         <CardContent sx={{ p: 4 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 3 }}>
             <Avatar
-              sx={{ 
-                width: 80, 
-                height: 80, 
+              sx={{
+                width: 80,
+                height: 80,
                 mr: 3,
-                bgcolor: 'primary.main'
+                bgcolor: 'primary.main',
               }}
             >
               <Person sx={{ fontSize: 40 }} />
             </Avatar>
-            
+
             <Box sx={{ flex: 1 }}>
               <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-                <Typography variant="h4" component="h1" sx={{ mr: 1 }}>
+                <Typography variant='h4' component='h1' sx={{ mr: 1 }}>
                   {userData?.userName.value ?? ''}
                 </Typography>
                 {userData?.isOfficial && (
                   <Chip
                     icon={<Verified />}
-                    label="公式"
-                    color="primary"
-                    variant="outlined"
-                    size="small"
+                    label='公式'
+                    color='primary'
+                    variant='outlined'
+                    size='small'
                   />
                 )}
               </Box>
-              
-              <Typography variant="body1" color="textSecondary" sx={{ mb: 2 }}>
+
+              <Typography variant='body1' color='textSecondary' sx={{ mb: 2 }}>
                 {userData?.bio.value ?? '自己紹介がありません'}
               </Typography>
-              
+
               <Grid container spacing={2} sx={{ mb: 2 }}>
                 <Grid item>
-                  <Typography variant="body2">
+                  <Typography variant='body2'>
                     <strong>{userData?.followerCount ?? 0}</strong> フォロワー
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Typography variant="body2">
+                  <Typography variant='body2'>
                     <strong>{userData?.followingCount ?? 0}</strong> フォロー中
                   </Typography>
                 </Grid>
                 <Grid item>
-                  <Typography variant="body2">
+                  <Typography variant='body2'>
                     <strong>{userData?.postCount ?? 0}</strong> 投稿
                   </Typography>
                 </Grid>
               </Grid>
-              
+
               <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
                 {!isOwnProfile && (
-                  <FollowButton 
-                    targetUserId={uid!} 
-                    variant="contained"
-                    size="medium"
+                  <FollowButton
+                    targetUserId={uid!}
+                    variant='contained'
+                    size='medium'
                   />
                 )}
                 <Button
                   component={Link}
-                  to="posts"
-                  variant="outlined"
+                  to='posts'
+                  variant='outlined'
                   startIcon={<Article />}
                 >
                   投稿一覧
                 </Button>
-                
+
                 {/* ユーザーメニュー */}
                 <UserMenu
                   userId={uid!}
@@ -174,37 +175,33 @@ export const UserComponent = () => {
                     navigator.share?.({
                       title: `${userData?.userName.value}さんのプロフィール`,
                       text: userData?.bio.value || '',
-                      url: window.location.href
+                      url: window.location.href,
                     })
-                  }}
-                  onReport={() => {
-                    console.log('Report user:', uid)
-                    // TODO: 報告機能の実装
                   }}
                 />
               </Box>
             </Box>
           </Box>
-          
+
           {/* ミュート状態の表示 */}
           {isMuted && !isOwnProfile && (
             <>
               <Divider sx={{ my: 2 }} />
-              <Chip 
-                label="このユーザーをミュートしています" 
-                color="warning" 
-                variant="outlined" 
+              <Chip
+                label='このユーザーをミュートしています'
+                color='warning'
+                variant='outlined'
               />
             </>
           )}
-          
+
           {userData?.isSuspended && (
             <>
               <Divider sx={{ my: 2 }} />
-              <Chip 
-                label="このアカウントは停止されています" 
-                color="error" 
-                variant="outlined" 
+              <Chip
+                label='このアカウントは停止されています'
+                color='error'
+                variant='outlined'
               />
             </>
           )}

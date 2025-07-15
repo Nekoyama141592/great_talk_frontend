@@ -23,8 +23,12 @@ export const usePosts = (sortType: PostSortType = 'popularity') => {
     const orderField = sortType === 'popularity' ? 'msgCount' : 'createdAt'
     const orderDirection = 'desc' // Both popularity and newest should be descending
 
-    let q = query(colRef, orderBy(orderField, orderDirection), limit(POSTS_PER_PAGE))
-    
+    let q = query(
+      colRef,
+      orderBy(orderField, orderDirection),
+      limit(POSTS_PER_PAGE)
+    )
+
     // Add pagination cursor if provided
     if (pageParam) {
       q = query(q, startAfter(pageParam))
@@ -58,7 +62,7 @@ export const usePosts = (sortType: PostSortType = 'popularity') => {
     queryKey: ['posts', sortType],
     queryFn,
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: lastPage => {
       return lastPage.hasMore ? lastPage.lastDoc : undefined
     },
   })

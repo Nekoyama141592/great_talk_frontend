@@ -7,18 +7,20 @@ import {
   ListItemText,
   Divider,
   Tooltip,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material'
 import {
   MoreVert,
   PersonOff,
   PersonAddAlt1,
-  Report,
   Share,
-  Block,
-  CheckCircle
+  CheckCircle,
 } from '@mui/icons-material'
-import { useUserMute, useIsUserMuted, useIsUserMuteLoading } from '../../hooks/use-user-mute'
+import {
+  useUserMute,
+  useIsUserMuted,
+  useIsUserMuteLoading,
+} from '../../hooks/use-user-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
 
@@ -26,7 +28,6 @@ export interface UserMenuProps {
   userId: string
   userName?: string
   onShare?: () => void
-  onReport?: () => void
   onFollow?: () => void
   onUnfollow?: () => void
   isFollowing?: boolean
@@ -37,7 +38,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({
   userId,
   userName = 'ユーザー',
   onShare,
-  onReport,
   onFollow,
   onUnfollow,
   isFollowing = false,
@@ -73,11 +73,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({
     onShare?.()
   }
 
-  const handleReport = () => {
-    handleMenuClose()
-    onReport?.()
-  }
-
   const handleFollow = () => {
     handleMenuClose()
     onFollow?.()
@@ -90,10 +85,10 @@ export const UserMenu: React.FC<UserMenuProps> = ({
 
   return (
     <>
-      <Tooltip title="メニュー">
+      <Tooltip title='メニュー'>
         <IconButton
           onClick={handleMenuOpen}
-          size="small"
+          size='small'
           sx={{
             color: 'text.secondary',
             '&:hover': {
@@ -126,60 +121,48 @@ export const UserMenu: React.FC<UserMenuProps> = ({
         {/* 共有 */}
         <MenuItem onClick={handleShare}>
           <ListItemIcon>
-            <Share fontSize="small" />
+            <Share fontSize='small' />
           </ListItemIcon>
           <ListItemText>プロフィールを共有</ListItemText>
         </MenuItem>
 
         {/* フォロー・アンフォロー */}
-        {isAuthenticated && !isOwnProfile && [
-          <MenuItem key="follow" onClick={isFollowing ? handleUnfollow : handleFollow}>
-            <ListItemIcon>
-              {isFollowing ? (
-                <CheckCircle fontSize="small" />
-              ) : (
-                <PersonAddAlt1 fontSize="small" />
-              )}
-            </ListItemIcon>
-            <ListItemText>
-              {isFollowing ? 'フォローを解除' : 'フォローする'}
-            </ListItemText>
-          </MenuItem>,
+        {isAuthenticated &&
+          !isOwnProfile && [
+            <MenuItem
+              key='follow'
+              onClick={isFollowing ? handleUnfollow : handleFollow}
+            >
+              <ListItemIcon>
+                {isFollowing ? (
+                  <CheckCircle fontSize='small' />
+                ) : (
+                  <PersonAddAlt1 fontSize='small' />
+                )}
+              </ListItemIcon>
+              <ListItemText>
+                {isFollowing ? 'フォローを解除' : 'フォローする'}
+              </ListItemText>
+            </MenuItem>,
 
-          <Divider key="divider" />,
-          
-          /* ユーザーミュート */
-          <MenuItem key="mute" onClick={handleMute} disabled={isLoading}>
-            <ListItemIcon>
-              {isLoading ? (
-                <CircularProgress size={20} />
-              ) : isMuted ? (
-                <PersonAddAlt1 fontSize="small" />
-              ) : (
-                <PersonOff fontSize="small" />
-              )}
-            </ListItemIcon>
-            <ListItemText>
-              {isMuted ? 'ミュートを解除' : 'ユーザーをミュート'}
-            </ListItemText>
-          </MenuItem>,
+            <Divider key='divider' />,
 
-          /* ブロック */
-          <MenuItem key="block" onClick={() => console.log('Block user:', userId)}>
-            <ListItemIcon>
-              <Block fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>ユーザーをブロック</ListItemText>
-          </MenuItem>,
-
-          /* 報告 */
-          <MenuItem key="report" onClick={handleReport}>
-            <ListItemIcon>
-              <Report fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>ユーザーを報告</ListItemText>
-          </MenuItem>
-        ]}
+            /* ユーザーミュート */
+            <MenuItem key='mute' onClick={handleMute} disabled={isLoading}>
+              <ListItemIcon>
+                {isLoading ? (
+                  <CircularProgress size={20} />
+                ) : isMuted ? (
+                  <PersonAddAlt1 fontSize='small' />
+                ) : (
+                  <PersonOff fontSize='small' />
+                )}
+              </ListItemIcon>
+              <ListItemText>
+                {isMuted ? 'ミュートを解除' : 'ユーザーをミュート'}
+              </ListItemText>
+            </MenuItem>,
+          ]}
       </Menu>
     </>
   )

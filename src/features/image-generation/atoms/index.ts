@@ -16,13 +16,10 @@ export const imageGenerationAtom = atom<ImageGenerationState>({
   error: null,
 })
 
-export const updatePromptAtom = atom(
-  null,
-  (get, set, prompt: string) => {
-    const current = get(imageGenerationAtom)
-    set(imageGenerationAtom, { ...current, prompt })
-  }
-)
+export const updatePromptAtom = atom(null, (get, set, prompt: string) => {
+  const current = get(imageGenerationAtom)
+  set(imageGenerationAtom, { ...current, prompt })
+})
 
 export const updateSizeAtom = atom(
   null,
@@ -32,13 +29,10 @@ export const updateSizeAtom = atom(
   }
 )
 
-export const setLoadingAtom = atom(
-  null,
-  (get, set, isLoading: boolean) => {
-    const current = get(imageGenerationAtom)
-    set(imageGenerationAtom, { ...current, isLoading })
-  }
-)
+export const setLoadingAtom = atom(null, (get, set, isLoading: boolean) => {
+  const current = get(imageGenerationAtom)
+  set(imageGenerationAtom, { ...current, isLoading })
+})
 
 export const setGeneratedImageAtom = atom(
   null,
@@ -48,23 +42,17 @@ export const setGeneratedImageAtom = atom(
   }
 )
 
-export const setErrorAtom = atom(
-  null,
-  (get, set, error: string | null) => {
-    const current = get(imageGenerationAtom)
-    set(imageGenerationAtom, { ...current, error })
-  }
-)
+export const setErrorAtom = atom(null, (get, set, error: string | null) => {
+  const current = get(imageGenerationAtom)
+  set(imageGenerationAtom, { ...current, error })
+})
 
-export const resetImageGenerationAtom = atom(
-  null,
-  (_get, set) => {
-    set(imageGenerationAtom, {
-      prompt: '',
-      size: '1024x1024',
-      generatedImage: null,
-      isLoading: false,
-      error: null,
-    })
-  }
-)
+export const resetImageGenerationAtom = atom(null, (_get, set) => {
+  set(imageGenerationAtom, {
+    prompt: '',
+    size: '1024x1024',
+    generatedImage: null,
+    isLoading: false,
+    error: null,
+  })
+})

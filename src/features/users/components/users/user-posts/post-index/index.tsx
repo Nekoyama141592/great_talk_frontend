@@ -49,12 +49,12 @@ export const PostIndexComponent = () => {
             <p>{post.description.value}</p>
             <div className='flex items-center justify-between mt-4'>
               <p>{post.msgCount}コメント</p>
-              <div onClick={(e) => e.preventDefault()}>
+              <div onClick={e => e.preventDefault()}>
                 <LikeButton
                   postId={post.postId}
                   targetUserId={post.uid}
                   likeCount={post.likeCount}
-                  size="medium"
+                  size='medium'
                   showCount={true}
                 />
               </div>

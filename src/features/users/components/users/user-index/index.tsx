@@ -19,7 +19,7 @@ import { useFollowingUsers } from '../../../hooks/use-following-users'
 export const UserIndexComponent = () => {
   // Initialize following users data
   useFollowingUsers()
-  
+
   const queryFn = async () => {
     const colRef = collection(db, `public/v1/users`)
     const q = query(colRef, orderBy('followerCount', 'desc'), limit(30))
@@ -47,44 +47,47 @@ export const UserIndexComponent = () => {
     })
     return usersData
   }
-  
+
   const { data, isPending, error } = useQuery({
     queryKey: ['users'],
     queryFn: queryFn,
   })
-  
-  if (error) return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography color="error">{error.message}</Typography>
-    </Container>
-  )
-  
-  if (isPending) return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography>読み込み中...</Typography>
-    </Container>
-  )
-  
-  if (!data) return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography>データがありません</Typography>
-    </Container>
-  )
-  
+
+  if (error)
+    return (
+      <Container maxWidth='lg' sx={{ py: 4 }}>
+        <Typography color='error'>{error.message}</Typography>
+      </Container>
+    )
+
+  if (isPending)
+    return (
+      <Container maxWidth='lg' sx={{ py: 4 }}>
+        <Typography>読み込み中...</Typography>
+      </Container>
+    )
+
+  if (!data)
+    return (
+      <Container maxWidth='lg' sx={{ py: 4 }}>
+        <Typography>データがありません</Typography>
+      </Container>
+    )
+
   const users: PublicUser[] = data
-  
+
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Typography variant="h4" component="h1" gutterBottom>
+    <Container maxWidth='lg' sx={{ py: 4 }}>
+      <Typography variant='h4' component='h1' gutterBottom>
         人気ユーザー
       </Typography>
-      
+
       <Grid container spacing={3}>
         {users.map(user => (
           <Grid item xs={12} sm={6} md={4} key={user.uid}>
-            <Card 
+            <Card
               elevation={2}
-              sx={{ 
+              sx={{
                 height: '100%',
                 transition: 'all 0.2s ease-in-out',
                 '&:hover': {
@@ -96,23 +99,25 @@ export const UserIndexComponent = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                   <Avatar
-                    sx={{ 
-                      width: 48, 
-                      height: 48, 
+                    sx={{
+                      width: 48,
+                      height: 48,
                       mr: 2,
-                      bgcolor: 'primary.main'
+                      bgcolor: 'primary.main',
                     }}
                   >
                     <Person />
                   </Avatar>
-                  
+
                   <Box sx={{ flex: 1, minWidth: 0 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}>
-                      <Typography 
-                        variant="h6" 
+                    <Box
+                      sx={{ display: 'flex', alignItems: 'center', mb: 0.5 }}
+                    >
+                      <Typography
+                        variant='h6'
                         component={Link}
                         to={`/users/${user.uid}`}
-                        sx={{ 
+                        sx={{
                           textDecoration: 'none',
                           color: 'inherit',
                           '&:hover': { color: 'primary.main' },
@@ -127,18 +132,18 @@ export const UserIndexComponent = () => {
                       {user.isOfficial && (
                         <Chip
                           icon={<Verified />}
-                          label="公式"
-                          color="primary"
-                          variant="outlined"
-                          size="small"
+                          label='公式'
+                          color='primary'
+                          variant='outlined'
+                          size='small'
                           sx={{ ml: 1 }}
                         />
                       )}
                     </Box>
-                    
-                    <Typography 
-                      variant="body2" 
-                      color="textSecondary"
+
+                    <Typography
+                      variant='body2'
+                      color='textSecondary'
                       sx={{
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',
@@ -151,24 +156,21 @@ export const UserIndexComponent = () => {
                     >
                       {user.bio.value || '自己紹介がありません'}
                     </Typography>
-                    
-                    <Typography variant="body2" color="textSecondary">
+
+                    <Typography variant='body2' color='textSecondary'>
                       <strong>{user.followerCount}</strong> フォロワー
                     </Typography>
                   </Box>
-                  
-                  <FollowButtonCompact 
-                    targetUserId={user.uid}
-                    size="small"
-                  />
+
+                  <FollowButtonCompact targetUserId={user.uid} size='small' />
                 </Box>
-                
+
                 {user.isSuspended && (
-                  <Chip 
-                    label="停止中" 
-                    color="error" 
-                    variant="outlined" 
-                    size="small"
+                  <Chip
+                    label='停止中'
+                    color='error'
+                    variant='outlined'
+                    size='small'
                   />
                 )}
               </CardContent>

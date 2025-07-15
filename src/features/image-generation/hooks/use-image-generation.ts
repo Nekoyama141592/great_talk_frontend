@@ -32,7 +32,7 @@ export const useImageGeneration = () => {
 
     try {
       const result = await apiRepository.generateImage(state.prompt, state.size)
-      
+
       if (result.success && result.data) {
         setGeneratedImage(result.data.base64)
       } else {

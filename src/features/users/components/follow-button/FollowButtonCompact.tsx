@@ -26,7 +26,7 @@ export const FollowButtonCompact: React.FC<FollowButtonCompactProps> = ({
   const handleClick = async (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()
-    
+
     try {
       await toggleFollow(targetUserId)
     } catch (err) {

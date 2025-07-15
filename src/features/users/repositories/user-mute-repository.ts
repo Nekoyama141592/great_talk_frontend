@@ -9,11 +9,19 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
-import { UserMute, MuteUserToken, MuteUserTokenEntity, UserMuteResult } from '@shared/schema/user-mute'
+import {
+  UserMute,
+  MuteUserToken,
+  MuteUserTokenEntity,
+  UserMuteResult,
+} from '@shared/schema/user-mute'
 
 // ユニークなトークンIDを生成
 const generateTokenId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  )
 }
 
 export class UserMuteRepository {
@@ -43,11 +51,27 @@ export class UserMuteRepository {
       }
 
       // トークンを保存（プライベートコレクション）
-      const tokenRef = doc(db, 'private', 'v1', 'privateUsers', currentUserId, 'tokens', tokenId)
+      const tokenRef = doc(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        currentUserId,
+        'tokens',
+        tokenId
+      )
       batch.set(tokenRef, muteUserToken)
 
       // UserMuteを保存（パブリックコレクション）
-      const userMuteRef = doc(db, 'public', 'v1', 'users', passiveUserId, 'userMutes', currentUserId)
+      const userMuteRef = doc(
+        db,
+        'public',
+        'v1',
+        'users',
+        passiveUserId,
+        'userMutes',
+        currentUserId
+      )
       batch.set(userMuteRef, userMute)
 
       await batch.commit()
@@ -55,9 +79,12 @@ export class UserMuteRepository {
       return { success: true, tokenId }
     } catch (error) {
       console.error('Error muting user:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'ユーザーのミュートに失敗しました' 
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'ユーザーのミュートに失敗しました',
       }
     }
   }
@@ -72,11 +99,27 @@ export class UserMuteRepository {
       const batch = writeBatch(db)
 
       // トークンを削除
-      const tokenRef = doc(db, 'private', 'v1', 'privateUsers', currentUserId, 'tokens', tokenId)
+      const tokenRef = doc(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        currentUserId,
+        'tokens',
+        tokenId
+      )
       batch.delete(tokenRef)
 
       // UserMuteを削除
-      const userMuteRef = doc(db, 'public', 'v1', 'users', passiveUserId, 'userMutes', currentUserId)
+      const userMuteRef = doc(
+        db,
+        'public',
+        'v1',
+        'users',
+        passiveUserId,
+        'userMutes',
+        currentUserId
+      )
       batch.delete(userMuteRef)
 
       await batch.commit()
@@ -84,9 +127,12 @@ export class UserMuteRepository {
       return { success: true }
     } catch (error) {
       console.error('Error unmuting user:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'ユーザーのミュート解除に失敗しました' 
+      return {
+        success: false,
+        error:
+          error instanceof Error
+            ? error.message
+            : 'ユーザーのミュート解除に失敗しました',
       }
     }
   }
@@ -94,16 +140,23 @@ export class UserMuteRepository {
   // ユーザーのミュートユーザートークンを取得（リトライなし）
   async getMuteUserTokens(userId: string): Promise<MuteUserTokenEntity[]> {
     try {
-      const tokensRef = collection(db, 'private', 'v1', 'privateUsers', userId, 'tokens')
+      const tokensRef = collection(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        userId,
+        'tokens'
+      )
       const q = query(
         tokensRef,
         where('tokenType', '==', 'muteUser'),
         orderBy('createdAt', 'desc')
       )
-      
+
       // 一度だけ実行、リトライしない
       const querySnapshot = await getDocs(q)
-      
+
       return querySnapshot.docs.map(doc => {
         const data = doc.data() as MuteUserToken
         return {
@@ -133,10 +186,10 @@ export class UserMuteRepository {
       const allUsers: any[] = []
 
       // for (const chunk of chunks) {
-        // ユーザーをcollectionGroupで検索
-        // const usersRef = collection(db, 'public', 'v1', 'users')
-        // Note: 実際の実装では、ユーザーIDからユーザーを取得する適切なクエリが必要
-        // ここでは簡略化していますが、実際にはより効率的な方法を検討してください
+      // ユーザーをcollectionGroupで検索
+      // const usersRef = collection(db, 'public', 'v1', 'users')
+      // Note: 実際の実装では、ユーザーIDからユーザーを取得する適切なクエリが必要
+      // ここでは簡略化していますが、実際にはより効率的な方法を検討してください
       // }
 
       return allUsers

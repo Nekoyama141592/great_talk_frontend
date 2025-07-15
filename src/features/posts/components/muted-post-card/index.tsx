@@ -8,11 +8,7 @@ import {
   Avatar,
   Fade,
 } from '@mui/material'
-import {
-  VolumeOff,
-  Visibility,
-  VisibilityOff,
-} from '@mui/icons-material'
+import { VolumeOff, Visibility, VisibilityOff } from '@mui/icons-material'
 import { usePostMute } from '../../hooks/use-post-mute'
 import { PublicPost } from '@shared/schema/public-post'
 
@@ -70,8 +66,12 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
             borderColor: 'warning.200',
           }}
         >
-          <VolumeOff color="warning" fontSize="small" />
-          <Typography variant="body2" color="warning.dark" sx={{ fontWeight: 500 }}>
+          <VolumeOff color='warning' fontSize='small' />
+          <Typography
+            variant='body2'
+            color='warning.dark'
+            sx={{ fontWeight: 500 }}
+          >
             ミュートされた投稿
           </Typography>
         </Box>
@@ -86,12 +86,12 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
               bgcolor: 'grey.400',
             }}
           >
-            <VolumeOff fontSize="small" />
+            <VolumeOff fontSize='small' />
           </Avatar>
           <Box sx={{ flex: 1 }}>
             <Typography
-              variant="body2"
-              color="text.secondary"
+              variant='body2'
+              color='text.secondary'
               sx={{
                 fontWeight: 500,
                 fontSize: '0.9rem',
@@ -99,10 +99,7 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
             >
               ミュートされた投稿
             </Typography>
-            <Typography
-              variant="caption"
-              color="text.disabled"
-            >
+            <Typography variant='caption' color='text.disabled'>
               投稿者: {post.uid}
             </Typography>
           </Box>
@@ -113,7 +110,7 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
           <Fade in={isContentVisible} timeout={300}>
             <Box sx={{ mb: 2, p: 2, bgcolor: 'grey.100', borderRadius: 1 }}>
               <Typography
-                variant="h6"
+                variant='h6'
                 sx={{
                   fontWeight: 500,
                   fontSize: '1rem',
@@ -124,8 +121,8 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
                 {post.title.value}
               </Typography>
               <Typography
-                variant="body2"
-                color="text.secondary"
+                variant='body2'
+                color='text.secondary'
                 sx={{
                   lineHeight: 1.5,
                   display: '-webkit-box',
@@ -152,8 +149,8 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
           <Button
             onClick={handleToggleContent}
             startIcon={isContentVisible ? <VisibilityOff /> : <Visibility />}
-            size="small"
-            color="inherit"
+            size='small'
+            color='inherit'
             sx={{
               textTransform: 'none',
               color: 'text.secondary',
@@ -164,9 +161,9 @@ export const MutedPostCard: React.FC<MutedPostCardProps> = ({
 
           <Button
             onClick={handleUnmute}
-            variant="outlined"
-            size="small"
-            color="warning"
+            variant='outlined'
+            size='small'
+            color='warning'
             sx={{
               textTransform: 'none',
               fontWeight: 500,

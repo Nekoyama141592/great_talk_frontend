@@ -7,18 +7,14 @@ import {
   ListItemText,
   Divider,
   Tooltip,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material'
+import { MoreVert, VolumeOff, VolumeUp, Share } from '@mui/icons-material'
 import {
-  MoreVert,
-  VolumeOff,
-  VolumeUp,
-  Report,
-  Share,
-  Bookmark,
-  BookmarkBorder
-} from '@mui/icons-material'
-import { usePostMute, useIsPostMuted, useIsPostMuteLoading } from '../../hooks/use-post-mute'
+  usePostMute,
+  useIsPostMuted,
+  useIsPostMuteLoading,
+} from '../../hooks/use-post-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
 
@@ -27,9 +23,6 @@ export interface PostMenuProps {
   postUid: string
   postTitle?: string
   onShare?: () => void
-  onReport?: () => void
-  onBookmark?: () => void
-  isBookmarked?: boolean
 }
 
 export const PostMenu: React.FC<PostMenuProps> = ({
@@ -37,9 +30,6 @@ export const PostMenu: React.FC<PostMenuProps> = ({
   postUid,
   postTitle = '投稿',
   onShare,
-  onReport,
-  onBookmark,
-  isBookmarked = false,
 }) => {
   const [authState] = useAtom(authAtom)
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -72,22 +62,12 @@ export const PostMenu: React.FC<PostMenuProps> = ({
     onShare?.()
   }
 
-  const handleReport = () => {
-    handleMenuClose()
-    onReport?.()
-  }
-
-  const handleBookmark = () => {
-    handleMenuClose()
-    onBookmark?.()
-  }
-
   return (
     <>
-      <Tooltip title="メニュー">
+      <Tooltip title='メニュー'>
         <IconButton
           onClick={handleMenuOpen}
-          size="small"
+          size='small'
           sx={{
             color: 'text.secondary',
             '&:hover': {
@@ -120,55 +100,32 @@ export const PostMenu: React.FC<PostMenuProps> = ({
         {/* 共有 */}
         <MenuItem onClick={handleShare}>
           <ListItemIcon>
-            <Share fontSize="small" />
+            <Share fontSize='small' />
           </ListItemIcon>
           <ListItemText>投稿を共有</ListItemText>
         </MenuItem>
 
-        {/* ブックマーク */}
-        {isAuthenticated && (
-          <MenuItem onClick={handleBookmark}>
-            <ListItemIcon>
-              {isBookmarked ? (
-                <Bookmark fontSize="small" />
-              ) : (
-                <BookmarkBorder fontSize="small" />
-              )}
-            </ListItemIcon>
-            <ListItemText>
-              {isBookmarked ? 'ブックマークを解除' : 'ブックマークに追加'}
-            </ListItemText>
-          </MenuItem>
-        )}
-
         {/* 他のユーザーの投稿の場合のみ表示 */}
-        {!isOwnPost && isAuthenticated && [
-          <Divider key="divider" />,
-          
-          /* ミュート */
-          <MenuItem key="mute" onClick={handleMute} disabled={isLoading}>
-            <ListItemIcon>
-              {isLoading ? (
-                <CircularProgress size={20} />
-              ) : isMuted ? (
-                <VolumeUp fontSize="small" />
-              ) : (
-                <VolumeOff fontSize="small" />
-              )}
-            </ListItemIcon>
-            <ListItemText>
-              {isMuted ? 'ミュートを解除' : '投稿をミュート'}
-            </ListItemText>
-          </MenuItem>,
+        {!isOwnPost &&
+          isAuthenticated && [
+            <Divider key='divider' />,
 
-          /* 報告 */
-          <MenuItem key="report" onClick={handleReport}>
-            <ListItemIcon>
-              <Report fontSize="small" />
-            </ListItemIcon>
-            <ListItemText>投稿を報告</ListItemText>
-          </MenuItem>
-        ]}
+            /* ミュート */
+            <MenuItem key='mute' onClick={handleMute} disabled={isLoading}>
+              <ListItemIcon>
+                {isLoading ? (
+                  <CircularProgress size={20} />
+                ) : isMuted ? (
+                  <VolumeUp fontSize='small' />
+                ) : (
+                  <VolumeOff fontSize='small' />
+                )}
+              </ListItemIcon>
+              <ListItemText>
+                {isMuted ? 'ミュートを解除' : '投稿をミュート'}
+              </ListItemText>
+            </MenuItem>,
+          ]}
       </Menu>
     </>
   )

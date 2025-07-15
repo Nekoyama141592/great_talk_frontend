@@ -13,18 +13,15 @@ export const followStateAtom = atom<FollowState>({
 })
 
 // Action atoms
-export const addFollowingUserAtom = atom(
-  null,
-  (get, set, userId: string) => {
-    const current = get(followStateAtom)
-    const newFollowingUsers = new Set(current.followingUsers)
-    newFollowingUsers.add(userId)
-    set(followStateAtom, { 
-      ...current, 
-      followingUsers: newFollowingUsers 
-    })
-  }
-)
+export const addFollowingUserAtom = atom(null, (get, set, userId: string) => {
+  const current = get(followStateAtom)
+  const newFollowingUsers = new Set(current.followingUsers)
+  newFollowingUsers.add(userId)
+  set(followStateAtom, {
+    ...current,
+    followingUsers: newFollowingUsers,
+  })
+})
 
 export const removeFollowingUserAtom = atom(
   null,
@@ -32,9 +29,9 @@ export const removeFollowingUserAtom = atom(
     const current = get(followStateAtom)
     const newFollowingUsers = new Set(current.followingUsers)
     newFollowingUsers.delete(userId)
-    set(followStateAtom, { 
-      ...current, 
-      followingUsers: newFollowingUsers 
+    set(followStateAtom, {
+      ...current,
+      followingUsers: newFollowingUsers,
     })
   }
 )
@@ -55,13 +52,13 @@ export const setLoadingFollowActionAtom = atom(
   (get, set, userId: string, isLoading: boolean) => {
     const current = get(followStateAtom)
     const newLoadingActions = new Set(current.loadingFollowActions)
-    
+
     if (isLoading) {
       newLoadingActions.add(userId)
     } else {
       newLoadingActions.delete(userId)
     }
-    
+
     set(followStateAtom, {
       ...current,
       loadingFollowActions: newLoadingActions,
@@ -71,11 +68,20 @@ export const setLoadingFollowActionAtom = atom(
 
 export const updateFollowCountAtom = atom(
   null,
-  (get, set, userId: string, type: 'follow' | 'unfollow', countType: 'followers' | 'following') => {
+  (
+    get,
+    set,
+    userId: string,
+    type: 'follow' | 'unfollow',
+    countType: 'followers' | 'following'
+  ) => {
     const current = get(followStateAtom)
-    const currentCounts = current.followCounts[userId] || { followers: 0, following: 0 }
+    const currentCounts = current.followCounts[userId] || {
+      followers: 0,
+      following: 0,
+    }
     const increment = type === 'follow' ? 1 : -1
-    
+
     set(followStateAtom, {
       ...current,
       followCounts: {
@@ -104,23 +110,17 @@ export const setFollowCountsAtom = atom(
 )
 
 // Selector atoms
-export const isFollowingAtom = atom(
-  (get) => (userId: string) => {
-    const { followingUsers } = get(followStateAtom)
-    return followingUsers.has(userId)
-  }
-)
+export const isFollowingAtom = atom(get => (userId: string) => {
+  const { followingUsers } = get(followStateAtom)
+  return followingUsers.has(userId)
+})
 
-export const isLoadingFollowActionAtom = atom(
-  (get) => (userId: string) => {
-    const { loadingFollowActions } = get(followStateAtom)
-    return loadingFollowActions.has(userId)
-  }
-)
+export const isLoadingFollowActionAtom = atom(get => (userId: string) => {
+  const { loadingFollowActions } = get(followStateAtom)
+  return loadingFollowActions.has(userId)
+})
 
-export const getFollowCountsAtom = atom(
-  (get) => (userId: string) => {
-    const { followCounts } = get(followStateAtom)
-    return followCounts[userId] || { followers: 0, following: 0 }
-  }
-)
+export const getFollowCountsAtom = atom(get => (userId: string) => {
+  const { followCounts } = get(followStateAtom)
+  return followCounts[userId] || { followers: 0, following: 0 }
+})

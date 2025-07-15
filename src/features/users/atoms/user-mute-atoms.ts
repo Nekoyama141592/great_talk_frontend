@@ -11,7 +11,7 @@ const initialUserMuteState: UserMuteState = {
 export const userMuteStateAtom = atom<UserMuteState>(initialUserMuteState)
 
 // ミュートユーザーIDリストを取得
-export const muteUserIdsAtom = atom((get) => {
+export const muteUserIdsAtom = atom(get => {
   const state = get(userMuteStateAtom)
   return state.muteUserTokens.map(token => token.passiveUid)
 })
@@ -23,10 +23,13 @@ const userMuteLoadingAtomCache = new Map<string, any>()
 // 特定のユーザーがミュートされているかチェック
 export const isUserMutedAtom = (userId: string) => {
   if (!userMutedAtomCache.has(userId)) {
-    userMutedAtomCache.set(userId, atom((get) => {
-      const muteUserIds = get(muteUserIdsAtom)
-      return muteUserIds.includes(userId)
-    }))
+    userMutedAtomCache.set(
+      userId,
+      atom(get => {
+        const muteUserIds = get(muteUserIdsAtom)
+        return muteUserIds.includes(userId)
+      })
+    )
   }
   return userMutedAtomCache.get(userId)
 }
@@ -34,10 +37,13 @@ export const isUserMutedAtom = (userId: string) => {
 // 特定のユーザーがミュート処理中かチェック
 export const isUserMuteLoadingAtom = (userId: string) => {
   if (!userMuteLoadingAtomCache.has(userId)) {
-    userMuteLoadingAtomCache.set(userId, atom((get) => {
-      const state = get(userMuteStateAtom)
-      return state.loadingUserIds.includes(userId)
-    }))
+    userMuteLoadingAtomCache.set(
+      userId,
+      atom(get => {
+        const state = get(userMuteStateAtom)
+        return state.loadingUserIds.includes(userId)
+      })
+    )
   }
   return userMuteLoadingAtomCache.get(userId)
 }
@@ -47,8 +53,10 @@ export const addMuteUserAtom = atom(
   null,
   (get, set, token: MuteUserTokenEntity) => {
     const current = get(userMuteStateAtom)
-    const exists = current.muteUserTokens.some(t => t.passiveUid === token.passiveUid)
-    
+    const exists = current.muteUserTokens.some(
+      t => t.passiveUid === token.passiveUid
+    )
+
     if (!exists) {
       set(userMuteStateAtom, {
         ...current,
@@ -59,16 +67,15 @@ export const addMuteUserAtom = atom(
 )
 
 // ユーザーミュート削除のwrite-only atom
-export const removeMuteUserAtom = atom(
-  null,
-  (get, set, passiveUid: string) => {
-    const current = get(userMuteStateAtom)
-    set(userMuteStateAtom, {
-      ...current,
-      muteUserTokens: current.muteUserTokens.filter(token => token.passiveUid !== passiveUid),
-    })
-  }
-)
+export const removeMuteUserAtom = atom(null, (get, set, passiveUid: string) => {
+  const current = get(userMuteStateAtom)
+  set(userMuteStateAtom, {
+    ...current,
+    muteUserTokens: current.muteUserTokens.filter(
+      token => token.passiveUid !== passiveUid
+    ),
+  })
+})
 
 // ローディング状態設定のwrite-only atom
 export const setUserMuteLoadingAtom = atom(
@@ -78,7 +85,7 @@ export const setUserMuteLoadingAtom = atom(
     const loadingUserIds = isLoading
       ? [...current.loadingUserIds, userId]
       : current.loadingUserIds.filter(id => id !== userId)
-    
+
     set(userMuteStateAtom, {
       ...current,
       loadingUserIds,

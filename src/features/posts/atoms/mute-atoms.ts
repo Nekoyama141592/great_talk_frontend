@@ -17,7 +17,7 @@ const initialPostMuteState: PostMuteState = {
 export const postMuteStateAtom = atom<PostMuteState>(initialPostMuteState)
 
 // ミュート投稿IDリストを取得
-export const mutePostIdsAtom = atom((get) => {
+export const mutePostIdsAtom = atom(get => {
   const state = get(postMuteStateAtom)
   return state.mutePostTokens.map(token => token.postId)
 })
@@ -29,10 +29,13 @@ const postMuteLoadingAtomCache = new Map<string, any>()
 // 特定の投稿がミュートされているかチェック
 export const isPostMutedAtom = (postId: string) => {
   if (!postMutedAtomCache.has(postId)) {
-    postMutedAtomCache.set(postId, atom((get) => {
-      const mutePostIds = get(mutePostIdsAtom)
-      return mutePostIds.includes(postId)
-    }))
+    postMutedAtomCache.set(
+      postId,
+      atom(get => {
+        const mutePostIds = get(mutePostIdsAtom)
+        return mutePostIds.includes(postId)
+      })
+    )
   }
   return postMutedAtomCache.get(postId)
 }
@@ -40,10 +43,13 @@ export const isPostMutedAtom = (postId: string) => {
 // 特定の投稿がミュート処理中かチェック
 export const isPostMuteLoadingAtom = (postId: string) => {
   if (!postMuteLoadingAtomCache.has(postId)) {
-    postMuteLoadingAtomCache.set(postId, atom((get) => {
-      const state = get(postMuteStateAtom)
-      return state.loadingPostIds.includes(postId)
-    }))
+    postMuteLoadingAtomCache.set(
+      postId,
+      atom(get => {
+        const state = get(postMuteStateAtom)
+        return state.loadingPostIds.includes(postId)
+      })
+    )
   }
   return postMuteLoadingAtomCache.get(postId)
 }
@@ -54,7 +60,7 @@ export const addMutePostAtom = atom(
   (get, set, token: MutePostTokenEntity) => {
     const current = get(postMuteStateAtom)
     const exists = current.mutePostTokens.some(t => t.postId === token.postId)
-    
+
     if (!exists) {
       set(postMuteStateAtom, {
         ...current,
@@ -65,16 +71,15 @@ export const addMutePostAtom = atom(
 )
 
 // ミュート削除のwrite-only atom
-export const removeMutePostAtom = atom(
-  null,
-  (get, set, postId: string) => {
-    const current = get(postMuteStateAtom)
-    set(postMuteStateAtom, {
-      ...current,
-      mutePostTokens: current.mutePostTokens.filter(token => token.postId !== postId),
-    })
-  }
-)
+export const removeMutePostAtom = atom(null, (get, set, postId: string) => {
+  const current = get(postMuteStateAtom)
+  set(postMuteStateAtom, {
+    ...current,
+    mutePostTokens: current.mutePostTokens.filter(
+      token => token.postId !== postId
+    ),
+  })
+})
 
 // ローディング状態設定のwrite-only atom
 export const setPostMuteLoadingAtom = atom(
@@ -84,7 +89,7 @@ export const setPostMuteLoadingAtom = atom(
     const loadingPostIds = isLoading
       ? [...current.loadingPostIds, postId]
       : current.loadingPostIds.filter(id => id !== postId)
-    
+
     set(postMuteStateAtom, {
       ...current,
       loadingPostIds,

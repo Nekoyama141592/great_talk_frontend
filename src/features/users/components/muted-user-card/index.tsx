@@ -9,13 +9,13 @@ import {
   Collapse,
   IconButton,
   Tooltip,
-  CircularProgress
+  CircularProgress,
 } from '@mui/material'
 import {
   PersonOff,
   ExpandMore,
   ExpandLess,
-  PersonAddAlt1
+  PersonAddAlt1,
 } from '@mui/icons-material'
 import { useUserMute, useIsUserMuteLoading } from '../../hooks/use-user-mute'
 
@@ -53,22 +53,22 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
         transition: 'all 0.2s ease-in-out',
         '&:hover': {
           boxShadow: 2,
-        }
+        },
       }}
     >
       <CardContent sx={{ p: 2 }}>
         {/* ミュート状態の表示 */}
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-          <PersonOff 
-            sx={{ 
-              color: 'warning.main', 
+          <PersonOff
+            sx={{
+              color: 'warning.main',
               mr: 1,
-              fontSize: 20
-            }} 
+              fontSize: 20,
+            }}
           />
-          <Typography 
-            variant="body2" 
-            color="warning.dark"
+          <Typography
+            variant='body2'
+            color='warning.dark'
             sx={{ fontWeight: 500 }}
           >
             このユーザーをミュートしています
@@ -77,7 +77,7 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
             <Tooltip title={isExpanded ? '詳細を隠す' : '詳細を表示'}>
               <IconButton
                 onClick={handleToggleExpand}
-                size="small"
+                size='small'
                 sx={{ color: 'warning.main' }}
               >
                 {isExpanded ? <ExpandLess /> : <ExpandMore />}
@@ -97,26 +97,26 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
                   height: 40,
                   mr: 2,
                   filter: 'grayscale(100%)',
-                  opacity: 0.7
+                  opacity: 0.7,
                 }}
               >
                 {displayName.charAt(0).toUpperCase()}
               </Avatar>
               <Box sx={{ flex: 1 }}>
                 <Typography
-                  variant="subtitle1"
+                  variant='subtitle1'
                   sx={{
                     fontWeight: 600,
                     color: 'text.primary',
-                    opacity: 0.8
+                    opacity: 0.8,
                   }}
                 >
                   {displayName}
                 </Typography>
                 {user.email && user.displayName && (
                   <Typography
-                    variant="caption"
-                    color="text.secondary"
+                    variant='caption'
+                    color='text.secondary'
                     sx={{ opacity: 0.7 }}
                   >
                     {user.email}
@@ -126,12 +126,12 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
             </Box>
 
             <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ 
+              variant='body2'
+              color='text.secondary'
+              sx={{
                 mb: 2,
                 fontStyle: 'italic',
-                opacity: 0.8
+                opacity: 0.8,
               }}
             >
               このユーザーの投稿やアクティビティは非表示になっています
@@ -145,15 +145,11 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
             onClick={handleUnmute}
             disabled={isLoading}
             startIcon={
-              isLoading ? (
-                <CircularProgress size={16} />
-              ) : (
-                <PersonAddAlt1 />
-              )
+              isLoading ? <CircularProgress size={16} /> : <PersonAddAlt1 />
             }
-            variant="outlined"
-            color="warning"
-            size="small"
+            variant='outlined'
+            color='warning'
+            size='small'
             sx={{
               borderRadius: 1,
               textTransform: 'none',
@@ -161,7 +157,7 @@ export const MutedUserCard: React.FC<MutedUserCardProps> = ({ user }) => {
               px: 2,
               '&:hover': {
                 bgcolor: 'warning.100',
-              }
+              },
             }}
           >
             {isLoading ? 'ミュート解除中...' : 'ミュートを解除'}

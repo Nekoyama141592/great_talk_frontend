@@ -14,7 +14,7 @@ import {
   Comment,
   Visibility,
   Psychology,
-  People
+  People,
 } from '@mui/icons-material'
 import { PublicPost } from '@shared/schema/public-post'
 import { useIsPostMuted } from '../../hooks/use-post-mute'
@@ -27,9 +27,6 @@ export interface PostCardProps {
   index?: number
   isFollowingView?: boolean
   onShare?: (post: PublicPost) => void
-  onReport?: (post: PublicPost) => void
-  onBookmark?: (post: PublicPost) => void
-  isBookmarked?: boolean
 }
 
 export const PostCard: React.FC<PostCardProps> = ({
@@ -37,9 +34,6 @@ export const PostCard: React.FC<PostCardProps> = ({
   index = 0,
   isFollowingView = false,
   onShare,
-  onReport,
-  onBookmark,
-  isBookmarked = false,
 }) => {
   const isMuted = useIsPostMuted(post.postId)
 
@@ -67,8 +61,8 @@ export const PostCard: React.FC<PostCardProps> = ({
           '&:hover': {
             transform: 'translateY(-2px)',
             boxShadow: 4,
-            borderColor: isFollowingView ? 'primary.dark' : 'transparent'
-          }
+            borderColor: isFollowingView ? 'primary.dark' : 'transparent',
+          },
         }}
       >
         <CardContent sx={{ p: 3 }}>
@@ -83,69 +77,66 @@ export const PostCard: React.FC<PostCardProps> = ({
                   width: 40,
                   height: 40,
                   mr: 2,
-                  bgcolor: '#10b981'
+                  bgcolor: '#10b981',
                 }}
               >
                 <Psychology />
               </Avatar>
               <Box sx={{ flex: 1 }}>
                 <Typography
-                  variant="h6"
+                  variant='h6'
                   sx={{
                     fontWeight: 600,
                     fontSize: '1.1rem',
                     lineHeight: 1.2,
-                    mb: 0.5
+                    mb: 0.5,
                   }}
                 >
                   {post.title.value}
                 </Typography>
                 <Typography
-                  variant="caption"
-                  color="text.secondary"
+                  variant='caption'
+                  color='text.secondary'
                   sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}
                 >
-                  <Schedule fontSize="inherit" />
+                  <Schedule fontSize='inherit' />
                   {formatDate(post.createdAt)}
                 </Typography>
               </Box>
-              
+
               {/* フォロー中表示の場合はフォローチップを表示 */}
               {isFollowingView && (
                 <Chip
-                  label="フォロー中"
-                  size="small"
-                  color="primary"
-                  variant="outlined"
+                  label='フォロー中'
+                  size='small'
+                  color='primary'
+                  variant='outlined'
                   icon={<People />}
                 />
               )}
 
               {/* 投稿メニュー */}
-              <Box onClick={(e) => e.preventDefault()}>
+              <Box onClick={e => e.preventDefault()}>
                 <PostMenu
                   postId={post.postId}
                   postUid={post.uid}
                   postTitle={post.title.value}
                   onShare={() => onShare?.(post)}
-                  onReport={() => onReport?.(post)}
-                  onBookmark={() => onBookmark?.(post)}
-                  isBookmarked={isBookmarked}
                 />
               </Box>
             </Box>
 
             {/* Post Content */}
             <Typography
-              variant="body2"
-              color="text.secondary"
+              variant='body2'
+              color='text.secondary'
               sx={{
                 mb: 2,
                 lineHeight: 1.5,
                 display: '-webkit-box',
                 WebkitLineClamp: 3,
                 WebkitBoxOrient: 'vertical',
-                overflow: 'hidden'
+                overflow: 'hidden',
               }}
             >
               {post.description.value}
@@ -155,54 +146,66 @@ export const PostCard: React.FC<PostCardProps> = ({
             <Box sx={{ display: 'flex', gap: 1, mb: 2, flexWrap: 'wrap' }}>
               {post.title.sentiment && (
                 <Chip
-                  label={post.title.sentiment === 'POSITIVE' ? 'ポジティブ' : post.title.sentiment === 'NEGATIVE' ? 'ネガティブ' : 'ニュートラル'}
-                  size="small"
-                  color={post.title.sentiment === 'POSITIVE' ? 'success' : post.title.sentiment === 'NEGATIVE' ? 'error' : 'default'}
-                  variant="outlined"
+                  label={
+                    post.title.sentiment === 'POSITIVE'
+                      ? 'ポジティブ'
+                      : post.title.sentiment === 'NEGATIVE'
+                        ? 'ネガティブ'
+                        : 'ニュートラル'
+                  }
+                  size='small'
+                  color={
+                    post.title.sentiment === 'POSITIVE'
+                      ? 'success'
+                      : post.title.sentiment === 'NEGATIVE'
+                        ? 'error'
+                        : 'default'
+                  }
+                  variant='outlined'
                 />
               )}
               {post.customCompleteText?.systemPrompt && (
                 <Chip
-                  label="AI対話可能"
-                  size="small"
-                  color="primary"
-                  variant="outlined"
+                  label='AI対話可能'
+                  size='small'
+                  color='primary'
+                  variant='outlined'
                   icon={<Psychology />}
                 />
               )}
             </Box>
 
             {/* Post Stats */}
-            <Box 
-              sx={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
                 alignItems: 'center',
                 borderTop: '1px solid #f0f0f0',
-                pt: 2
+                pt: 2,
               }}
             >
               <Box sx={{ display: 'flex', gap: 3 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Comment fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary">
+                  <Comment fontSize='small' color='action' />
+                  <Typography variant='body2' color='text.secondary'>
                     {post.msgCount}
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                  <Visibility fontSize="small" color="action" />
-                  <Typography variant="body2" color="text.secondary">
+                  <Visibility fontSize='small' color='action' />
+                  <Typography variant='body2' color='text.secondary'>
                     {(post as Record<string, unknown>).impressionCount || 0}
                   </Typography>
                 </Box>
               </Box>
-              
-              <Box onClick={(e) => e.preventDefault()}>
+
+              <Box onClick={e => e.preventDefault()}>
                 <LikeButton
                   postId={post.postId}
                   targetUserId={post.uid}
                   likeCount={post.likeCount}
-                  size="medium"
+                  size='medium'
                   showCount={true}
                 />
               </Box>
@@ -217,25 +220,25 @@ export const PostCard: React.FC<PostCardProps> = ({
 // Helper function to format date
 const formatDate = (timestamp: any) => {
   if (!timestamp) return ''
-  
+
   try {
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp)
     const now = new Date()
     const diff = now.getTime() - date.getTime()
-    
+
     const minutes = Math.floor(diff / (1000 * 60))
     const hours = Math.floor(diff / (1000 * 60 * 60))
     const days = Math.floor(diff / (1000 * 60 * 60 * 24))
-    
+
     if (minutes < 1) return 'たった今'
     if (minutes < 60) return `${minutes}分前`
     if (hours < 24) return `${hours}時間前`
     if (days < 7) return `${days}日前`
-    
+
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
       month: 'short',
-      day: 'numeric'
+      day: 'numeric',
     })
   } catch {
     return ''

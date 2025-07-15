@@ -2,7 +2,12 @@ import { useState } from 'react'
 import { useAtom } from 'jotai'
 import { PostLikeRepository } from '../repositories/post-like-repository'
 import { authAtom } from '@auth/atoms'
-import { postLikeStateAtom, addPostLikeAtom, removePostLikeAtom, resetPostLikeCountDeltaAtom } from '../atoms'
+import {
+  postLikeStateAtom,
+  addPostLikeAtom,
+  removePostLikeAtom,
+  resetPostLikeCountDeltaAtom,
+} from '../atoms'
 
 const postLikeRepository = new PostLikeRepository()
 
@@ -18,7 +23,7 @@ export const usePostLike = () => {
     if (!authState?.uid || isLoading) return
 
     setIsLoading(true)
-    
+
     // Optimistic update
     addPostLike(postId)
 
@@ -50,7 +55,7 @@ export const usePostLike = () => {
     if (!authState?.uid || isLoading) return
 
     setIsLoading(true)
-    
+
     // Optimistic update
     removePostLike(postId)
 
@@ -80,7 +85,7 @@ export const usePostLike = () => {
 
   const togglePostLike = async (targetUserId: string, postId: string) => {
     const isLiked = postLikeState.likedPostIds.includes(postId)
-    
+
     if (isLiked) {
       await unlikePost(targetUserId, postId)
     } else {

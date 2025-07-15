@@ -17,7 +17,11 @@ export const useLikedPosts = () => {
     return await postLikeRepository.getLikedPosts(authState.uid)
   }
 
-  const { data: likedPostIds, isLoading, error } = useQuery({
+  const {
+    data: likedPostIds,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['liked-posts', authState?.uid],
     queryFn: queryFn,
     enabled: !!authState?.uid,
@@ -25,7 +29,11 @@ export const useLikedPosts = () => {
 
   // Initialize the post like state when data is loaded
   useEffect(() => {
-    if (likedPostIds && authState?.uid && initializedRef.current !== authState.uid) {
+    if (
+      likedPostIds &&
+      authState?.uid &&
+      initializedRef.current !== authState.uid
+    ) {
       if (process.env.NODE_ENV === 'development') {
         console.log('Initializing liked posts state:', likedPostIds)
       }

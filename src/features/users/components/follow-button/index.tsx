@@ -74,11 +74,7 @@ export const FollowButton: React.FC<FollowButtonProps> = ({
         onClose={() => setError(null)}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert 
-          onClose={() => setError(null)} 
-          severity="error" 
-          variant="filled"
-        >
+        <Alert onClose={() => setError(null)} severity='error' variant='filled'>
           {error}
         </Alert>
       </Snackbar>

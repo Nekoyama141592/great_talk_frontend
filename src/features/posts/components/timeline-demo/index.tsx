@@ -1,5 +1,12 @@
 import { useState } from 'react'
-import { Box, Card, CardContent, Typography, Button, ButtonGroup } from '@mui/material'
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  Button,
+  ButtonGroup,
+} from '@mui/material'
 import { Timeline, TrendingUp, Schedule } from '@mui/icons-material'
 import { PostsComponent } from '../posts'
 import { TimelineComponent } from '../timeline'
@@ -29,16 +36,17 @@ export const TimelineDemoComponent = () => {
       <Card sx={{ mb: 3, borderRadius: 2 }}>
         <CardContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-            <Timeline color="primary" />
-            <Typography variant="h5" sx={{ fontWeight: 600 }}>
+            <Timeline color='primary' />
+            <Typography variant='h5' sx={{ fontWeight: 600 }}>
               Timeline Demo
             </Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Flutter nativeアプリを参考にしたタイムライン投稿機能のデモンストレーション
+          <Typography variant='body2' color='text.secondary' sx={{ mb: 2 }}>
+            Flutter
+            nativeアプリを参考にしたタイムライン投稿機能のデモンストレーション
           </Typography>
-          
-          <ButtonGroup variant="outlined" size="small">
+
+          <ButtonGroup variant='outlined' size='small'>
             <Button
               onClick={() => setCurrentView('posts')}
               variant={currentView === 'posts' ? 'contained' : 'outlined'}

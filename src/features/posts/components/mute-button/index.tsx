@@ -1,7 +1,11 @@
 import React from 'react'
 import { IconButton, Tooltip, CircularProgress } from '@mui/material'
 import { VolumeOff, VolumeUp } from '@mui/icons-material'
-import { usePostMute, useIsPostMuted, useIsPostMuteLoading } from '../../hooks/use-post-mute'
+import {
+  usePostMute,
+  useIsPostMuted,
+  useIsPostMuteLoading,
+} from '../../hooks/use-post-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
 
@@ -31,7 +35,7 @@ export const MuteButton: React.FC<MuteButtonProps> = ({
   const handleMuteClick = async (event: React.MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    
+
     if (!isAuthenticated || isOwnPost) {
       return
     }
@@ -78,7 +82,10 @@ export const MuteButton: React.FC<MuteButtonProps> = ({
 
   if (showTooltip) {
     return (
-      <Tooltip title={isAuthenticated ? tooltipText : 'ログインが必要です'} arrow>
+      <Tooltip
+        title={isAuthenticated ? tooltipText : 'ログインが必要です'}
+        arrow
+      >
         {buttonContent}
       </Tooltip>
     )

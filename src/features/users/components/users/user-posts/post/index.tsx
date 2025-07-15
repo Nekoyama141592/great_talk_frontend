@@ -81,7 +81,7 @@ export const PostComponent = () => {
           postId={post.postId}
           targetUserId={post.uid}
           likeCount={post.likeCount}
-          size="medium"
+          size='medium'
           showCount={true}
         />
       </div>

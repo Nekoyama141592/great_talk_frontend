@@ -25,7 +25,7 @@ export const LikeButtonCompact: React.FC<LikeButtonCompactProps> = ({
   const handleLikeClick = async (event: React.MouseEvent) => {
     event.preventDefault()
     event.stopPropagation()
-    
+
     if (!isAuthenticated) {
       console.warn('User must be authenticated to like posts')
       return

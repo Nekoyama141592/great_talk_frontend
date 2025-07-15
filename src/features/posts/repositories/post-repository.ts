@@ -22,7 +22,6 @@ export class PostRepository {
     }
 
     const postDocData = {
-      bookmarkCount: 0,
       createdAt: serverTimestamp(),
       customCompleteText: {
         systemPrompt: postData.systemPrompt.trim(),
@@ -43,7 +42,6 @@ export class PostRepository {
       msgCount: 0,
       muteCount: 0,
       postId,
-      reportCount: 0,
       score: 0.0,
       searchToken: this.createSearchToken(postData.title),
       title: {

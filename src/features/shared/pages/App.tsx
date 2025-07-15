@@ -30,7 +30,7 @@ const theme = createTheme({
 const AppContent = () => {
   const initUser = useSetAtom(initUserAtom)
   const clearUser = useSetAtom(clearUserAtom)
-  
+
   // Initialize liked posts state when user is authenticated
   useLikedPosts()
 

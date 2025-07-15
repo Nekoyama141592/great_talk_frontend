@@ -25,7 +25,10 @@ export const usePostMute = () => {
   const currentUserId = authState?.uid
 
   // 投稿をミュートする
-  const mutePost = async (postUid: string, postId: string): Promise<boolean> => {
+  const mutePost = async (
+    postUid: string,
+    postId: string
+  ): Promise<boolean> => {
     if (!currentUserId) {
       console.warn('User must be authenticated to mute posts')
       return false
@@ -42,7 +45,11 @@ export const usePostMute = () => {
       }
       addMutePost(tempToken)
 
-      const result = await postMuteRepository.mutePost(currentUserId, postUid, postId)
+      const result = await postMuteRepository.mutePost(
+        currentUserId,
+        postUid,
+        postId
+      )
 
       if (result.success && result.tokenId) {
         // 成功時に正しいトークンIDで更新
@@ -71,14 +78,19 @@ export const usePostMute = () => {
   }
 
   // 投稿のミュートを解除する
-  const unmutePost = async (postUid: string, postId: string): Promise<boolean> => {
+  const unmutePost = async (
+    postUid: string,
+    postId: string
+  ): Promise<boolean> => {
     if (!currentUserId) {
       console.warn('User must be authenticated to unmute posts')
       return false
     }
 
     // ミュートトークンを検索
-    const muteToken = muteState.mutePostTokens.find(token => token.postId === postId)
+    const muteToken = muteState.mutePostTokens.find(
+      token => token.postId === postId
+    )
     if (!muteToken) {
       console.warn('Mute token not found for post:', postId)
       return false
@@ -116,8 +128,13 @@ export const usePostMute = () => {
   }
 
   // ミュート状態をトグルする
-  const toggleMute = async (postUid: string, postId: string): Promise<boolean> => {
-    const isMuted = muteState.mutePostTokens.some(token => token.postId === postId)
+  const toggleMute = async (
+    postUid: string,
+    postId: string
+  ): Promise<boolean> => {
+    const isMuted = muteState.mutePostTokens.some(
+      token => token.postId === postId
+    )
     return isMuted ? unmutePost(postUid, postId) : mutePost(postUid, postId)
   }
 

@@ -21,7 +21,14 @@ import { PhotoCamera, Download, Refresh } from '@mui/icons-material'
 import { useImageGeneration } from '../hooks/use-image-generation'
 
 const ImageGenerationPage: React.FC = () => {
-  const { state, updatePrompt, updateSize, generateImage, setError, resetState } = useImageGeneration()
+  const {
+    state,
+    updatePrompt,
+    updateSize,
+    generateImage,
+    setError,
+    resetState,
+  } = useImageGeneration()
 
   const handleDownload = () => {
     if (!state.generatedImage) return
@@ -41,7 +48,7 @@ const ImageGenerationPage: React.FC = () => {
   ] as const
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
+    <Container maxWidth='md' sx={{ py: 4 }}>
       <Paper
         elevation={3}
         sx={{
@@ -60,20 +67,21 @@ const ImageGenerationPage: React.FC = () => {
             left: 0,
             right: 0,
             bottom: 0,
-            background: 'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
+            background:
+              'url("data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%239C92AC" fill-opacity="0.1"%3E%3Ccircle cx="30" cy="30" r="4"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")',
             zIndex: 0,
           }}
         />
-        
+
         <Box sx={{ position: 'relative', zIndex: 1 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
             <PhotoCamera sx={{ fontSize: 40, mr: 2 }} />
-            <Typography variant="h4" component="h1" fontWeight="bold">
+            <Typography variant='h4' component='h1' fontWeight='bold'>
               AI画像生成
             </Typography>
           </Box>
-          
-          <Typography variant="body1" sx={{ mb: 4, opacity: 0.9 }}>
+
+          <Typography variant='body1' sx={{ mb: 4, opacity: 0.9 }}>
             テキストから美しい画像を生成します。あなたのアイデアを言葉で表現してください。
           </Typography>
 
@@ -83,11 +91,11 @@ const ImageGenerationPage: React.FC = () => {
               fullWidth
               multiline
               rows={4}
-              label="画像の説明（プロンプト）"
-              placeholder="例: 美しい夕日の海辺、波が穏やかに打ち寄せている"
+              label='画像の説明（プロンプト）'
+              placeholder='例: 美しい夕日の海辺、波が穏やかに打ち寄せている'
               value={state.prompt}
-              onChange={(e) => updatePrompt(e.target.value)}
-              variant="filled"
+              onChange={e => updatePrompt(e.target.value)}
+              variant='filled'
               sx={{
                 '& .MuiFilledInput-root': {
                   backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -109,13 +117,13 @@ const ImageGenerationPage: React.FC = () => {
             />
 
             {/* Size Selection */}
-            <FormControl fullWidth variant="filled">
+            <FormControl fullWidth variant='filled'>
               <InputLabel sx={{ color: 'rgba(255, 255, 255, 0.7)' }}>
                 画像サイズ
               </InputLabel>
               <Select
                 value={state.size}
-                onChange={(e) => updateSize(e.target.value as typeof state.size)}
+                onChange={e => updateSize(e.target.value as typeof state.size)}
                 sx={{
                   backgroundColor: 'rgba(255, 255, 255, 0.1)',
                   color: 'white',
@@ -127,11 +135,11 @@ const ImageGenerationPage: React.FC = () => {
                   },
                 }}
               >
-                {sizeOptions.map((option) => (
+                {sizeOptions.map(option => (
                   <MenuItem key={option.value} value={option.value}>
                     <Box>
-                      <Typography variant="body1">{option.label}</Typography>
-                      <Typography variant="caption" color="textSecondary">
+                      <Typography variant='body1'>{option.label}</Typography>
+                      <Typography variant='caption' color='textSecondary'>
                         {option.description}
                       </Typography>
                     </Box>
@@ -142,11 +150,17 @@ const ImageGenerationPage: React.FC = () => {
 
             {/* Generate Button */}
             <Button
-              variant="contained"
-              size="large"
+              variant='contained'
+              size='large'
               onClick={generateImage}
               disabled={state.isLoading || !state.prompt.trim()}
-              startIcon={state.isLoading ? <CircularProgress size={20} /> : <PhotoCamera />}
+              startIcon={
+                state.isLoading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <PhotoCamera />
+                )
+              }
               sx={{
                 py: 2,
                 backgroundColor: 'rgba(255, 255, 255, 0.2)',
@@ -167,11 +181,7 @@ const ImageGenerationPage: React.FC = () => {
       {/* Error Display */}
       {state.error && (
         <Fade in>
-          <Alert
-            severity="error"
-            sx={{ mt: 3 }}
-            onClose={() => setError(null)}
-          >
+          <Alert severity='error' sx={{ mt: 3 }} onClose={() => setError(null)}>
             {state.error}
           </Alert>
         </Fade>
@@ -182,28 +192,37 @@ const ImageGenerationPage: React.FC = () => {
         <Fade in>
           <Card sx={{ mt: 3, overflow: 'visible' }}>
             <Box sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h6" component="h2">
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 2,
+                }}
+              >
+                <Typography variant='h6' component='h2'>
                   生成された画像
                 </Typography>
                 <Box sx={{ display: 'flex', gap: 1 }}>
                   <Chip
-                    label={sizeOptions.find(opt => opt.value === state.size)?.label}
-                    size="small"
-                    color="primary"
-                    variant="outlined"
+                    label={
+                      sizeOptions.find(opt => opt.value === state.size)?.label
+                    }
+                    size='small'
+                    color='primary'
+                    variant='outlined'
                   />
                   <Button
-                    variant="outlined"
-                    size="small"
+                    variant='outlined'
+                    size='small'
                     startIcon={<Download />}
                     onClick={handleDownload}
                   >
                     ダウンロード
                   </Button>
                   <Button
-                    variant="outlined"
-                    size="small"
+                    variant='outlined'
+                    size='small'
                     startIcon={<Refresh />}
                     onClick={resetState}
                   >
@@ -211,11 +230,11 @@ const ImageGenerationPage: React.FC = () => {
                   </Button>
                 </Box>
               </Box>
-              
+
               <CardMedia
-                component="img"
+                component='img'
                 image={`data:image/png;base64,${state.generatedImage}`}
-                alt="Generated image"
+                alt='Generated image'
                 sx={{
                   borderRadius: 2,
                   boxShadow: 3,
@@ -223,11 +242,11 @@ const ImageGenerationPage: React.FC = () => {
                   height: 'auto',
                 }}
               />
-              
+
               {state.prompt && (
                 <Typography
-                  variant="caption"
-                  color="textSecondary"
+                  variant='caption'
+                  color='textSecondary'
                   sx={{ mt: 2, display: 'block', fontStyle: 'italic' }}
                 >
                   プロンプト: {state.prompt}

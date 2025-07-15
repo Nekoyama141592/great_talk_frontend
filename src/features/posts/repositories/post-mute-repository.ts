@@ -9,12 +9,19 @@ import {
   where,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
-import { PostMute, MutePostToken, MutePostTokenEntity } from '@shared/schema/post-mute'
+import {
+  PostMute,
+  MutePostToken,
+  MutePostTokenEntity,
+} from '@shared/schema/post-mute'
 import { PublicPost } from '@shared/schema/public-post'
 
 // ユニークなトークンIDを生成
 const generateTokenId = () => {
-  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)
+  return (
+    Math.random().toString(36).substring(2, 15) +
+    Math.random().toString(36).substring(2, 15)
+  )
 }
 
 export class PostMuteRepository {
@@ -45,11 +52,29 @@ export class PostMuteRepository {
       }
 
       // トークンを保存
-      const tokenRef = doc(db, 'private', 'v1', 'privateUsers', currentUserId, 'tokens', tokenId)
+      const tokenRef = doc(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        currentUserId,
+        'tokens',
+        tokenId
+      )
       batch.set(tokenRef, mutePostToken)
 
       // PostMuteを保存
-      const postMuteRef = doc(db, 'public', 'v1', 'users', postUid, 'posts', postId, 'postMutes', currentUserId)
+      const postMuteRef = doc(
+        db,
+        'public',
+        'v1',
+        'users',
+        postUid,
+        'posts',
+        postId,
+        'postMutes',
+        currentUserId
+      )
       batch.set(postMuteRef, postMute)
 
       await batch.commit()
@@ -57,9 +82,10 @@ export class PostMuteRepository {
       return { success: true, tokenId }
     } catch (error) {
       console.error('Error muting post:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'ミュートに失敗しました' 
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'ミュートに失敗しました',
       }
     }
   }
@@ -75,11 +101,29 @@ export class PostMuteRepository {
       const batch = writeBatch(db)
 
       // トークンを削除
-      const tokenRef = doc(db, 'private', 'v1', 'privateUsers', currentUserId, 'tokens', tokenId)
+      const tokenRef = doc(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        currentUserId,
+        'tokens',
+        tokenId
+      )
       batch.delete(tokenRef)
 
       // PostMuteを削除
-      const postMuteRef = doc(db, 'public', 'v1', 'users', postUid, 'posts', postId, 'postMutes', currentUserId)
+      const postMuteRef = doc(
+        db,
+        'public',
+        'v1',
+        'users',
+        postUid,
+        'posts',
+        postId,
+        'postMutes',
+        currentUserId
+      )
       batch.delete(postMuteRef)
 
       await batch.commit()
@@ -87,9 +131,10 @@ export class PostMuteRepository {
       return { success: true }
     } catch (error) {
       console.error('Error unmuting post:', error)
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'ミュート解除に失敗しました' 
+      return {
+        success: false,
+        error:
+          error instanceof Error ? error.message : 'ミュート解除に失敗しました',
       }
     }
   }
@@ -97,16 +142,23 @@ export class PostMuteRepository {
   // ユーザーのミュート投稿トークンを取得（リトライなし）
   async getMutePostTokens(userId: string): Promise<MutePostTokenEntity[]> {
     try {
-      const tokensRef = collection(db, 'private', 'v1', 'privateUsers', userId, 'tokens')
+      const tokensRef = collection(
+        db,
+        'private',
+        'v1',
+        'privateUsers',
+        userId,
+        'tokens'
+      )
       const q = query(
         tokensRef,
         where('tokenType', '==', 'mutePost'),
         orderBy('createdAt', 'desc')
       )
-      
+
       // 一度だけ実行、リトライしない
       const querySnapshot = await getDocs(q)
-      
+
       return querySnapshot.docs.map(doc => {
         const data = doc.data() as MutePostToken
         return {
@@ -136,10 +188,10 @@ export class PostMuteRepository {
       const allPosts: PublicPost[] = []
 
       // for (const chunk of chunks) {
-        // 投稿をcollectionGroupで検索
-        // const postsRef = collection(db, 'public', 'v1', 'users')
-        // Note: 実際の実装では、投稿IDから投稿を取得する適切なクエリが必要
-        // ここでは簡略化していますが、実際にはより効率的な方法を検討してください
+      // 投稿をcollectionGroupで検索
+      // const postsRef = collection(db, 'public', 'v1', 'users')
+      // Note: 実際の実装では、投稿IDから投稿を取得する適切なクエリが必要
+      // ここでは簡略化していますが、実際にはより効率的な方法を検討してください
       // }
 
       return allPosts

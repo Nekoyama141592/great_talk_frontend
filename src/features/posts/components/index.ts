@@ -16,7 +16,11 @@ export { MutedPostCard } from './muted-post-card'
 export { usePosts } from '../hooks/use-posts'
 export { useTimelinePosts } from '../hooks/use-timeline-posts'
 export { useRealtimeTimeline } from '../hooks/use-realtime-timeline'
-export { usePostMute, useIsPostMuted, useIsPostMuteLoading } from '../hooks/use-post-mute'
+export {
+  usePostMute,
+  useIsPostMuted,
+  useIsPostMuteLoading,
+} from '../hooks/use-post-mute'
 
 // Types
 export type { PostSortType } from '../hooks/use-posts'

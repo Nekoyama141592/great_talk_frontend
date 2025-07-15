@@ -8,7 +8,7 @@ import {
   startAfter,
   DocumentSnapshot,
   doc,
-  getDoc
+  getDoc,
 } from 'firebase/firestore'
 import { db } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
@@ -34,7 +34,14 @@ export const useTimelinePosts = (enabled: boolean = true) => {
     }
 
     // Get user's timeline entries
-    const timelineColRef = collection(db, 'public', 'v1', 'users', currentUserId, 'timelines')
+    const timelineColRef = collection(
+      db,
+      'public',
+      'v1',
+      'users',
+      currentUserId,
+      'timelines'
+    )
     let timelineQuery = query(
       timelineColRef,
       orderBy('createdAt', 'desc'),
@@ -50,7 +57,7 @@ export const useTimelinePosts = (enabled: boolean = true) => {
       postId: doc.data().postId,
       posterUid: doc.data().posterUid,
       createdAt: doc.data().createdAt,
-      isRead: doc.data().isRead || false
+      isRead: doc.data().isRead || false,
     }))
 
     if (timelineEntries.length === 0) {
@@ -58,11 +65,19 @@ export const useTimelinePosts = (enabled: boolean = true) => {
     }
 
     // Fetch the actual posts
-    const postsPromises = timelineEntries.map(async (entry) => {
+    const postsPromises = timelineEntries.map(async entry => {
       try {
-        const postRef = doc(db, 'public', 'v1', 'users', entry.posterUid, 'posts', entry.postId)
+        const postRef = doc(
+          db,
+          'public',
+          'v1',
+          'users',
+          entry.posterUid,
+          'posts',
+          entry.postId
+        )
         const postDoc = await getDoc(postRef)
-        
+
         if (postDoc.exists()) {
           const postData = postDoc.data()
           return {
@@ -84,7 +99,9 @@ export const useTimelinePosts = (enabled: boolean = true) => {
       }
     })
 
-    const posts = (await Promise.all(postsPromises)).filter(post => post !== null) as PublicPost[]
+    const posts = (await Promise.all(postsPromises)).filter(
+      post => post !== null
+    ) as PublicPost[]
 
     return {
       posts,
@@ -97,7 +114,7 @@ export const useTimelinePosts = (enabled: boolean = true) => {
     queryKey: ['timeline-posts', currentUserId],
     queryFn,
     initialPageParam: undefined,
-    getNextPageParam: (lastPage) => {
+    getNextPageParam: lastPage => {
       return lastPage.hasMore ? lastPage.lastDoc : undefined
     },
     enabled: !!currentUserId && enabled,
