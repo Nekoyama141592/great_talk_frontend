@@ -154,21 +154,6 @@ export const PostCard: React.FC<PostCardProps> = ({
                       },
                     }}
                   />
-                  {post.likeCount > 10 && (
-                    <Chip
-                      icon={<TrendingUp sx={{ fontSize: 14 }} />}
-                      label='人気'
-                      size='small'
-                      sx={{
-                        background:
-                          'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
-                        color: 'white',
-                        fontWeight: 600,
-                        fontSize: '0.75rem',
-                        border: 'none',
-                      }}
-                    />
-                  )}
                 </Box>
               </Box>
 
@@ -346,7 +331,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                   targetUserId={post.uid}
                   likeCount={post.likeCount}
                   size='medium'
-                  showCount={true}
+                  showCount={false}
                 />
               </Box>
             </Box>

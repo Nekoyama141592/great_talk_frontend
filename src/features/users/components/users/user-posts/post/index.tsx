@@ -236,7 +236,7 @@ export const PostComponent = () => {
               targetUserId={post.uid}
               likeCount={post.likeCount}
               size='medium'
-              showCount={true}
+              showCount={false}
             />
           </Box>
         </CardContent>

@@ -55,7 +55,7 @@ export const PostIndexComponent = () => {
                   targetUserId={post.uid}
                   likeCount={post.likeCount}
                   size='medium'
-                  showCount={true}
+                  showCount={false}
                 />
               </div>
             </div>
