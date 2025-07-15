@@ -22,11 +22,16 @@ export class PostRepository {
     }
 
     const postDocData = {
+      bookmarkCount: 0,
       createdAt: serverTimestamp(),
       customCompleteText: {
         systemPrompt: postData.systemPrompt.trim(),
       },
       description: {
+        languageCode: 'ja',
+        negativeScore: 0.0,
+        positiveScore: 0.0,
+        sentiment: 'NEUTRAL',
         value: postData.description.trim(),
       },
       exampleTexts: [],
@@ -34,6 +39,8 @@ export class PostRepository {
       hashTags: [],
       image: {
         bucketName: '',
+        moderationLabels: [],
+        moderationModelVersion: '',
         value: imageFileName,
       },
       impressionCount: 0,
@@ -42,9 +49,14 @@ export class PostRepository {
       msgCount: 0,
       muteCount: 0,
       postId,
+      reportCount: 0,
       score: 0.0,
       searchToken: this.createSearchToken(postData.title),
       title: {
+        languageCode: 'ja',
+        negativeScore: 0.0,
+        positiveScore: 0.0,
+        sentiment: 'NEUTRAL',
         value: postData.title.trim(),
       },
       uid: userId,
