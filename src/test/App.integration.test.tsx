@@ -46,6 +46,6 @@ describe('App Integration', () => {
 
     // The app renders successfully and shows main content
     // (Actual auth check behavior may vary based on mocking)
-    expect(screen.getByRole('list')).toBeInTheDocument()
+    expect(screen.getByText('投稿がありません')).toBeInTheDocument()
   })
 })

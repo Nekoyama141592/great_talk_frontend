@@ -38,7 +38,7 @@ describe('PostsComponent', () => {
   it('renders empty posts list when no data', () => {
     renderWithProviders(<PostsComponent />)
 
-    // Should render ul element
-    expect(screen.getByRole('list')).toBeInTheDocument()
+    // Should render empty state message
+    expect(screen.getByText('投稿がありません')).toBeInTheDocument()
   })
 })
