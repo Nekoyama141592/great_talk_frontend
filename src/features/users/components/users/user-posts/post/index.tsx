@@ -1,10 +1,10 @@
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc } from 'firebase/firestore'
-import { db } from '@shared/infrastructures/firebase'
+import { db, functions } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
 import { useState } from 'react'
-import { getFunctions, httpsCallable } from '@firebase/functions'
+import { httpsCallable } from '@firebase/functions'
 import ReactMarkdown from 'react-markdown'
 import { LikeButton } from '@posts/components/like-button'
 import { 
@@ -29,7 +29,8 @@ import {
 } from '@mui/icons-material'
 
 interface Response {
-  message: string
+  model: string
+  content: string
 }
 export const PostComponent = () => {
   const [response, setResponse] = useState<string>('')
@@ -61,19 +62,21 @@ export const PostComponent = () => {
 
   const onClick = async (systemPrompt: string, text: string) => {
     setResponse('読み込み中...')
-    const functions = getFunctions()
     const generateText = httpsCallable(functions, 'generateTextV2')
+    const combinedMessage = `${systemPrompt}\n\n${text}`
     const messages = [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: text },
+      { role: 'user', content: combinedMessage },
     ]
-    generateText({ messages })
+    generateText({ 
+      model: 'o4-mini-2025-04-16',
+      messages 
+    })
       .then(result => {
         const data = result.data as Response
-        setResponse(data.message)
+        setResponse(data.content)
       })
       .catch(e => {
-        setResponse(`${e}`)
+        setResponse(`エラーが発生しました: ${e}`)
       })
   }
 
