@@ -2,7 +2,9 @@ import { describe, it, expect } from 'vitest'
 import { PostDataProcessor } from './post-data-processor'
 import { CreatePostData } from '@shared/schema/create-post'
 
-const createMockPostData = (overrides?: Partial<CreatePostData>): CreatePostData => ({
+const createMockPostData = (
+  overrides?: Partial<CreatePostData>
+): CreatePostData => ({
   title: '  Test Title  ',
   description: '  Test description content  ',
   systemPrompt: '  You are a helpful assistant  ',
@@ -15,7 +17,7 @@ describe('PostDataProcessor', () => {
     it('should trim whitespace from all text fields', () => {
       const data = createMockPostData()
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.title).toBe('Test Title')
       expect(result.description).toBe('Test description content')
       expect(result.systemPrompt).toBe('You are a helpful assistant')
@@ -28,7 +30,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'Six Seven Eight Nine Ten',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.wordCount).toBe(10)
     })
 
@@ -39,7 +41,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'Only these words',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.wordCount).toBe(3)
     })
 
@@ -50,7 +52,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'c', // 1 word
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       // 201 words / 200 words per minute = 1.005, ceil = 2
       expect(result.estimatedReadingTime).toBe(2)
     })
@@ -60,7 +62,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'あなたはロールプレイを行うアシスタントです',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.hasAdvancedPrompt).toBe(true)
     })
 
@@ -69,7 +71,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'You are a roleplay assistant with step-by-step thinking',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.hasAdvancedPrompt).toBe(true)
     })
 
@@ -78,7 +80,7 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'Use CHAIN OF THOUGHT reasoning',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.hasAdvancedPrompt).toBe(true)
     })
 
@@ -87,14 +89,14 @@ describe('PostDataProcessor', () => {
         systemPrompt: 'You are a helpful assistant that answers questions',
       })
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result.hasAdvancedPrompt).toBe(false)
     })
 
     it('should return complete processed data structure', () => {
       const data = createMockPostData()
       const result = PostDataProcessor.processPostData(data)
-      
+
       expect(result).toHaveProperty('title')
       expect(result).toHaveProperty('description')
       expect(result).toHaveProperty('systemPrompt')
@@ -114,7 +116,7 @@ describe('PostDataProcessor', () => {
         estimatedReadingTime: 1,
         hasAdvancedPrompt: false,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
       expect(warnings).toContain('投稿の内容が短すぎる可能性があります')
     })
@@ -128,7 +130,7 @@ describe('PostDataProcessor', () => {
         estimatedReadingTime: 8,
         hasAdvancedPrompt: false,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
       expect(warnings).toContain('投稿の内容が長すぎる可能性があります')
     })
@@ -142,9 +144,11 @@ describe('PostDataProcessor', () => {
         estimatedReadingTime: 1,
         hasAdvancedPrompt: false,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
-      expect(warnings).toContain('システムプロンプトをより詳細に記述することを推奨します')
+      expect(warnings).toContain(
+        'システムプロンプトをより詳細に記述することを推奨します'
+      )
     })
 
     it('should not warn about short system prompts with advanced features', () => {
@@ -156,21 +160,24 @@ describe('PostDataProcessor', () => {
         estimatedReadingTime: 1,
         hasAdvancedPrompt: true,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
-      expect(warnings).not.toContain('システムプロンプトをより詳細に記述することを推奨します')
+      expect(warnings).not.toContain(
+        'システムプロンプトをより詳細に記述することを推奨します'
+      )
     })
 
     it('should return empty array for good quality content', () => {
       const processedData = {
         title: 'Perfect Title',
         description: 'Perfect Description with enough content',
-        systemPrompt: 'You are a helpful assistant that provides detailed responses with proper context and examples',
+        systemPrompt:
+          'You are a helpful assistant that provides detailed responses with proper context and examples',
         wordCount: 100,
         estimatedReadingTime: 1,
         hasAdvancedPrompt: false,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
       expect(warnings).toEqual([])
     })
@@ -184,11 +191,13 @@ describe('PostDataProcessor', () => {
         estimatedReadingTime: 1,
         hasAdvancedPrompt: false,
       }
-      
+
       const warnings = PostDataProcessor.validateProcessedData(processedData)
       expect(warnings.length).toBeGreaterThan(1)
       expect(warnings).toContain('投稿の内容が短すぎる可能性があります')
-      expect(warnings).toContain('システムプロンプトをより詳細に記述することを推奨します')
+      expect(warnings).toContain(
+        'システムプロンプトをより詳細に記述することを推奨します'
+      )
     })
   })
 })

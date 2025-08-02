@@ -27,7 +27,7 @@ global.IntersectionObserver = vi.fn().mockImplementation(_callback => ({
 }))
 
 // Mock React Router
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router-dom', async importOriginal => {
   const actual = await importOriginal<typeof import('react-router-dom')>()
   return {
     ...actual,
@@ -38,7 +38,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 })
 
 // Mock React Query
-vi.mock('@tanstack/react-query', async (importOriginal) => {
+vi.mock('@tanstack/react-query', async importOriginal => {
   const actual = await importOriginal<typeof import('@tanstack/react-query')>()
   return {
     ...actual,
@@ -59,7 +59,7 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 })
 
 // Mock Jotai
-vi.mock('jotai', async (importOriginal) => {
+vi.mock('jotai', async importOriginal => {
   const actual = await importOriginal<typeof import('jotai')>()
   return {
     ...actual,

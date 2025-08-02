@@ -19,10 +19,10 @@ import {
   Tooltip,
   IconButton,
 } from '@mui/material'
-import { 
-  AutoAwesome, 
-  Download, 
-  Refresh, 
+import {
+  AutoAwesome,
+  Download,
+  Refresh,
   ImageSearch,
   Palette,
   AspectRatio,
@@ -139,7 +139,8 @@ const ImageGenerationPage: React.FC = () => {
                   variant='h5'
                   sx={{
                     fontWeight: 700,
-                    background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+                    background:
+                      'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
@@ -191,7 +192,8 @@ const ImageGenerationPage: React.FC = () => {
                   variant='h5'
                   sx={{
                     fontWeight: 700,
-                    background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+                    background:
+                      'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
                     backgroundClip: 'text',
                     WebkitBackgroundClip: 'text',
                     WebkitTextFillColor: 'transparent',
@@ -205,7 +207,9 @@ const ImageGenerationPage: React.FC = () => {
                 <Select
                   value={state.size}
                   label='サイズを選択'
-                  onChange={e => updateSize(e.target.value as typeof state.size)}
+                  onChange={e =>
+                    updateSize(e.target.value as typeof state.size)
+                  }
                   sx={{
                     borderRadius: 3,
                     background: 'rgba(255, 255, 255, 0.8)',
@@ -261,7 +265,8 @@ const ImageGenerationPage: React.FC = () => {
                   boxShadow: state.isLoading
                     ? 'none'
                     : '0 12px 32px rgba(139, 92, 246, 0.4)',
-                  transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+                  transition:
+                    'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
                   '&:hover': {
                     background: state.isLoading
                       ? 'linear-gradient(135deg, #64748b 0%, #475569 100%)'
@@ -272,7 +277,8 @@ const ImageGenerationPage: React.FC = () => {
                       : '0 16px 40px rgba(139, 92, 246, 0.5)',
                   },
                   '&:disabled': {
-                    background: 'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
+                    background:
+                      'linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%)',
                     color: '#64748b',
                   },
                 }}
@@ -287,15 +293,15 @@ const ImageGenerationPage: React.FC = () => {
       {/* Error Display */}
       {state.error && (
         <Fade in>
-          <Alert 
-            severity='error' 
-            sx={{ 
+          <Alert
+            severity='error'
+            sx={{
               mt: 4,
               borderRadius: 3,
               '& .MuiAlert-message': {
                 fontWeight: 600,
               },
-            }} 
+            }}
             onClose={() => setError(null)}
           >
             {state.error}
@@ -345,7 +351,8 @@ const ImageGenerationPage: React.FC = () => {
                       width: 48,
                       height: 48,
                       borderRadius: '50%',
-                      background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                      background:
+                        'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
@@ -354,12 +361,13 @@ const ImageGenerationPage: React.FC = () => {
                   >
                     <AutoAwesome sx={{ fontSize: 24, color: 'white' }} />
                   </Box>
-                  <Typography 
-                    variant='h5' 
+                  <Typography
+                    variant='h5'
                     component='h2'
                     sx={{
                       fontWeight: 700,
-                      background: 'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
+                      background:
+                        'linear-gradient(135deg, #1e293b 0%, #475569 100%)',
                       backgroundClip: 'text',
                       WebkitBackgroundClip: 'text',
                       WebkitTextFillColor: 'transparent',
@@ -374,7 +382,8 @@ const ImageGenerationPage: React.FC = () => {
                       sizeOptions.find(opt => opt.value === state.size)?.label
                     }
                     sx={{
-                      background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
+                      background:
+                        'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
                       color: 'white',
                       fontWeight: 600,
                     }}
@@ -383,10 +392,12 @@ const ImageGenerationPage: React.FC = () => {
                     <IconButton
                       onClick={handleDownload}
                       sx={{
-                        background: 'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
+                        background:
+                          'linear-gradient(135deg, #22c55e 0%, #16a34a 100%)',
                         color: 'white',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+                          background:
+                            'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
                           transform: 'scale(1.05)',
                         },
                         transition: 'all 0.3s ease',
@@ -399,10 +410,12 @@ const ImageGenerationPage: React.FC = () => {
                     <IconButton
                       onClick={resetState}
                       sx={{
-                        background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+                        background:
+                          'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
                         color: 'white',
                         '&:hover': {
-                          background: 'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
+                          background:
+                            'linear-gradient(135deg, #ea580c 0%, #c2410c 100%)',
                           transform: 'scale(1.05)',
                         },
                         transition: 'all 0.3s ease',

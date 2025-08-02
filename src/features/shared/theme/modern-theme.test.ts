@@ -18,11 +18,11 @@ describe('Modern Theme', () => {
       expect(colors.primary).toHaveProperty('50')
       expect(colors.primary).toHaveProperty('500')
       expect(colors.primary).toHaveProperty('950')
-      
+
       expect(colors.secondary).toHaveProperty('50')
       expect(colors.secondary).toHaveProperty('500')
       expect(colors.secondary).toHaveProperty('950')
-      
+
       expect(colors.neutral).toHaveProperty('50')
       expect(colors.neutral).toHaveProperty('500')
       expect(colors.neutral).toHaveProperty('950')
@@ -34,7 +34,7 @@ describe('Modern Theme', () => {
       expect(colors.gradients).toHaveProperty('accent')
       expect(colors.gradients).toHaveProperty('glass')
       expect(colors.gradients).toHaveProperty('rainbow')
-      
+
       expect(colors.gradients.primary).toContain('linear-gradient')
       expect(colors.gradients.rainbow).toContain('linear-gradient')
     })
@@ -75,7 +75,7 @@ describe('Modern Theme', () => {
     it('should have special effect shadows', () => {
       expect(shadows).toHaveProperty('glass')
       expect(shadows).toHaveProperty('glow')
-      
+
       expect(shadows.glass).toContain('rgba')
       expect(shadows.glow).toContain('rgba')
     })
@@ -94,7 +94,7 @@ describe('Modern Theme', () => {
       expect(animations.easing).toHaveProperty('easeIn')
       expect(animations.easing).toHaveProperty('easeOut')
       expect(animations.easing).toHaveProperty('spring')
-      
+
       expect(animations.easing.ease).toContain('cubic-bezier')
       expect(animations.easing.spring).toContain('cubic-bezier')
     })
@@ -117,14 +117,22 @@ describe('Modern Theme', () => {
 
     it('should have typography configuration', () => {
       expect(lightTheme.typography.fontFamily).toBe(typography.fontFamily)
-      expect(lightTheme.typography.h1?.fontSize).toBe(typography.fontSize['4xl'])
-      expect(lightTheme.typography.h1?.fontWeight).toBe(typography.fontWeight.bold)
+      expect(lightTheme.typography.h1?.fontSize).toBe(
+        typography.fontSize['4xl']
+      )
+      expect(lightTheme.typography.h1?.fontWeight).toBe(
+        typography.fontWeight.bold
+      )
     })
 
     it('should have custom component styles', () => {
-      expect(lightTheme.components?.MuiButton?.styleOverrides?.root).toBeDefined()
+      expect(
+        lightTheme.components?.MuiButton?.styleOverrides?.root
+      ).toBeDefined()
       expect(lightTheme.components?.MuiCard?.styleOverrides?.root).toBeDefined()
-      expect(lightTheme.components?.MuiTextField?.styleOverrides?.root).toBeDefined()
+      expect(
+        lightTheme.components?.MuiTextField?.styleOverrides?.root
+      ).toBeDefined()
     })
   })
 
@@ -153,7 +161,7 @@ describe('Modern Theme', () => {
     describe('glassMorphism', () => {
       it('should return glass morphism styles with default opacity', () => {
         const styles = glassMorphism()
-        
+
         expect(styles.background).toBe('rgba(255, 255, 255, 0.1)')
         expect(styles.backdropFilter).toBe('blur(20px)')
         expect(styles.border).toBe('1px solid rgba(255, 255, 255, 0.2)')
@@ -161,7 +169,7 @@ describe('Modern Theme', () => {
 
       it('should accept custom opacity', () => {
         const styles = glassMorphism(0.5)
-        
+
         expect(styles.background).toBe('rgba(255, 255, 255, 0.5)')
       })
     })
@@ -169,7 +177,7 @@ describe('Modern Theme', () => {
     describe('darkGlassMorphism', () => {
       it('should return dark glass morphism styles', () => {
         const styles = darkGlassMorphism()
-        
+
         expect(styles.background).toBe('rgba(30, 41, 59, 0.1)')
         expect(styles.backdropFilter).toBe('blur(20px)')
         expect(styles.border).toBe('1px solid rgba(255, 255, 255, 0.1)')
@@ -177,7 +185,7 @@ describe('Modern Theme', () => {
 
       it('should accept custom opacity', () => {
         const styles = darkGlassMorphism(0.3)
-        
+
         expect(styles.background).toBe('rgba(30, 41, 59, 0.3)')
       })
     })
@@ -185,7 +193,7 @@ describe('Modern Theme', () => {
     describe('hoverScale', () => {
       it('should return hover scale styles with default scale', () => {
         const styles = hoverScale()
-        
+
         expect(styles.transition).toContain(animations.duration.base)
         expect(styles.transition).toContain(animations.easing.spring)
         expect(styles['&:hover'].transform).toBe('scale(1.02)')
@@ -193,7 +201,7 @@ describe('Modern Theme', () => {
 
       it('should accept custom scale', () => {
         const styles = hoverScale(1.1)
-        
+
         expect(styles['&:hover'].transform).toBe('scale(1.1)')
       })
     })
@@ -201,7 +209,7 @@ describe('Modern Theme', () => {
     describe('hoverGlow', () => {
       it('should return hover glow styles with default color', () => {
         const styles = hoverGlow()
-        
+
         expect(styles.transition).toContain(animations.duration.base)
         expect(styles.transition).toContain(animations.easing.ease)
         expect(styles['&:hover'].boxShadow).toContain(colors.primary[500])
@@ -210,7 +218,7 @@ describe('Modern Theme', () => {
       it('should accept custom color', () => {
         const customColor = '#ff0000'
         const styles = hoverGlow(customColor)
-        
+
         expect(styles['&:hover'].boxShadow).toContain(customColor)
       })
     })
