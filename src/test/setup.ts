@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom'
+import { vi } from 'vitest'
 
 // Mock Firebase
 vi.mock('@shared/infrastructures/firebase', () => ({
@@ -26,8 +27,8 @@ global.IntersectionObserver = vi.fn().mockImplementation(_callback => ({
 }))
 
 // Mock React Router
-vi.mock('react-router-dom', async importOriginal => {
-  const actual = await importOriginal()
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router-dom')>()
   return {
     ...actual,
     useNavigate: () => vi.fn(),
@@ -37,8 +38,8 @@ vi.mock('react-router-dom', async importOriginal => {
 })
 
 // Mock React Query
-vi.mock('@tanstack/react-query', async importOriginal => {
-  const actual = await importOriginal()
+vi.mock('@tanstack/react-query', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@tanstack/react-query')>()
   return {
     ...actual,
     useQuery: () => ({
@@ -58,8 +59,8 @@ vi.mock('@tanstack/react-query', async importOriginal => {
 })
 
 // Mock Jotai
-vi.mock('jotai', async importOriginal => {
-  const actual = await importOriginal()
+vi.mock('jotai', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('jotai')>()
   return {
     ...actual,
     useAtom: (atom: any) => {
