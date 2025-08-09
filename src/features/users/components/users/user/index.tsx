@@ -23,7 +23,7 @@ import { useUserMute, useIsUserMuted } from '../../../hooks/use-user-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
 import { getUserImageUrl } from '@/utils/image_url_util'
-import { useUserImageModeration } from '../../hooks/use-user-image-moderation'
+import { useUserImageModeration } from '../../../hooks/use-user-image-moderation'
 
 export const UserComponent = () => {
   const { uid } = useParams()
