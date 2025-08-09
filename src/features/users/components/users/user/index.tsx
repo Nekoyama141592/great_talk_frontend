@@ -22,23 +22,31 @@ import { UserMenu } from '../../user-menu'
 import { useUserMute, useIsUserMuted } from '../../../hooks/use-user-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
-import { useEffect } from 'react'
 import { getUserImageUrl } from '@/utils/image_url_util'
+import { useUserImageModeration } from '../../hooks/use-user-image-moderation'
 
 export const UserComponent = () => {
   const { uid } = useParams()
   const [authState] = useAtom(authAtom)
   const { initializeMuteTokens } = useUserMute()
   const isMuted = useIsUserMuted(uid || '')
+  const { data: userImageModeration } = useUserImageModeration(uid)
+  
   // Initialize following users data
   useFollowingUsers()
 
-  // Initialize user mute tokens on component mount
-  useEffect(() => {
-    if (authState?.uid) {
-      initializeMuteTokens()
-    }
-  }, [authState?.uid, initializeMuteTokens])
+  // Initialize mute tokens using useQuery instead of useEffect
+  useQuery({
+    queryKey: ['initializeMuteTokens', authState?.uid],
+    queryFn: async () => {
+      if (authState?.uid) {
+        await initializeMuteTokens()
+      }
+      return null
+    },
+    enabled: !!authState?.uid,
+    staleTime: Infinity, // Only run once per session
+  })
 
   const isOwnProfile = authState?.uid === uid
 
@@ -122,7 +130,7 @@ export const UserComponent = () => {
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 4 }}>
             <Avatar
               src={
-                userData.image.moderationModelVersion
+                userImageModeration?.hasModeratedImage
                   ? getUserImageUrl(uid!)
                   : undefined
               }
