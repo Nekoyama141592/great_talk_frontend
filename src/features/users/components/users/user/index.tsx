@@ -121,7 +121,11 @@ export const UserComponent = () => {
         <CardContent sx={{ p: 6 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 4 }}>
             <Avatar
-              src={uid ? getUserImageUrl(uid) : undefined}
+              src={
+                userData.image.moderationModelVersion
+                  ? getUserImageUrl(uid!)
+                  : undefined
+              }
               sx={{
                 width: 120,
                 height: 120,

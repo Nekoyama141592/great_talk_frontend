@@ -14,11 +14,8 @@ export class PostRepository {
     const postId = generateRandomId()
 
     // Upload image using Cloud Functions
-    let imageFileName = ''
     if (postData.image instanceof File) {
-      imageFileName = await this.uploadImage(userId, postId, postData.image)
-    } else {
-      imageFileName = postData.image
+      await this.uploadImage(userId, postId, postData.image)
     }
 
     const postDocData = {
@@ -38,10 +35,7 @@ export class PostRepository {
       genre: '',
       hashTags: [],
       image: {
-        bucketName: '',
-        moderationLabels: [],
         moderationModelVersion: '',
-        value: imageFileName,
       },
       impressionCount: 0,
       likeCount: 0,

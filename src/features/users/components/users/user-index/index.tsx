@@ -98,7 +98,11 @@ export const UserIndexComponent = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                   <Avatar
-                    src={getUserImageUrl(user.uid)}
+                    src={
+                      user.image.moderationModelVersion
+                        ? getUserImageUrl(user.uid)
+                        : undefined
+                    }
                     sx={{
                       width: 48,
                       height: 48,

@@ -1,4 +1,3 @@
 export interface ModeratedImage {
-  bucketName: string
-  value: string
+  moderationModelVersion: string
 }

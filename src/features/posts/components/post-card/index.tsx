@@ -25,6 +25,7 @@ import { LikeButton } from '../like-button'
 import { PostMenu } from '../post-menu'
 import { MutedPostCard } from '../muted-post-card'
 import { getUserImageUrl, getPostImageUrl } from '@/utils/image_url_util'
+import { useUserImageModeration } from '@users/hooks/use-user-image-moderation'
 
 export interface PostCardProps {
   post: PublicPost
@@ -41,6 +42,7 @@ export const PostCard: React.FC<PostCardProps> = ({
 }) => {
   console.log(getPostImageUrl(post.uid, post.postId))
   const isMuted = useIsPostMuted(post.postId)
+  const { data: userImageModeration } = useUserImageModeration(post.uid)
 
   // ミュートされた投稿の場合は専用カードを表示
   if (isMuted) {
@@ -105,7 +107,11 @@ export const PostCard: React.FC<PostCardProps> = ({
             {/* Post Header */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Avatar
-                src={getUserImageUrl(post.uid)}
+                src={
+                  userImageModeration?.hasModeratedImage
+                    ? getUserImageUrl(post.uid)
+                    : undefined
+                }
                 sx={{
                   width: 48,
                   height: 48,
@@ -215,7 +221,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             </Typography>
 
             {/* Post Image */}
-            {post.image?.value && (
+            {post.image?.moderationModelVersion && (
               <Box
                 sx={{
                   mb: 3,
@@ -239,7 +245,7 @@ export const PostCard: React.FC<PostCardProps> = ({
                     objectFit: 'cover',
                     display: 'block',
                   }}
-                  onError={(e) => {
+                  onError={e => {
                     e.currentTarget.style.display = 'none'
                   }}
                 />
