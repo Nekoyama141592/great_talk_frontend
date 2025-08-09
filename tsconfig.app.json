@@ -14,6 +14,19 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path mapping */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@atoms/*": ["src/atoms/*"],
+      "@features/*": ["src/features/*"],
+      "@shared/*": ["src/features/shared/*"],
+      "@auth/*": ["src/features/auth/*"],
+      "@posts/*": ["src/features/posts/*"],
+      "@users/*": ["src/features/users/*"],
+      "@image-generation/*": ["src/features/image-generation/*"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,

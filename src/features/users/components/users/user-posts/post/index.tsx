@@ -1,0 +1,743 @@
+import { useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+import { doc, getDoc } from 'firebase/firestore'
+import { db, functions } from '@shared/infrastructures/firebase'
+import { PublicPost } from '@shared/schema/public-post'
+import { PublicUser } from '@shared/schema/public-user'
+import { useState } from 'react'
+import { httpsCallable } from '@firebase/functions'
+import ReactMarkdown from 'react-markdown'
+import { LikeButton } from '@posts/components/like-button'
+import { getUserImageUrl, getPostImageUrl } from '@/utils/image_url_util'
+import { useUserImageModeration } from '@users/hooks/use-user-image-moderation'
+import {
+  Box,
+  Card,
+  CardContent,
+  Typography,
+  TextField,
+  Button,
+  Avatar,
+  Chip,
+  Divider,
+  CircularProgress,
+  Paper,
+  Skeleton,
+  IconButton,
+  Modal,
+  Backdrop,
+  Fade,
+} from '@mui/material'
+import {
+  MessageOutlined,
+  SendOutlined,
+  PersonOutlined,
+  AccessTimeOutlined,
+  InfoOutlined,
+  Close,
+  Code,
+} from '@mui/icons-material'
+
+interface Response {
+  model: string
+  content: string
+}
+export const PostComponent = () => {
+  const [response, setResponse] = useState<string>('')
+  const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false)
+  const { uid, postId } = useParams()
+
+  // ユーザー情報を取得
+  const userQueryFn = async () => {
+    if (!uid) return null
+    const docRef = doc(db, 'public/v1/users', uid)
+    const userDoc = await getDoc(docRef)
+    const data = userDoc.data()
+    if (!data) return null
+    const res: PublicUser = {
+      bio: data.bio,
+      ethAddress: data.ethAddress,
+      followerCount: data.followerCount,
+      followingCount: data.followingCount,
+      isNFTicon: data.isNFTicon,
+      isOfficial: data.isOfficial,
+      isSuspended: data.isSuspended,
+      muteCount: data.muteCount,
+      postCount: data.postCount,
+      uid: data.uid,
+      image: data.image,
+      userName: data.userName,
+    }
+    return res
+  }
+
+  const { data: userData } = useQuery({
+    queryKey: ['user', uid],
+    queryFn: userQueryFn,
+    enabled: !!uid,
+  })
+
+  const { data: userImageModeration } = useUserImageModeration(uid)
+
+  const queryFn = async () => {
+    if (!uid || !postId) return
+    const docRef = doc(db, `public/v1/users/${uid}/posts`, postId)
+    const postDoc = await getDoc(docRef)
+    const data = postDoc.data()
+    if (!data) return
+    const res: PublicPost = {
+      customCompleteText: data.customCompleteText,
+      description: data.description,
+      image: data.image,
+      msgCount: data.msgCount,
+      likeCount: data.likeCount || 0,
+      postId: data.postId,
+      title: data.title,
+      uid: data.uid,
+      createdAt: data.createdAt,
+    }
+    return res
+  }
+  const { data, isPending, error } = useQuery({
+    queryKey: ['post'],
+    queryFn: queryFn,
+  })
+  const [inputText, setInputText] = useState('')
+
+  const onClick = async (systemPrompt: string, text: string) => {
+    setResponse('読み込み中...')
+    const generateText = httpsCallable(functions, 'generateTextV2')
+    const combinedMessage = `${systemPrompt}\n\n${text}`
+    const messages = [{ role: 'user', content: combinedMessage }]
+    generateText({
+      model: 'o4-mini-2025-04-16',
+      messages,
+    })
+      .then(result => {
+        const data = result.data as Response
+        setResponse(data.content)
+      })
+      .catch(e => {
+        setResponse(`エラーが発生しました: ${e}`)
+      })
+  }
+
+  const handleSubmit = (
+    e: React.FormEvent<HTMLFormElement>,
+    systemPrompt: string
+  ) => {
+    e.preventDefault()
+    onClick(systemPrompt, inputText)
+  }
+
+  if (isPending) {
+    return (
+      <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        <Card elevation={2}>
+          <CardContent>
+            <Skeleton variant='text' width='60%' height={48} />
+            <Skeleton variant='text' width='40%' height={24} sx={{ mt: 1 }} />
+            <Skeleton
+              variant='rectangular'
+              width='100%'
+              height={120}
+              sx={{ mt: 2 }}
+            />
+            <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+              <Skeleton variant='circular' width={40} height={40} />
+              <Skeleton variant='text' width='30%' height={24} />
+            </Box>
+          </CardContent>
+        </Card>
+      </Box>
+    )
+  }
+
+  if (!data) {
+    return (
+      <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        <Card elevation={2}>
+          <CardContent sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant='h6' color='text.secondary'>
+              投稿が存在しません
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    )
+  }
+
+  if (error) {
+    return (
+      <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+        <Card elevation={2}>
+          <CardContent sx={{ textAlign: 'center', py: 8 }}>
+            <Typography variant='h6' color='error'>
+              エラーが発生しました
+            </Typography>
+            <Typography variant='body2' color='text.secondary' sx={{ mt: 1 }}>
+              {error.message}
+            </Typography>
+          </CardContent>
+        </Card>
+      </Box>
+    )
+  }
+
+  const post: PublicPost = data
+  const formatDate = (timestamp: { seconds: number } | null) => {
+    if (!timestamp) return ''
+    const date = new Date(timestamp.seconds * 1000)
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  }
+
+  return (
+    <Box sx={{ maxWidth: 800, mx: 'auto', p: 3 }}>
+      {/* Main Post Card */}
+      <Card
+        elevation={3}
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          mb: 3,
+          transition: 'all 0.3s ease',
+          '&:hover': {
+            transform: 'translateY(-2px)',
+            boxShadow: theme => theme.shadows[8],
+          },
+        }}
+      >
+        <CardContent sx={{ p: 4, position: 'relative' }}>
+          {/* System Prompt Button */}
+          <IconButton
+            onClick={() => setShowSystemPrompt(true)}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                transform: 'scale(1.05)',
+                boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+              },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+              zIndex: 1,
+            }}
+          >
+            <Code sx={{ fontSize: 20 }} />
+          </IconButton>
+
+          {/* Post Header */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
+            <Avatar
+              src={
+                userImageModeration?.hasModeratedImage
+                  ? getUserImageUrl(uid!)
+                  : undefined
+              }
+              sx={{
+                width: 56,
+                height: 56,
+                bgcolor: 'primary.main',
+                fontSize: '1.5rem',
+                fontWeight: 'bold',
+              }}
+            >
+              <PersonOutlined />
+            </Avatar>
+            <Box sx={{ flex: 1 }}>
+              <Typography
+                variant='h6'
+                sx={{ fontWeight: 600, color: 'text.primary' }}
+              >
+                {userData?.userName?.value || post?.uid}
+              </Typography>
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}
+              >
+                <AccessTimeOutlined
+                  sx={{ fontSize: 16, color: 'text.secondary' }}
+                />
+                <Typography variant='body2' color='text.secondary'>
+                  {formatDate(post?.createdAt)}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+
+          {/* Post Title */}
+          <Typography
+            variant='h4'
+            component='h1'
+            sx={{
+              fontWeight: 700,
+              mb: 2,
+              color: 'text.primary',
+              lineHeight: 1.2,
+            }}
+          >
+            {post?.title.value}
+          </Typography>
+
+          {/* Post Description */}
+          <Typography
+            variant='body1'
+            sx={{
+              mb: 3,
+              color: 'text.secondary',
+              lineHeight: 1.6,
+              fontSize: '1.1rem',
+            }}
+          >
+            {post?.description.value}
+          </Typography>
+
+          {/* Post Image */}
+          {post?.image?.moderationModelVersion && (
+            <Box
+              sx={{
+                mb: 3,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                },
+              }}
+            >
+              <img
+                src={getPostImageUrl(post.uid, post.postId)}
+                alt={post.title.value}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: '500px',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+                onError={e => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </Box>
+          )}
+
+          <Divider sx={{ my: 3 }} />
+
+          {/* Post Stats */}
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Chip
+              icon={<MessageOutlined />}
+              label={`${post?.msgCount} コメント`}
+              variant='outlined'
+              sx={{
+                borderRadius: 2,
+                '& .MuiChip-icon': { fontSize: 18 },
+              }}
+            />
+            <LikeButton
+              postId={post.postId}
+              targetUserId={post.uid}
+              likeCount={post.likeCount}
+              size='medium'
+              showCount={false}
+            />
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* AI Question Section */}
+      <Card
+        elevation={2}
+        sx={{
+          borderRadius: 3,
+          overflow: 'hidden',
+          mb: 3,
+        }}
+      >
+        <CardContent sx={{ p: 4 }}>
+          <Typography
+            variant='h6'
+            sx={{
+              mb: 3,
+              fontWeight: 600,
+              color: 'text.primary',
+            }}
+          >
+            AIに質問する
+          </Typography>
+
+          <Box
+            component='form'
+            onSubmit={e =>
+              handleSubmit(e, post.customCompleteText.systemPrompt)
+            }
+            sx={{ display: 'flex', gap: 2, alignItems: 'flex-end' }}
+          >
+            <TextField
+              fullWidth
+              multiline
+              maxRows={4}
+              value={inputText}
+              onChange={e => setInputText(e.target.value)}
+              placeholder='この投稿について質問があれば、お気軽にどうぞ...'
+              variant='outlined'
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: 2,
+                  backgroundColor: 'background.default',
+                  '&:hover': {
+                    backgroundColor: 'action.hover',
+                  },
+                  '&.Mui-focused': {
+                    backgroundColor: 'background.paper',
+                  },
+                },
+              }}
+            />
+            <Button
+              type='submit'
+              variant='contained'
+              endIcon={<SendOutlined />}
+              disabled={!inputText.trim()}
+              sx={{
+                borderRadius: 2,
+                px: 3,
+                py: 1.5,
+                minWidth: 120,
+                textTransform: 'none',
+                fontWeight: 600,
+                boxShadow: 'none',
+                '&:hover': {
+                  boxShadow: theme => theme.shadows[4],
+                  transform: 'translateY(-1px)',
+                },
+                '&:disabled': {
+                  opacity: 0.5,
+                },
+              }}
+            >
+              送信
+            </Button>
+          </Box>
+        </CardContent>
+      </Card>
+
+      {/* AI Response Section */}
+      {response && (
+        <Card
+          elevation={2}
+          sx={{
+            borderRadius: 3,
+            overflow: 'hidden',
+          }}
+        >
+          <CardContent sx={{ p: 4 }}>
+            <Typography
+              variant='h6'
+              sx={{
+                mb: 3,
+                fontWeight: 600,
+                color: 'text.primary',
+              }}
+            >
+              AI回答
+            </Typography>
+
+            {response === '読み込み中...' ? (
+              <Box
+                sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 4 }}
+              >
+                <CircularProgress size={24} />
+                <Typography variant='body2' color='text.secondary'>
+                  AIが回答を生成しています...
+                </Typography>
+              </Box>
+            ) : (
+              <Paper
+                elevation={0}
+                sx={{
+                  p: 3,
+                  backgroundColor: 'background.default',
+                  borderRadius: 2,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                }}
+              >
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => (
+                      <Typography
+                        variant='body1'
+                        sx={{
+                          mb: 2,
+                          lineHeight: 1.7,
+                          '&:last-child': { mb: 0 },
+                        }}
+                      >
+                        {children}
+                      </Typography>
+                    ),
+                    h1: ({ children }) => (
+                      <Typography
+                        variant='h5'
+                        sx={{
+                          fontWeight: 700,
+                          mb: 2,
+                          mt: 3,
+                          '&:first-of-type': { mt: 0 },
+                        }}
+                      >
+                        {children}
+                      </Typography>
+                    ),
+                    h2: ({ children }) => (
+                      <Typography
+                        variant='h6'
+                        sx={{
+                          fontWeight: 600,
+                          mb: 1.5,
+                          mt: 2.5,
+                          '&:first-of-type': { mt: 0 },
+                        }}
+                      >
+                        {children}
+                      </Typography>
+                    ),
+                    ul: ({ children }) => (
+                      <Box component='ul' sx={{ pl: 2, mb: 2 }}>
+                        {children}
+                      </Box>
+                    ),
+                    li: ({ children }) => (
+                      <Typography
+                        component='li'
+                        variant='body1'
+                        sx={{ mb: 0.5, lineHeight: 1.6 }}
+                      >
+                        {children}
+                      </Typography>
+                    ),
+                    code: ({ children }) => (
+                      <Box
+                        component='code'
+                        sx={{
+                          backgroundColor: 'action.hover',
+                          px: 1,
+                          py: 0.5,
+                          borderRadius: 1,
+                          fontFamily: 'monospace',
+                          fontSize: '0.9em',
+                        }}
+                      >
+                        {children}
+                      </Box>
+                    ),
+                  }}
+                >
+                  {response}
+                </ReactMarkdown>
+              </Paper>
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      {/* System Prompt Modal */}
+      <Modal
+        open={showSystemPrompt}
+        onClose={() => setShowSystemPrompt(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(10px)',
+          },
+        }}
+      >
+        <Fade in={showSystemPrompt}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: { xs: '90%', sm: '80%', md: 600 },
+              maxHeight: '80vh',
+              bgcolor: 'background.paper',
+              borderRadius: 4,
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
+              outline: 'none',
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            }}
+          >
+            {/* Modal Header */}
+            <Box
+              sx={{
+                p: 3,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                  sx={{
+                    p: 1,
+                    borderRadius: 2,
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Code sx={{ fontSize: 24 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    variant='h6'
+                    sx={{ fontWeight: 700, mb: 0.5, fontSize: '1.25rem' }}
+                  >
+                    システムプロンプト
+                  </Typography>
+                  <Typography
+                    variant='body2'
+                    sx={{ opacity: 0.9, fontSize: '0.875rem' }}
+                  >
+                    この投稿のAI設定を確認
+                  </Typography>
+                </Box>
+              </Box>
+              <IconButton
+                onClick={() => setShowSystemPrompt(false)}
+                sx={{
+                  color: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    transform: 'scale(1.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
+
+            {/* Modal Content */}
+            <Box
+              sx={{ p: 4, maxHeight: 'calc(80vh - 120px)', overflow: 'auto' }}
+            >
+              {post?.customCompleteText?.systemPrompt ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    borderRadius: 3,
+                    background:
+                      'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    border: '2px solid #e2e8f0',
+                    position: 'relative',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 4,
+                      background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                      borderRadius: '12px 12px 0 0',
+                    },
+                  }}
+                >
+                  <Typography
+                    variant='body1'
+                    sx={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.95rem',
+                      lineHeight: 1.6,
+                      color: 'text.primary',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      mt: 1,
+                    }}
+                  >
+                    {post.customCompleteText.systemPrompt}
+                  </Typography>
+                </Paper>
+              ) : (
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    py: 6,
+                    color: 'text.secondary',
+                  }}
+                >
+                  <InfoOutlined sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+                  <Typography variant='h6' sx={{ mb: 1, opacity: 0.8 }}>
+                    システムプロンプトが設定されていません
+                  </Typography>
+                  <Typography variant='body2' sx={{ opacity: 0.6 }}>
+                    この投稿にはカスタムAI設定が含まれていません
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
+            {/* Modal Footer */}
+            <Box
+              sx={{
+                p: 3,
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Button
+                onClick={() => setShowSystemPrompt(false)}
+                variant='contained'
+                sx={{
+                  background:
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  px: 3,
+                  py: 1,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    background:
+                      'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+                    transform: 'translateY(-1px)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                閉じる
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
+    </Box>
+  )
+}
