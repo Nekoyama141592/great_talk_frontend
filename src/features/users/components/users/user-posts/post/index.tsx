@@ -3,10 +3,13 @@ import { useQuery } from '@tanstack/react-query'
 import { doc, getDoc } from 'firebase/firestore'
 import { db, functions } from '@shared/infrastructures/firebase'
 import { PublicPost } from '@shared/schema/public-post'
+import { PublicUser } from '@shared/schema/public-user'
 import { useState } from 'react'
 import { httpsCallable } from '@firebase/functions'
 import ReactMarkdown from 'react-markdown'
 import { LikeButton } from '@posts/components/like-button'
+import { getUserImageUrl, getPostImageUrl } from '@/utils/image_url_util'
+import { useUserImageModeration } from '@users/hooks/use-user-image-moderation'
 import {
   Box,
   Card,
@@ -35,6 +38,39 @@ interface Response {
 export const PostComponent = () => {
   const [response, setResponse] = useState<string>('')
   const { uid, postId } = useParams()
+
+  // ユーザー情報を取得
+  const userQueryFn = async () => {
+    if (!uid) return null
+    const docRef = doc(db, 'public/v1/users', uid)
+    const userDoc = await getDoc(docRef)
+    const data = userDoc.data()
+    if (!data) return null
+    const res: PublicUser = {
+      bio: data.bio,
+      ethAddress: data.ethAddress,
+      followerCount: data.followerCount,
+      followingCount: data.followingCount,
+      isNFTicon: data.isNFTicon,
+      isOfficial: data.isOfficial,
+      isSuspended: data.isSuspended,
+      muteCount: data.muteCount,
+      postCount: data.postCount,
+      uid: data.uid,
+      image: data.image,
+      userName: data.userName,
+    }
+    return res
+  }
+
+  const { data: userData } = useQuery({
+    queryKey: ['user', uid],
+    queryFn: userQueryFn,
+    enabled: !!uid,
+  })
+
+  const { data: userImageModeration } = useUserImageModeration(uid)
+
   const queryFn = async () => {
     if (!uid || !postId) return
     const docRef = doc(db, `public/v1/users/${uid}/posts`, postId)
@@ -171,6 +207,11 @@ export const PostComponent = () => {
           {/* Post Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <Avatar
+              src={
+                userImageModeration?.hasModeratedImage
+                  ? getUserImageUrl(uid!)
+                  : undefined
+              }
               sx={{
                 width: 56,
                 height: 56,
@@ -186,7 +227,7 @@ export const PostComponent = () => {
                 variant='h6'
                 sx={{ fontWeight: 600, color: 'text.primary' }}
               >
-                {post?.uid}
+                {userData?.userName?.value || post?.uid}
               </Typography>
               <Box
                 sx={{ display: 'flex', alignItems: 'center', gap: 1, mt: 0.5 }}
@@ -227,6 +268,38 @@ export const PostComponent = () => {
           >
             {post?.description.value}
           </Typography>
+
+          {/* Post Image */}
+          {post?.image?.moderationModelVersion && (
+            <Box
+              sx={{
+                mb: 3,
+                borderRadius: 2,
+                overflow: 'hidden',
+                boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                transition: 'all 0.3s ease',
+                '&:hover': {
+                  transform: 'scale(1.02)',
+                  boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                },
+              }}
+            >
+              <img
+                src={getPostImageUrl(post.uid, post.postId)}
+                alt={post.title.value}
+                style={{
+                  width: '100%',
+                  height: 'auto',
+                  maxHeight: '500px',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+                onError={e => {
+                  e.currentTarget.style.display = 'none'
+                }}
+              />
+            </Box>
+          )}
 
           <Divider sx={{ my: 3 }} />
 
