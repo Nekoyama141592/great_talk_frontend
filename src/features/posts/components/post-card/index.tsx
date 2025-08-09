@@ -16,7 +16,6 @@ import {
   Visibility,
   Psychology,
   People,
-  TrendingUp,
   AutoAwesome,
 } from '@mui/icons-material'
 // import { colors, glassMorphism, hoverScale } from '@shared/theme/modern-theme'
@@ -25,6 +24,7 @@ import { useIsPostMuted } from '../../hooks/use-post-mute'
 import { LikeButton } from '../like-button'
 import { PostMenu } from '../post-menu'
 import { MutedPostCard } from '../muted-post-card'
+import { getUserImageUrl, getPostImageUrl } from '@/utils/image_url_util'
 
 export interface PostCardProps {
   post: PublicPost
@@ -39,6 +39,7 @@ export const PostCard: React.FC<PostCardProps> = ({
   isFollowingView = false,
   onShare,
 }) => {
+  console.log(getPostImageUrl(post.uid, post.postId))
   const isMuted = useIsPostMuted(post.postId)
 
   // ミュートされた投稿の場合は専用カードを表示
@@ -104,6 +105,7 @@ export const PostCard: React.FC<PostCardProps> = ({
             {/* Post Header */}
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 3 }}>
               <Avatar
+                src={getUserImageUrl(post.uid)}
                 sx={{
                   width: 48,
                   height: 48,
@@ -212,6 +214,38 @@ export const PostCard: React.FC<PostCardProps> = ({
               {post.description.value}
             </Typography>
 
+            {/* Post Image */}
+            {post.image?.value && (
+              <Box
+                sx={{
+                  mb: 3,
+                  borderRadius: 2,
+                  overflow: 'hidden',
+                  boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+                  transition: 'all 0.3s ease',
+                  '&:hover': {
+                    transform: 'scale(1.02)',
+                    boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
+                  },
+                }}
+              >
+                <img
+                  src={getPostImageUrl(post.uid, post.postId)}
+                  alt={post.title.value}
+                  style={{
+                    width: '100%',
+                    height: 'auto',
+                    maxHeight: '400px',
+                    objectFit: 'cover',
+                    display: 'block',
+                  }}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none'
+                  }}
+                />
+              </Box>
+            )}
+
             {/* Sentiment & Moderation Indicators */}
             <Box sx={{ display: 'flex', gap: 1.5, mb: 3, flexWrap: 'wrap' }}>
               {post.title.sentiment && (
@@ -315,12 +349,6 @@ export const PostCard: React.FC<PostCardProps> = ({
                     <Visibility
                       sx={{ fontSize: 18, color: 'text.secondary' }}
                     />
-                    <Typography
-                      variant='body2'
-                      sx={{ fontWeight: 600, color: 'text.primary' }}
-                    >
-                      {(post as Record<string, unknown>).impressionCount || 0}
-                    </Typography>
                   </Box>
                 </Tooltip>
               </Box>

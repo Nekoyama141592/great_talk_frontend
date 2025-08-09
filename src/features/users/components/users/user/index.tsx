@@ -23,13 +23,13 @@ import { useUserMute, useIsUserMuted } from '../../../hooks/use-user-mute'
 import { useAtom } from 'jotai'
 import { authAtom } from '@auth/atoms'
 import { useEffect } from 'react'
+import { getUserImageUrl } from '@/utils/image_url_util'
 
 export const UserComponent = () => {
   const { uid } = useParams()
   const [authState] = useAtom(authAtom)
   const { initializeMuteTokens } = useUserMute()
   const isMuted = useIsUserMuted(uid || '')
-
   // Initialize following users data
   useFollowingUsers()
 
@@ -92,7 +92,7 @@ export const UserComponent = () => {
       </Container>
     )
 
-  const userData: PublicUser = data
+  const userData = data as PublicUser
 
   return (
     <Container maxWidth='lg' sx={{ py: 6 }}>
@@ -121,6 +121,7 @@ export const UserComponent = () => {
         <CardContent sx={{ p: 6 }}>
           <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 4 }}>
             <Avatar
+              src={uid ? getUserImageUrl(uid) : undefined}
               sx={{
                 width: 120,
                 height: 120,

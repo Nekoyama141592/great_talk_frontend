@@ -16,6 +16,7 @@ import {
 import { Person, Verified } from '@mui/icons-material'
 import { FollowButtonCompact } from '../../follow-button/FollowButtonCompact'
 import { useFollowingUsers } from '../../../hooks/use-following-users'
+import { getUserImageUrl } from '@/utils/image_url_util'
 export const UserIndexComponent = () => {
   // Initialize following users data
   useFollowingUsers()
@@ -29,7 +30,6 @@ export const UserIndexComponent = () => {
       const data = doc.data()
       const res: PublicUser = {
         bio: data.bio,
-        blockCount: data.blockCount,
         ethAddress: data.ethAddress,
         followerCount: data.followerCount,
         followingCount: data.followingCount,
@@ -38,7 +38,6 @@ export const UserIndexComponent = () => {
         isSuspended: data.isSuspended,
         muteCount: data.muteCount,
         postCount: data.postCount,
-        reportCount: data.reportCount,
         uid: data.uid,
         image: data.image,
         userName: data.userName,
@@ -99,6 +98,7 @@ export const UserIndexComponent = () => {
               <CardContent>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
                   <Avatar
+                    src={getUserImageUrl(user.uid)}
                     sx={{
                       width: 48,
                       height: 48,

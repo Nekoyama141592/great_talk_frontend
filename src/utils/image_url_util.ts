@@ -6,12 +6,12 @@ const getR2Endpoint = (): string => {
   return endpoint.endsWith('/') ? endpoint.slice(0, -1) : endpoint;
 };
 
-export const getUserImageUrl = (uid: string): string => {
+export const getUserImageUrl = (uid: string, imageName?: string): string => {
   const baseUrl = `${getR2Endpoint()}/users/${uid}`;
-  return baseUrl
+  return baseUrl;
 };
 
-export const getPostImageUrl = (uid: string, postId: string): string => {
+export const getPostImageUrl = (uid: string, postId: string, imageName?: string): string => {
   const baseUrl = `${getR2Endpoint()}/users/${uid}/posts/${postId}`;
-  return baseUrl
+  return baseUrl;
 };
