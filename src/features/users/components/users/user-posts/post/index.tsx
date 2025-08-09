@@ -23,12 +23,19 @@ import {
   CircularProgress,
   Paper,
   Skeleton,
+  IconButton,
+  Modal,
+  Backdrop,
+  Fade,
 } from '@mui/material'
 import {
   MessageOutlined,
   SendOutlined,
   PersonOutlined,
   AccessTimeOutlined,
+  InfoOutlined,
+  Close,
+  Code,
 } from '@mui/icons-material'
 
 interface Response {
@@ -37,6 +44,7 @@ interface Response {
 }
 export const PostComponent = () => {
   const [response, setResponse] = useState<string>('')
+  const [showSystemPrompt, setShowSystemPrompt] = useState<boolean>(false)
   const { uid, postId } = useParams()
 
   // ユーザー情報を取得
@@ -203,7 +211,31 @@ export const PostComponent = () => {
           },
         }}
       >
-        <CardContent sx={{ p: 4 }}>
+        <CardContent sx={{ p: 4, position: 'relative' }}>
+          {/* System Prompt Button */}
+          <IconButton
+            onClick={() => setShowSystemPrompt(true)}
+            sx={{
+              position: 'absolute',
+              top: 16,
+              right: 16,
+              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              color: 'white',
+              width: 48,
+              height: 48,
+              '&:hover': {
+                background: 'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                transform: 'scale(1.05)',
+                boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+              },
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              boxShadow: '0 4px 15px rgba(102, 126, 234, 0.3)',
+              zIndex: 1,
+            }}
+          >
+            <Code sx={{ fontSize: 20 }} />
+          </IconButton>
+
           {/* Post Header */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 3 }}>
             <Avatar
@@ -521,6 +553,191 @@ export const PostComponent = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* System Prompt Modal */}
+      <Modal
+        open={showSystemPrompt}
+        onClose={() => setShowSystemPrompt(false)}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+          sx: {
+            background: 'rgba(0, 0, 0, 0.8)',
+            backdropFilter: 'blur(10px)',
+          },
+        }}
+      >
+        <Fade in={showSystemPrompt}>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: { xs: '90%', sm: '80%', md: 600 },
+              maxHeight: '80vh',
+              bgcolor: 'background.paper',
+              borderRadius: 4,
+              boxShadow: '0 25px 50px rgba(0, 0, 0, 0.25)',
+              outline: 'none',
+              overflow: 'hidden',
+              background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
+            }}
+          >
+            {/* Modal Header */}
+            <Box
+              sx={{
+                p: 3,
+                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <Box
+                  sx={{
+                    p: 1,
+                    borderRadius: 2,
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Code sx={{ fontSize: 24 }} />
+                </Box>
+                <Box>
+                  <Typography
+                    variant='h6'
+                    sx={{ fontWeight: 700, mb: 0.5, fontSize: '1.25rem' }}
+                  >
+                    システムプロンプト
+                  </Typography>
+                  <Typography
+                    variant='body2'
+                    sx={{ opacity: 0.9, fontSize: '0.875rem' }}
+                  >
+                    この投稿のAI設定を確認
+                  </Typography>
+                </Box>
+              </Box>
+              <IconButton
+                onClick={() => setShowSystemPrompt(false)}
+                sx={{
+                  color: 'white',
+                  bgcolor: 'rgba(255, 255, 255, 0.1)',
+                  '&:hover': {
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    transform: 'scale(1.1)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                <Close />
+              </IconButton>
+            </Box>
+
+            {/* Modal Content */}
+            <Box
+              sx={{ p: 4, maxHeight: 'calc(80vh - 120px)', overflow: 'auto' }}
+            >
+              {post?.customCompleteText?.systemPrompt ? (
+                <Paper
+                  elevation={0}
+                  sx={{
+                    p: 3,
+                    borderRadius: 3,
+                    background:
+                      'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+                    border: '2px solid #e2e8f0',
+                    position: 'relative',
+                    '&::before': {
+                      content: '""',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      height: 4,
+                      background: 'linear-gradient(90deg, #667eea, #764ba2)',
+                      borderRadius: '12px 12px 0 0',
+                    },
+                  }}
+                >
+                  <Typography
+                    variant='body1'
+                    sx={{
+                      fontFamily: 'monospace',
+                      fontSize: '0.95rem',
+                      lineHeight: 1.6,
+                      color: 'text.primary',
+                      whiteSpace: 'pre-wrap',
+                      wordBreak: 'break-word',
+                      mt: 1,
+                    }}
+                  >
+                    {post.customCompleteText.systemPrompt}
+                  </Typography>
+                </Paper>
+              ) : (
+                <Box
+                  sx={{
+                    textAlign: 'center',
+                    py: 6,
+                    color: 'text.secondary',
+                  }}
+                >
+                  <InfoOutlined sx={{ fontSize: 48, mb: 2, opacity: 0.5 }} />
+                  <Typography variant='h6' sx={{ mb: 1, opacity: 0.8 }}>
+                    システムプロンプトが設定されていません
+                  </Typography>
+                  <Typography variant='body2' sx={{ opacity: 0.6 }}>
+                    この投稿にはカスタムAI設定が含まれていません
+                  </Typography>
+                </Box>
+              )}
+            </Box>
+
+            {/* Modal Footer */}
+            <Box
+              sx={{
+                p: 3,
+                borderTop: '1px solid #e2e8f0',
+                background: '#f8fafc',
+                display: 'flex',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <Button
+                onClick={() => setShowSystemPrompt(false)}
+                variant='contained'
+                sx={{
+                  background:
+                    'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                  color: 'white',
+                  px: 3,
+                  py: 1,
+                  borderRadius: 2,
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  boxShadow: 'none',
+                  '&:hover': {
+                    background:
+                      'linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%)',
+                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+                    transform: 'translateY(-1px)',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              >
+                閉じる
+              </Button>
+            </Box>
+          </Box>
+        </Fade>
+      </Modal>
     </Box>
   )
 }
